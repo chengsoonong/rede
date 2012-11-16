@@ -1,0 +1,86 @@
+/* -- Layout -- */
+#container {
+    width:1200px;
+    margin:20px auto;
+}
+
+#chart {
+    float:left;
+    width:800px;
+}
+
+#controls {
+    float:left;
+    width:360px;
+    font-size:small;
+}
+
+#snps {
+    float:left;
+    width:360px;
+    font-size:small;
+}
+
+#pairs {
+    float:left;
+    width:360px;
+    font-size:small;
+}
+
+#footer {
+    clear:both;
+}
+
+
+
+
+/* -- NICTA typography -- */
+
+body {
+    line-height: 1.3em;
+    color:#575555;
+    font-family: Helvetica, Arial, san-serif;
+    background-color: #fff;
+}
+
+h1 {
+    margin: 0.15em 0 0.9em;
+    font-size: 2.1em;
+    color:#333;
+    line-height: 1em;
+}
+
+h2 {
+    margin: 2.2em 0 0.9em;
+    font-size: 1.7em;
+    color:#6d509c;
+}
+
+h3, table caption {
+    padding: 1em 0 0.5em;
+    font-size: 1.7em;
+    color:#826aa5;
+    font-weight: normal;
+    text-align: left;
+}
+
+h4 {
+    margin: 1em 0;
+    font-size: 1.2em;
+    color:#666;
+}
+
+h5 {
+    margin: 1em 0;
+    font-size: 1.1em;
+    color:#333;
+}
+
+h6 {
+    margin: 1em 0;
+    font-size: 1.1em;
+    color:#333;
+    font-weight:normal;
+}
+
+

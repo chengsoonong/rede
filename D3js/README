@@ -1,0 +1,6 @@
+python -m SimpleHTTPServer 8888
+http://localhost:8888/view_graph.html
+
+
+Using d3.js, Tutorial:
+http://alignedleft.com/tutorials/d3/

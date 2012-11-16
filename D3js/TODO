@@ -1,0 +1,8 @@
+- ticks on chromosome
+- merge to one html with radio buttons (see view_graph.html)
+- fade of subgraph (links not working)
+- fade of SNPs and pairs in text
+- http://jbrowse.org/ on separate <div>
+- show contingency tables or statistics such as odds ratio in separate <div>
+- graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
+- collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
