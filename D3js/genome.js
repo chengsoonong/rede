@@ -1,7 +1,10 @@
 
 // Genome object for drawing
+
 function Genome() {
-    var genome = {},
+	// return the genome object with the information for drawing the chromosomes circles 
+	
+    var genome = {},              //genome = this  !!!
     chromosomes,
     n = 24,
     padding = 0.05;
@@ -33,24 +36,30 @@ function Genome() {
 	while (++i < n) {
 	    a0 = x,
 	    a1 = x += chromLength[i] * k;
-	    chromosomes[i] = {
+	    
+	    chromosomes[i] = {  //array chromosomes with objects content information  
 		index: i,
 		startAngle: a0,
 		endAngle: a1,
+		factor_k: k,
+		//angleTicks:d3.range(a0,a1,(a1-a0)/5),  //angles for ticks
 		value: chromLength[i] * k
+		
+		
+		
 	    };
 	    x += padding;
 	}
     };
     
     genome.chromosomes = function() {
-	if (!chromosomes) relayout();
+	if (!chromosomes) relayout();  //ensures that array chromosomes will not be returned empty
 	return chromosomes;
     };
 
     genome.getAngle = function(chrom, bpPosition)
     {
-	if (!chromosomes) relayout();
+	if (!chromosomes) relayout();  //ensures that array chromosomes will not be returned empty
 	circ_loc = chromosomes[chrom-1].startAngle
 	    + (bpPosition/chromLength[chrom-1])
 	    *(chromosomes[chrom-1].endAngle - chromosomes[chrom-1].startAngle);
