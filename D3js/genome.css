@@ -5,30 +5,40 @@
 }
 
 #chart {
+	position:fixed;
+	
+	
+		
     float:left;
     width:800px;
 }
 
 #controls {
-    float:left;
+    float:right;
     width:360px;
     font-size:small;
 }
 
 #snps {
-    float:left;
+    float:right;
     width:360px;
     font-size:small;
+    
+    padding-left:20%;
 }
 
 #pairs {
-    float:left;
+    float:right;
     width:360px;
     font-size:small;
+    
+    padding-left:20%;
 }
 
 #footer {
     clear:both;
+    
+    padding-left:20%;
 }
 
 
