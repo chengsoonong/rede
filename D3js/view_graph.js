@@ -1,10 +1,10 @@
 
 var width = 800,
 height = 800,
-//chromRingOuterRadius = Math.min(width, height) * .49,
+//chromRingOuterRadius = Math.min(width, height) * .49,  //old adjustment
 //chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
-chromRingOuterRadius = Math.min(width, height) * .45,
+chromRingOuterRadius = Math.min(width, height) * .45,   //new adjustment
 chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
 
@@ -23,11 +23,12 @@ var all_chrom;
 var allNodes ;
 var links;
 
-
 var file_json;
 
-function Create_SVG_chart(){
-//Create SVG element
+function Create_SVG_chart(){  
+	// function to Create SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
+	
+	
  svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
     .attr("width", width)
@@ -69,7 +70,7 @@ svg.selectAll("text")      // write the numbers in chromosomes
     .text(function(d) { return d.index+1 });
 
 
-//******************* ticks on chromosome       
+// ticks on chromosome       
 
 var ticks = svg.append("g")
   .selectAll("g")
@@ -104,17 +105,15 @@ ticks.append("text")
     .text(function(d) { return d.label; });    
     
 
-//*******************  end
-		
+// when we click in chart it declaration below will reset the chart using the function reset		
 
-d3.select("#chart").selectAll('svg').on("click", fade2(1));
+d3.select("#chart").selectAll('svg').on("click", reset(1));
 
 };
 
 
 function transition_data(filename){
-
-
+//this function create all associations betewen the SNPs
 
 
 // Plot nodes and links for the default dataset
@@ -149,8 +148,8 @@ d3.json(filename, function(json) {
 	.style("stroke", function(d) { return graphColor(d.subgraph_id) })
 	.attr("cx", chromRingInnerRadius-20)
 	.attr("r", 3)
-	.on("mouseover", fade1(0))  //click mouseover mouseout
-	//.on("mouseout", fade2(1))  //see creat chart
+	.on("mouseover", fade(0))  //click mouseover mouseout
+	//.on("mouseout", reset(1))  //see creat chart
 	.attr("transform", function(d) { 
 	    return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
 
@@ -194,57 +193,32 @@ d3.json(filename, function(json) {
 };
 
 
-//******************* merge to one html with radio buttons (see view_graph.html)
 
+
+// create the first vizualization with "bdWTC.json" like default
 
 
 Create_SVG_chart();
 transition_data("bdWTC.json");
 file_json="bdWTC.json";
-		
+
+
+
+//******************* merge to one html with radio buttons 		
 d3.selectAll("input").on("change", function change() {
 			
-			
-			
-			
-  //svg.selectAll(".vertex").transition()  //erro
-  //.duration(1000) // this is 1s
-  //.delay(100)  
-  //.style("opacity", 0).remove();			
-  	
-  // svg.selectAll(".link").transition()
-  //.duration(1000) // this is 1s
-  //.delay(100)  
-  //.style("opacity", 0).remove();	
-  
-  //svg.selectAll(".vertex").remove();
-  //svg.selectAll(".link").remove();
-  
-  
    d3.select("#chart").selectAll('svg').remove(); //ok
    d3.select("#snps").selectAll("p").remove(); //ok
    d3.select("#pairs").selectAll("p").remove(); //ok
-   
-  // d3.select("#chart").selectAll('svg').transition() //erro
- // .duration(1000) // this is 1 second 
-  //.delay(100)  
- // .style("opacity", 0).remove();
-  
-   //svg.selectAll(".ticks").transition()
-   //       .duration(340)
-   //       .attr("opacity", 1);	
-  	
+   			
+			
   			file_json=this.id+".json";
   			Create_SVG_chart();
-  			transition_data(this.id+".json");
+  			transition_data(this.id+".json"); 			
   			
-  		
+   
+});						
  
-});
-
-
-
-
 
 //*******************  end
 
@@ -301,53 +275,44 @@ function link() {
 
 
 // Returns an event handler for fading
-function fade1(opacity) {
+function fade(opacity) {
     return function(g, i) {
-	svg.selectAll("g circle")
+	svg.selectAll("g circle")  //select the circles
             .filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
             })
 	    .transition()
             .style("opacity", opacity);
             
-   svg.selectAll(".link")
+   svg.selectAll(".link") //select the association regarding to the circle selected
    			.filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
-            })
-        .transition()
-  			.style("opacity", opacity).remove();	
+            }).remove();
+       // .transition()
+  		//	.style("opacity", opacity).remove();	
   
-   d3.select("#snps").selectAll("p").remove(); //ok
-   d3.select("#pairs").selectAll("p").remove(); //ok
+   d3.select("#snps").selectAll("p").remove(); //remove old text
+   d3.select("#pairs").selectAll("p").remove(); //remove old text
   
-    // Write out the data in text
- d3.select("#snps").selectAll("p")
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
 	.data(allNodes)
 	.enter().append("p")
-	.filter(function(d) {
-		return d.subgraph_id === allNodes[i].subgraph_id;
-            })
-     //novo
-	.append("link").attr("href",function(d){
-				
+	.filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
 	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;
-				
-			})
-			
-	.style("text-decoration",'none')
-	
-    .style("color", function(d) {
-					if (d.id != allNodes[i].id) {	//Threshold of 15
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})	
+	.style("text-decoration",'none')	
+    .style("color", function(d) {  //highlights the SNP selected
+					if (d.id != allNodes[i].id) {	
 						return "black";
 					} else {
-						return graphColor(d.subgraph_id); //red
+						return graphColor(d.subgraph_id);
 					}
-				})
-				
-			//.style("color", '#000')
-				        
+				})      
 	.text(function(d) { return showSnp(d); });
+    
     
  d3.select("#pairs").selectAll("p")
 	.data(links)
@@ -362,8 +327,10 @@ function fade1(opacity) {
 };
 
 
-function fade2(opacity) {
+function reset(opacity) {
+	//this function recreate the datas 
     return function(g, i) {
+    	
 	svg.selectAll("g circle")
             .filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
