@@ -1,9 +1,15 @@
 TO DO
 
+- change format of location to UCSC genome browser format (chr2:31596785)
+- show degree of vertex as tooltip
+- zoom with minimap
+- select threshold for interaction strength
+- select subset for exporting to UCSC BED file
+- show manhattan plots on separate <div>
 - http://jbrowse.org/ on separate <div>
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
-- collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
+- genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
 
 
 DONE
