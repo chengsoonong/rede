@@ -6,14 +6,64 @@
 
 #chart {
 	position:fixed;
-	
-	
-		
+			
     float:left;
     width:800px;
 }
 
+
+#teste{
+		
+  
+   
+	top:20px;
+	left:1205px;
+	    
+}
+
+
+#weight_Pvalue {
+		
+
+   
+	top:42px;
+	left:1200px;
+	    
+}
+
+g.axis {
+		
+   position:fixed;
+   
+	top:10px;
+	left:0px;
+	
+    
+}
+
+g.brush {
+		
+   position:fixed;
+   
+	top:10px;
+	left:0px;
+	
+    
+}
+
+circle.circlebrush{
+		
+   position:fixed;
+   
+	top:10px;
+	left:1000px;
+	
+    
+}
+
+
 #controls {
+	top:70px;
     float:right;
     width:360px;
     font-size:small;

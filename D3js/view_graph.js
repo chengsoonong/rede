@@ -241,7 +241,7 @@ d3.json(filename, function(json) {
        
 			//Create scale functions
 			var xScale = d3.scale.linear()
-								 .domain([0, d3.max(dataset, function(d) { return d; })])
+								 .domain([d3.min(dataset, function(d) { return d; })-1, d3.max(dataset, function(d) { return d; })+1])
 								 //.range([padding, w - padding * 2]);
 								.range([padding, w - padding * 2]);
           	
@@ -257,14 +257,14 @@ d3.json(filename, function(json) {
 			var xAxis = d3.svg.axis()
 							  .scale(xScale)
 							  .orient("bottom")
-							  .ticks(5);
+							  .ticks(8);
 
 			//Create SVG element
-			var svg2 = d3.select("body")
+			var svg2 = d3.select("#weight_Pvalue")
 						.append("svg")
 						.attr("class", "weightPvalue")
 						.attr("width", w)
-						.attr("height", h);
+						.attr("height", 50);
 
 			//Create circles
 	var circle2=		svg2.selectAll("circle")
@@ -302,11 +302,11 @@ function brushmove() {
   var s = d3.event.target.extent();
   circle2.classed("selected", function(d) { return s[0] <= d && d <= s[1]; });
   
-  d3.select("#teste").selectAll("p").remove();
-  d3.select("#teste").selectAll("p")
+  d3.select("#teste").selectAll("h").remove();
+  d3.select("#teste").selectAll("h")
 	.data([1])
-	.enter().append("p")
-	.text((s[0])+"  "+(s[1]));
+	.enter().append("h")
+	.text(two_dec(s[0])+" - "+two_dec(s[1]));
 	
 	//reset(1);
 	
@@ -378,7 +378,9 @@ d3.selectAll("input").on("change", function change() {
    d3.select("#snps").selectAll("p").remove(); //ok
    d3.select("#pairs").selectAll("p").remove(); //ok
    //weightPvalue	
-   d3.select("body").selectAll('svg').remove(); //ok			
+   d3.select("body").selectAll('svg').remove(); //ok
+   d3.select("#teste").selectAll("h").remove();
+   			
 	//d3.select("#slider-range-max").remove(); //ok
 			
   			file_json=this.id+".json";
@@ -399,7 +401,9 @@ d3.selectAll("input").on("change", function change() {
 // Display the nodes and links for debugging
 function showSnp(d)
 {
-    return d.label + " rs:" + d.rs + " Subgraph:" + d.subgraph_id;
+    return "chr"+d.chrom+':'+d.bp_position + "    " + d.rs + " Subgraph:" + d.subgraph_id;
+
+
 //    return d.label 
 //	+ " Chromosome: " + d.chrom + " Position:" + d.bp_position
 //	+ " rs:" + d.rs + " Subgraph:" + d.subgraph_id;
@@ -526,6 +530,7 @@ function reset(opacity) {
    			 d3.select("#snps").selectAll("p").remove(); //ok
    			 d3.select("#pairs").selectAll("p").remove(); //ok
    			 d3.select("body").selectAll('svg').remove(); //ok	
+   			 d3.select("#teste").selectAll("h").remove();
    				
   			Create_SVG_chart();
   			transition_data(file_json);        
@@ -547,4 +552,31 @@ function groupTicks(d) {
     };
   });
 };
+
+// return numbers with 2 decimal after "."
+
+function two_dec( value){
+	            /*  va1 = "1589.12345678"; // crio uma variável para receber o valor com vírgula (ponto no javascript).
+ 
+                   va2 = "."; // a próxima variável receberá o caractere que vou procurar na variável acima. "Que seria o ponto".
+ 
+                   x = va1.indexOf(va2); // o index ele irá informal a posição que está o caractere. será a posição 4
+ 
+                   alert("Posição do \"(.)\" é "+x); // mostrando o valor da posição
+ 
+                   y = x+3; // vamos pegar o resultado da posição + 3, que vamos usar lá embaixo. 
+ 
+                   alert("Posição de \"(x + 3)\" é "+y); // mostrando o valor de y
+ 
+                    va1 = va1.substring(0,y); // agora o substring ele pegará a informação da variável "v1" e irá mostrar só o tanto de caracteres que eu desejo (0,y) seria a mesma coisa de (0,7) se você contar os caracters da variável "v1" 7 posições ele irá mostrar só 2 números após a vírgula(ponto).
+				*/
+	
+	var v=value.toString();
+	var point=".";
+	var index_point=v.indexOf(point);
+	var index_twodec=index_point+3;
+	
+	return v.substring(0,index_twodec);;
+}
+
 
