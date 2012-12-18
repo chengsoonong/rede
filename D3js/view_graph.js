@@ -1,4 +1,6 @@
 
+
+
 var width = 800,
 height = 800,
 //chromRingOuterRadius = Math.min(width, height) * .49,  //old adjustment
@@ -21,6 +23,9 @@ var graphColor = d3.scale.category10();
 var svg ;
 var all_chrom;
 var allNodes ;
+
+var data_weight_pvalue;
+
 var links;
 
 var file_json;
@@ -41,6 +46,9 @@ function Create_SVG_chart(){
 
 // Global variable for all the vertices
  allNodes = new Array();
+
+data_weight_pvalue= new Array();
+
 
 svg.selectAll("path")
     .data(all_chrom.chromosomes()) // it'll return chromosomes[] with objects content information about each chromosomes
@@ -120,6 +128,12 @@ function transition_data(filename){
 d3.json(filename, function(json) {
     links = json.links;// var links = json.links;
 
+	//json.links.forEach(
+	//function(d) { data_weight_pvalue.push(d.weight) }   //data_weight_pvalue[]
+    //);
+   
+    
+
     json.nodes.forEach(
 	function(d) { allNodes.push(d) }   //allNodes[]
     );
@@ -177,7 +191,7 @@ d3.json(filename, function(json) {
 	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;
 				
 			})
-			
+			.attr("target","_blank")
 			.style("text-decoration",'none')
 			.style("color", '#000')
 	.text(function(d) { return showSnp(d); });
@@ -188,9 +202,163 @@ d3.json(filename, function(json) {
 	.data(links)
 	.enter().append("p")
 	.text(function(d) { return showInteract(d); });
+	
+	
 });
 
+
+
+
 };
+
+
+
+
+function brush_weight(filename){
+//this function create brush_weight
+
+
+// Plot nodes and links for the default dataset
+d3.json(filename, function(json) {
+    links = json.links;// var links = json.links;
+
+	json.links.forEach(
+	function(d) { data_weight_pvalue.push(d.weight) }   //data_weight_pvalue[]
+    );
+     
+
+  	
+	//Width and height
+			var w = 500;
+			var h = 300;
+			var padding = 30;
+			
+		
+			
+		var dataset = data_weight_pvalue;
+       //var dataset = dat;
+       
+       
+			//Create scale functions
+			var xScale = d3.scale.linear()
+								 .domain([0, d3.max(dataset, function(d) { return d; })])
+								 //.range([padding, w - padding * 2]);
+								.range([padding, w - padding * 2]);
+          	
+          
+								
+								
+			var yScale = d3.scale.linear()
+								 .domain([0, 0])
+								 .range([h - padding-250, padding-250]);
+
+
+			//Define X axis
+			var xAxis = d3.svg.axis()
+							  .scale(xScale)
+							  .orient("bottom")
+							  .ticks(5);
+
+			//Create SVG element
+			var svg2 = d3.select("body")
+						.append("svg")
+						.attr("class", "weightPvalue")
+						.attr("width", w)
+						.attr("height", h);
+
+			//Create circles
+	var circle2=		svg2.selectAll("circle")
+			   .data(dataset)
+			   .enter()
+			   .append("circle")
+			   .attr("cx", function(d) {
+			   		return xScale(d);
+			   })
+			   .attr("cy", function(d) {
+			   		return yScale(0);
+			   })
+			   .attr("r", 2);
+					
+			//Create X axis
+			svg2.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(0," + (h - padding-250) + ")")
+				.call(xAxis);
+				
+			svg2.append("g")
+    		.attr("class", "brush")
+    		.call(d3.svg.brush().x(xScale)
+    		.on("brushstart", brushstart)
+    		.on("brush", brushmove)
+    		.on("brushend", brushend))
+  			.selectAll("rect")
+    		.attr("height", 40);	
+			
+function brushstart() {
+  svg2.classed("selecting", true);
+}
+
+function brushmove() {
+  var s = d3.event.target.extent();
+  circle2.classed("selected", function(d) { return s[0] <= d && d <= s[1]; });
+  
+  d3.select("#teste").selectAll("p").remove();
+  d3.select("#teste").selectAll("p")
+	.data([1])
+	.enter().append("p")
+	.text((s[0])+"  "+(s[1]));
+	
+	//reset(1);
+	
+	 		 //d3.select("#chart").selectAll('svg').remove(); //ok
+   			 //d3.select("#snps").selectAll("p").remove(); //ok
+   			 //d3.select("#pairs").selectAll("p").remove(); //ok
+   			 //d3.select("body").selectAll('svg').remove(); //ok	
+   				
+  			//Create_SVG_chart();
+  			//transition_data(file_json); 
+			//brush_weight(file_json);
+	svg.selectAll(".link").remove();
+	reset_association();
+	 //    IMP    - acho que devo usar esta declaração para selecionar as associações entre os especificados p-values  
+	svg.selectAll(".link") //select the association regarding to the circle selected
+   			.filter(function(d) {
+		//return  s[0]<= d.weight && d.weight <=s[1];
+		return   d.weight  <=  s[0]	||  d.weight >=s[1];	
+            }).remove();
+	
+	
+	
+  
+}
+
+function brushend() {
+  svg2.classed("selecting", !d3.event.target.empty());
+}
+	
+	
+	
+function reset_association(){
+	 
+    // Draw the edges
+ svg.selectAll("path.link")
+	.data(links)
+	.enter().append("path")
+	.attr("class", "link")
+	.style("stroke", function(d) { return graphColor(d.subgraph_id); })
+	.style("stroke-width", 1)
+	.style("opacity", 0.3)
+	.style("fill", "none")
+	.attr("d", link());
+	
+} 	
+	
+	
+});
+
+
+};
+
 
 
 
@@ -201,8 +369,7 @@ d3.json(filename, function(json) {
 Create_SVG_chart();
 transition_data("bdWTC.json");
 file_json="bdWTC.json";
-
-
+brush_weight("bdWTC.json");
 
 //******************* merge to one html with radio buttons 		
 d3.selectAll("input").on("change", function change() {
@@ -210,17 +377,22 @@ d3.selectAll("input").on("change", function change() {
    d3.select("#chart").selectAll('svg').remove(); //ok
    d3.select("#snps").selectAll("p").remove(); //ok
    d3.select("#pairs").selectAll("p").remove(); //ok
-   			
+   //weightPvalue	
+   d3.select("body").selectAll('svg').remove(); //ok			
+	//d3.select("#slider-range-max").remove(); //ok
 			
   			file_json=this.id+".json";
   			Create_SVG_chart();
-  			transition_data(this.id+".json"); 			
+  			transition_data(this.id+".json");
+  			//slider_weight();
+  			brush_weight(this.id+".json");
+ 
   			
-   
 });						
  
 
 //*******************  end
+
 
 
 
@@ -284,6 +456,16 @@ function fade(opacity) {
 	    .transition()
             .style("opacity", opacity);
             
+            
+    svg.selectAll("g circle")  //show degree as tooltip - title
+            .filter(function(d) {
+		return d.subgraph_id === allNodes[i].subgraph_id;
+            })
+	  .append("title")
+      .text(function(d) { return "degree: " +d.degree });        
+            
+            
+         //    IMP    - acho que devo usar esta declaração para selecionar as associações entre os especificados p-values
    svg.selectAll(".link") //select the association regarding to the circle selected
    			.filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
@@ -302,7 +484,8 @@ function fade(opacity) {
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
 	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
 	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
-			})	
+			})
+	.attr("target","_blank")	
 	.style("text-decoration",'none')	
     .style("color", function(d) {  //highlights the SNP selected
 					if (d.id != allNodes[i].id) {	
@@ -330,22 +513,23 @@ function fade(opacity) {
 function reset(opacity) {
 	//this function recreate the datas 
     return function(g, i) {
-    	
-	svg.selectAll("g circle")
+    /*	
+	svg.selectAll("g circle") //acho q isso nao eh necessario pois eu estou recriando tudo novamente
             .filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
             })
 	    .transition()
             .style("opacity", opacity);
-            
+      */      
             
              d3.select("#chart").selectAll('svg').remove(); //ok
    			 d3.select("#snps").selectAll("p").remove(); //ok
    			 d3.select("#pairs").selectAll("p").remove(); //ok
-   
+   			 d3.select("body").selectAll('svg').remove(); //ok	
+   				
   			Create_SVG_chart();
   			transition_data(file_json);        
-            
+            brush_weight(file_json);
             
             
     };

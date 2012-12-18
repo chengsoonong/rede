@@ -6,11 +6,70 @@
 <script type="text/javascript" src="d3/d3.v2.js"></script>
 <script type="text/javascript" src="genome.js"></script>
 <link type="text/css" rel="stylesheet" href="genome.css"/>
+<!--
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+-->
+<style type="text/css">
+
+
+circle {
+  -webkit-transition: fill-opacity 250ms linear;
+}
+
+.selecting circle {
+  fill-opacity: .2;
+}
+
+.selecting circle.selected {
+  stroke: #f00;
+}
+
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+	
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+ }
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+			
+			
+
+		</style>
+
+
+
 </head>
 <body>
+	
+<div id="teste"> </div>	
+	
 <div id="container">
-<div id="chart">
+<div id="chart"></div>
+<div id="weight_Pvalue"></div>
+
+<!--
+<div id="div2"> 
+<p>
+    <label for="amount">Weight (P-value) :</label>
+    <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" />
+</p>
 </div>
+<div id="slider-range-max"  class="slider-weight  ui-corner-all"> </div>
+-->
 
 <div id="controls">
   <h3>Dataset</h3>
