@@ -1,13 +1,48 @@
+// Global variable for all
+var width =800 ,//800,
+height =800 ,//800,
+width2 =800 ,//800, //for transition
+height2 =800 ,//800, //for transition
 
-
-
-var width = 800,
-height = 800,
 //chromRingOuterRadius = Math.min(width, height) * .49,  //old adjustment
 //chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
 chromRingOuterRadius = Math.min(width, height) * .45,   //new adjustment
 chromRingInnerRadius = chromRingOuterRadius * 0.95;
+
+//variable for manhattan plot
+
+
+var margin = {top: 10, right: 10, bottom: 20, left: 40},
+    width_pm = 960 - margin.right - margin.left,
+    height_pm = 500 - margin.top - margin.bottom;
+
+var data ;
+
+var chrom_lenght=0;
+
+var ix_1,ix_2,iy_1,iy_2;
+var x_1,x_2,y_1,y_2;
+
+var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
+				180915260, 171115067, 159138663, 146364022,
+				141213431, 135534747, 135006516, 133851895,
+				115169878, 107349540, 102531392, 90354753,
+				81195210, 78077248, 59128983, 63025520,
+				48129895, 51304566, 155270560, 59373566);
+
+var chrom_acum_length= new Array();
+
+
+
+for (var i=0; i<chromLength.length;i++){
+	
+	chrom_lenght=chrom_lenght+chromLength[i];
+	
+	chrom_acum_length.push(chrom_lenght);
+	
+}
+
 
 
 // TODO: change to function reading from ucsc_colour.csv
@@ -18,39 +53,44 @@ var color = new Array(d3.rgb(153,102,0), d3.rgb(102,102,0), d3.rgb(153,153,30), 
 		      d3.rgb(0,255,255),d3.rgb(204,255,255),d3.rgb(153,0,204),d3.rgb(204,51,255),
 		      d3.rgb(204,153,255),d3.rgb(102,102,102),d3.rgb(153,153,153),d3.rgb(204,204,204));
 
-var graphColor = d3.scale.category10();
 
+
+// Global variable for all
+var graphColor = d3.scale.category10();
 var svg ;
 var all_chrom;
 var allNodes ;
-
 var data_weight_pvalue;
-
 var links;
-
 var file_json;
 
-function Create_SVG_chart(){  
-	// function to Create SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
-	
-	
+
+
+
+
+
+
+function Create_chr_circle(){  
+	// function to Create the SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
+		
  svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("width", width2)
+    .attr("height", height2)
     .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");  //This transform moves the element by pixels in both the X and Y directions.
+    //.attr("transform", "translate(" + 400 + "," + 400  + ")");  //This transform moves the element by pixels in both the X and Y directions.
+    .attr("transform", "translate(" + width2 / 2 + "," + height2 / 2 + ")");  //This transform moves the element by pixels in both the X and Y directions.
 
-// Plot the chromosomes in a circle
+// // Genome object for drawing Plot the chromosomes in a circle
  all_chrom = Genome();
 
-// Global variable for all the vertices
- allNodes = new Array();
 
-data_weight_pvalue= new Array();
+allNodes = new Array(); //create array that will receive objects with information about SNP from .json 
+
+data_weight_pvalue= new Array(); //create array that will receive the weight value from .json
 
 
-svg.selectAll("path")
+svg.selectAll("path") //create the vizualization of the chromosomes in circles.
     .data(all_chrom.chromosomes()) // it'll return chromosomes[] with objects content information about each chromosomes
     .enter()                       //in each object has information such as angle 
     .append("path")
@@ -113,26 +153,21 @@ ticks.append("text")
     .text(function(d) { return d.label; });    
     
 
-// when we click in chart it declaration below will reset the chart using the function reset		
+// when we click in vizualization it declaration below will reset the vizualization using the function reset		
 
-d3.select("#chart").selectAll('svg').on("click", reset(1));
+d3.select("#chart").selectAll('svg').on("click", reset());
 
 };
 
 
-function transition_data(filename){
+function Create_SNP_association(filename){
 //this function create all associations betewen the SNPs
 
 
 // Plot nodes and links for the default dataset
 d3.json(filename, function(json) {
     links = json.links;// var links = json.links;
-
-	//json.links.forEach(
-	//function(d) { data_weight_pvalue.push(d.weight) }   //data_weight_pvalue[]
-    //);
-   
-    
+	   
 
     json.nodes.forEach(
 	function(d) { allNodes.push(d) }   //allNodes[]
@@ -168,7 +203,7 @@ d3.json(filename, function(json) {
 	    return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
 
     
-    // Draw the edges
+    // Draw the edges  - the association between SNPs
  svg.selectAll("path.link")
 	.data(links)
 	.enter().append("path")
@@ -206,35 +241,28 @@ d3.json(filename, function(json) {
 	
 });
 
-
-
-
 };
 
 
 
 
 function brush_weight(filename){
-//this function create brush_weight
+//this function create the brush on weight value to vizualizate SNPs association in specific weight range 
 
 
-// Plot nodes and links for the default dataset
+
 d3.json(filename, function(json) {
     links = json.links;// var links = json.links;
 
 	json.links.forEach(
 	function(d) { data_weight_pvalue.push(d.weight) }   //data_weight_pvalue[]
     );
-     
-
-  	
+      	
 	//Width and height
 			var w = 500;
 			var h = 300;
 			var padding = 30;
-			
-		
-			
+							
 		var dataset = data_weight_pvalue;
        //var dataset = dat;
        
@@ -244,9 +272,7 @@ d3.json(filename, function(json) {
 								 .domain([d3.min(dataset, function(d) { return d; })-1, d3.max(dataset, function(d) { return d; })+1])
 								 //.range([padding, w - padding * 2]);
 								.range([padding, w - padding * 2]);
-          	
-          
-								
+            								
 								
 			var yScale = d3.scale.linear()
 								 .domain([0, 0])
@@ -260,14 +286,14 @@ d3.json(filename, function(json) {
 							  .ticks(8);
 
 			//Create SVG element
-			var svg2 = d3.select("#weight_Pvalue")
+			var svg2 = d3.select("#brush_weight")
 						.append("svg")
 						.attr("class", "weightPvalue")
 						.attr("width", w)
 						.attr("height", 50);
 
 			//Create circles
-	var circle2=		svg2.selectAll("circle")
+	var circle2= svg2.selectAll("circle")
 			   .data(dataset)
 			   .enter()
 			   .append("circle")
@@ -293,50 +319,32 @@ d3.json(filename, function(json) {
     		.on("brushend", brushend))
   			.selectAll("rect")
     		.attr("height", 40);	
+	
 			
-function brushstart() {
+function brushstart() { //selected de circles in x cordenate for diferent vizualization
   svg2.classed("selecting", true);
 }
 
 function brushmove() {
-  var s = d3.event.target.extent();
-  circle2.classed("selected", function(d) { return s[0] <= d && d <= s[1]; });
+  var s = d3.event.target.extent(); //return 2 value that are the 1ª and 2ª position the brush on x coordenate
+  circle2.classed("selected", function(d) { return s[0] <= d && d <= s[1]; }); //selected de circles in x cordenate for diferent vizualization
   
-  d3.select("#teste").selectAll("h").remove();
-  d3.select("#teste").selectAll("h")
+  d3.select("#two_weight_value").selectAll("h").remove(); //remove the old text
+  d3.select("#two_weight_value").selectAll("h")           //create the new text
 	.data([1])
 	.enter().append("h")
 	.text(two_dec(s[0])+" - "+two_dec(s[1]));
-	
-	//reset(1);
-	
-	 		 //d3.select("#chart").selectAll('svg').remove(); //ok
-   			 //d3.select("#snps").selectAll("p").remove(); //ok
-   			 //d3.select("#pairs").selectAll("p").remove(); //ok
-   			 //d3.select("body").selectAll('svg').remove(); //ok	
-   				
-  			//Create_SVG_chart();
-  			//transition_data(file_json); 
-			//brush_weight(file_json);
-	svg.selectAll(".link").remove();
-	reset_association();
-	 //    IMP    - acho que devo usar esta declaração para selecionar as associações entre os especificados p-values  
-	svg.selectAll(".link") //select the association regarding to the circle selected
-   			.filter(function(d) {
-		//return  s[0]<= d.weight && d.weight <=s[1];
-		return   d.weight  <=  s[0]	||  d.weight >=s[1];	
-            }).remove();
-	
-	
-	
-  
+		
+	svg.selectAll(".link").remove(); //remove the old association
+	reset_association();			 //create the new association
+	   
+	svg.selectAll(".link") // this declaretion selected the association between specifics  weight values 
+   			.filter(function(d) { return   d.weight  <=  s[0]	||  d.weight >=s[1];  }).remove();	
 }
 
-function brushend() {
+function brushend() { //selected de circles in x cordenate for diferent vizualization
   svg2.classed("selecting", !d3.event.target.empty());
 }
-	
-	
 	
 function reset_association(){
 	 
@@ -353,12 +361,9 @@ function reset_association(){
 	
 } 	
 	
-	
 });
 
-
 };
-
 
 
 
@@ -366,34 +371,81 @@ function reset_association(){
 // create the first vizualization with "bdWTC.json" like default
 
 
-Create_SVG_chart();
-transition_data("bdWTC.json");
+Create_chr_circle();
+Create_SNP_association("bdWTC.json");
 file_json="bdWTC.json";
 brush_weight("bdWTC.json");
 
-//******************* merge to one html with radio buttons 		
-d3.selectAll("input").on("change", function change() {
+// merge to one html with radio buttons 
+		
+/*
+  
+  d3.selectAll("input").on("change", function change() {
 			
-   d3.select("#chart").selectAll('svg').remove(); //ok
-   d3.select("#snps").selectAll("p").remove(); //ok
-   d3.select("#pairs").selectAll("p").remove(); //ok
-   //weightPvalue	
-   d3.select("body").selectAll('svg').remove(); //ok
-   d3.select("#teste").selectAll("h").remove();
+   d3.select("#chart").selectAll('svg').remove();  				//remove old selection
+   d3.select("#snps").selectAll("p").remove(); 					//remove old selection
+   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
+   d3.select("body").selectAll('svg').remove(); 				//remove old selection
+   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
+
+			file_json=this.id+".json";     						//create new again
+  			Create_chr_circle();								//create new again
+  			Create_SNP_association(this.id+".json");  			//create new again
+  			brush_weight(this.id+".json");						//create new again
    			
-	//d3.select("#slider-range-max").remove(); //ok
-			
-  			file_json=this.id+".json";
-  			Create_SVG_chart();
-  			transition_data(this.id+".json");
-  			//slider_weight();
-  			brush_weight(this.id+".json");
- 
-  			
 });						
  
+ 
+ */
 
-//*******************  end
+
+
+ d3.select("#Dataset_select").on("change", function change() {
+ 	
+   d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
+   d3.select("#snps").selectAll("p").remove(); 					//remove old selection
+   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
+   d3.select("body").selectAll('svg').remove(); 				//remove old selection
+   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
+
+			file_json=this.value+".json";     						//create new again
+  			Create_chr_circle();									//create new again
+  			Create_SNP_association(this.value+".json");  			//create new again
+  			brush_weight(this.value+".json");						//create new again
+	
+	});
+
+
+
+
+ d3.select("#Plot_select").on("change", function change() {
+ 	
+   d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
+   d3.select("#snps").selectAll("p").remove(); 					//remove old selection
+   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
+   d3.select("body").selectAll('svg').remove(); 				//remove old selection
+   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
+  	
+d3.select("body").selectAll("#butz").remove();
+d3.select("body").selectAll("#butr").remove(); 			
+
+
+			if(this.value==="p_cir"){
+				
+				Create_chr_circle();							//create new again
+  				Create_SNP_association(file_json);  			//create new again
+  				brush_weight(file_json);						//create new again
+  				
+			}else{
+				create_buttons();
+				read_file_to_chart(file_json);
+			}
+
+//p_man
+			
+	
+	});
+
 
 
 
@@ -403,10 +455,6 @@ function showSnp(d)
 {
     return "chr"+d.chrom+':'+d.bp_position + "    " + d.rs + " Subgraph:" + d.subgraph_id;
 
-
-//    return d.label 
-//	+ " Chromosome: " + d.chrom + " Position:" + d.bp_position
-//	+ " rs:" + d.rs + " Subgraph:" + d.subgraph_id;
 };
 
 function showInteract(d)
@@ -466,10 +514,8 @@ function fade(opacity) {
 		return d.subgraph_id === allNodes[i].subgraph_id;
             })
 	  .append("title")
-      .text(function(d) { return "degree: " +d.degree });        
-            
-            
-         //    IMP    - acho que devo usar esta declaração para selecionar as associações entre os especificados p-values
+      .text(function(d) { return "degree: " + two_dec(d.degree) });  
+        
    svg.selectAll(".link") //select the association regarding to the circle selected
    			.filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
@@ -514,26 +560,18 @@ function fade(opacity) {
 };
 
 
-function reset(opacity) {
-	//this function recreate the datas 
-    return function(g, i) {
-    /*	
-	svg.selectAll("g circle") //acho q isso nao eh necessario pois eu estou recriando tudo novamente
-            .filter(function(d) {
-		return d.subgraph_id != allNodes[i].subgraph_id;
-            })
-	    .transition()
-            .style("opacity", opacity);
-      */      
-            
-             d3.select("#chart").selectAll('svg').remove(); //ok
-   			 d3.select("#snps").selectAll("p").remove(); //ok
-   			 d3.select("#pairs").selectAll("p").remove(); //ok
-   			 d3.select("body").selectAll('svg').remove(); //ok	
-   			 d3.select("#teste").selectAll("h").remove();
+function reset() {
+	//this function recreate the datas in vizualization, removed them and create them 
+    return function() {
+               
+             d3.select("#chart").selectAll('svg').remove();  					//remove old selection 
+   			 d3.select("#snps").selectAll("p").remove(); 
+   			 d3.select("#pairs").selectAll("p").remove(); 
+   			 d3.select("body").selectAll('svg').remove(); 	
+   			 d3.select("#two_weight_value").selectAll("h").remove();
    				
-  			Create_SVG_chart();
-  			transition_data(file_json);        
+  			Create_chr_circle();												//create new again
+  			Create_SNP_association(file_json);        
             brush_weight(file_json);
             
             
@@ -541,9 +579,11 @@ function reset(opacity) {
 };
 
 
-// Returns an array with objects of tick angles and labels 
+
  
 function groupTicks(d) {
+	// Returns an array with objects of tick angles and labels 
+	
   var k = (d.endAngle - d.startAngle) / d.value;    // number of bases scaled to factor for K
   return d3.range(0, d.value, 0.041 ).map(function(v, i) {  //modification 0.05
     return {
@@ -553,24 +593,10 @@ function groupTicks(d) {
   });
 };
 
-// return numbers with 2 decimal after "."
+
 
 function two_dec( value){
-	            /*  va1 = "1589.12345678"; // crio uma variável para receber o valor com vírgula (ponto no javascript).
- 
-                   va2 = "."; // a próxima variável receberá o caractere que vou procurar na variável acima. "Que seria o ponto".
- 
-                   x = va1.indexOf(va2); // o index ele irá informal a posição que está o caractere. será a posição 4
- 
-                   alert("Posição do \"(.)\" é "+x); // mostrando o valor da posição
- 
-                   y = x+3; // vamos pegar o resultado da posição + 3, que vamos usar lá embaixo. 
- 
-                   alert("Posição de \"(x + 3)\" é "+y); // mostrando o valor de y
- 
-                    va1 = va1.substring(0,y); // agora o substring ele pegará a informação da variável "v1" e irá mostrar só o tanto de caracteres que eu desejo (0,y) seria a mesma coisa de (0,7) se você contar os caracters da variável "v1" 7 posições ele irá mostrar só 2 números após a vírgula(ponto).
-				*/
-	
+	// return numbers with 2 decimal after "."          	
 	var v=value.toString();
 	var point=".";
 	var index_point=v.indexOf(point);
@@ -578,5 +604,170 @@ function two_dec( value){
 	
 	return v.substring(0,index_twodec);;
 }
+
+
+
+
+
+
+
+
+//--------------------manhattan plot
+
+function  read_file_to_chart(file_name) {
+	
+	
+data = new Array();
+allNodes= new Array();
+data_weight_pvalue= new Array();
+	
+	
+	
+	
+d3.json(file_name, function(json) {
+   var  links = json.links;// var links = json.links;
+
+
+ json.nodes.forEach( 	function(d) { allNodes.push(d) }    );
+  
+	json.links.forEach(
+		
+
+		
+	function(d) { 
+		
+		data_weight_pvalue.push(d.weight); 
+		
+	
+		if (allNodes[d.source].chrom===1){
+
+			data.push([allNodes[d.source].bp_position,d.weight]);	
+		
+		}else{
+			
+			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight]);
+		}
+		
+		if (allNodes[d.target].chrom===1){
+			
+			data.push([allNodes[d.target].bp_position,d.weight]);	
+		
+		}else{
+			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight]);
+		}
+		
+		});
+      	
+      	ix_1=0;
+      	ix_2=chrom_lenght;
+      	iy_1=d3.min(data_weight_pvalue, function(d) { return d; })-1;
+      	iy_2=d3.max(data_weight_pvalue, function(d) { return d; })+1;
+      	
+create_chart(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1);
+});
+
+}
+
+function create_chart (x1,x2,y1,y2){
+
+var x = d3.scale.linear()
+								 .domain([x1,x2])//.domain([0, chrom_lenght])
+								 .range([0, width_pm]);
+
+var y = d3.scale.linear()
+								//.domain([d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1])
+								.domain([y1,y2])								 
+								.range([height_pm, 0]);
+
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width_pm + margin.right + margin.left)
+    .attr("height", height_pm + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+   
+    ;
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height_pm + ")")
+    .call(d3.svg.axis().scale(x).orient("bottom"));
+
+svg.append("g")
+    .attr("class", "y axis")
+   
+    .call(d3.svg.axis().scale(y).orient("left"));
+
+
+
+var circle = svg.append("g").selectAll("circle")
+    .data(data)
+  .enter().append("circle")
+    .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+    .attr("r", 3.5);
+    
+
+svg.append("g")
+    .attr("class", "brush")
+    .call(d3.svg.brush().x(x).y(y)
+    .on("brushstart", brushstart)
+    .on("brush", brushmove)
+    .on("brushend", brushend)
+        );
+    
+ 
+
+function brushstart() {
+  svg.classed("selecting", true);
+}
+
+function brushmove() {
+  var e = d3.event.target.extent();
+  circle.classed("selected", function(d) {
+    return e[0][0] <= d[0] && d[0] <= e[1][0] 
+        && e[0][1] <= d[1] && d[1] <= e[1][1];
+  });
+  
+ 
+  x_1=e[0][0];
+  x_2=e[1][0];
+  y_1=e[0][1];
+  y_2=e[1][1];
+  
+}
+
+function brushend() {
+  svg.classed("selecting", !d3.event.target.empty());
+}    
+    
+ 
+}
+
+
+
+
+function create_buttons(){
+	
+	
+
+	d3.select("body").append("button")
+    .attr("type", "button")
+    .attr("name", "butzoom")
+    .attr("id", "butz")  
+    .text( "Zoom");
+    
+    d3.select("body").append("button")
+    .attr("type", "button")
+    .attr("name", "butrest")
+    .attr("id", "butr")  
+    .text( "Reset");
+    
+    
+}
+
+
+
+
+
 
 

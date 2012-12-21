@@ -4,76 +4,31 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title>Interaction pathways</title>
 <script type="text/javascript" src="d3/d3.v2.js"></script>
+<script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="genome.js"></script>
 <link type="text/css" rel="stylesheet" href="genome.css"/>
-<!--
- <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
-    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
--->
-<style type="text/css">
-
-
-circle {
-  -webkit-transition: fill-opacity 250ms linear;
-}
-
-.selecting circle {
-  fill-opacity: .2;
-}
-
-.selecting circle.selected {
-  stroke: #f00;
-}
-
-
-.brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-	
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
- }
-			.axis path,
-			.axis line {
-				fill: none;
-				stroke: black;
-				shape-rendering: crispEdges;
-			}
-			
-			
-
-		</style>
-
-
+<script> 
+$(document).ready(function(){
+  $("#snps_text").click(function(){
+    $("#snps,#pairs").slideToggle("slow");
+  });
+});
+</script>
 
 </head>
+
 <body>
-	
-	
+
 
 <div id="container">
+	
 <div id="chart"></div>
 
 
-
-<!--
-<div id="div2"> 
-<p>
-    <label for="amount">Weight (P-value) :</label>
-    <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" />
-</p>
-</div>
-<div id="slider-range-max"  class="slider-weight  ui-corner-all"> </div>
--->
-
 <div id="controls">
-  <h3>Dataset</h3>
+  <!--<h3>Dataset</h3>
+  
   <form>
   <input type="radio" name="dataset" id="bdWTC" checked>
   <label for="bdWTC">Bipolar Disorder</label><br>
@@ -92,16 +47,42 @@ circle {
   <input type="radio" name="dataset" id="bc571" >
   <label for="bc571">Breast Cancer</label><br>
   </form>
- <br><br> 
- <div id="teste">weight: <span></span></div>	 
-<div id="weight_Pvalue"></div>  
-   <br><br>
-<div id="snps">
-  <h3>SNPs and their associations</h3>
-</div>
-<div id="pairs">
-</div>
-
+  -->
+  <h3>Dataset <select id="Dataset_select">
+ <option value="bdWTC">Bipolar Disorder</option>
+ <option value="cadWTC">Coronary Artery Disease</option>
+ <option value="cdWTC">Crohn's Disease</option>
+ <option value="htWTC">Hypertension</option>
+ <option value="raWTC">Rheumatoid Arthritis</option>
+ <option value="t1dWTC">Type 1 Diabetes</option>
+ <option value="t2dWTC">Type 2 Diabetes</option>
+ <option value="bc571">Breast Cancer</option>
+  </select>
+  </h3>
+  
+  <h3>Plot <select id="Plot_select">
+ <option value="p_cir">Circular</option>
+ <option value="p_man">Manhattan</option>
+  </select>
+  </h3>
+  
+ 
+ 
+ <br><br>
+ <div id="two_weight_value">Weight: <span></span></div>	 
+ <div id="brush_weight"></div>  
+ 
+ <br><br>
+ 
+ 
+ 
+ <div id="snps_text">
+ <h3>SNPs and their associations</h3>
+ </div>
+ <div id="snps">
+ </div>
+ <div id="pairs">
+ </div>
 
 
 <div id="footer">

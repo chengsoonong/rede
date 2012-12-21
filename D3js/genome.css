@@ -1,4 +1,40 @@
 /* -- Layout -- */
+
+
+circle {
+  -webkit-transition: fill-opacity 250ms linear;
+}
+
+.selecting circle {
+  fill-opacity: .2;
+}
+
+.selecting circle.selected {
+  stroke: #f00;
+}
+
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+	
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+ }
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+
+
+
+
 #container {
     width:1200px;
     margin:20px auto;
@@ -6,59 +42,27 @@
 
 #chart {
 	position:fixed;
-			
-    float:left;
-    width:800px;
+	
+	
+	top:40px;
+	left:30px;		
+    /*float:left;
+    width:800px;*/
 }
 
 
-#teste{
+#two_weight_value{
 		
-  
-   
 	top:20px;
 	left:1205px;
 	    
 }
 
-
-#weight_Pvalue {
-		
-
-   
+#brush_weight {
+	
 	top:42px;
 	left:1200px;
 	    
-}
-
-g.axis {
-		
-   position:fixed;
-   
-	top:10px;
-	left:0px;
-	
-    
-}
-
-g.brush {
-		
-   position:fixed;
-   
-	top:10px;
-	left:0px;
-	
-    
-}
-
-circle.circlebrush{
-		
-   position:fixed;
-   
-	top:10px;
-	left:1000px;
-	
-    
 }
 
 
