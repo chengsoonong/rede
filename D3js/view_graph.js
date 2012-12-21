@@ -10,8 +10,7 @@ height2 =800 ,//800, //for transition
 chromRingOuterRadius = Math.min(width, height) * .45,   //new adjustment
 chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
-//variable for manhattan plot
-
+//---------variable for manhattan plot
 
 var margin = {top: 10, right: 10, bottom: 20, left: 40},
     width_pm = 960 - margin.right - margin.left,
@@ -33,16 +32,15 @@ var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
 
 var chrom_acum_length= new Array();
 
-
+var plot_chosen;
 
 for (var i=0; i<chromLength.length;i++){
 	
-	chrom_lenght=chrom_lenght+chromLength[i];
-	
+	chrom_lenght=chrom_lenght+chromLength[i];	
 	chrom_acum_length.push(chrom_lenght);
 	
 }
-
+//---------variable for manhattan plot ----end
 
 
 // TODO: change to function reading from ucsc_colour.csv
@@ -370,11 +368,13 @@ function reset_association(){
 
 // create the first vizualization with "bdWTC.json" like default
 
-
+hide_button();     //hide the buttons for zoom manhattan plot
 Create_chr_circle();
 Create_SNP_association("bdWTC.json");
 file_json="bdWTC.json";
 brush_weight("bdWTC.json");
+plot_chosen="p_cir";     //chosen the circle plot like default
+
 
 // merge to one html with radio buttons 
 		
@@ -402,16 +402,27 @@ brush_weight("bdWTC.json");
 
  d3.select("#Dataset_select").on("change", function change() {
  	
+ 	file_json=this.value+".json";
+ 	
+ 	if( plot_chosen=== "p_cir" ){
+ 	
    d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
    d3.select("#snps").selectAll("p").remove(); 					//remove old selection
    d3.select("#pairs").selectAll("p").remove();    				//remove old selection
    d3.select("body").selectAll('svg').remove(); 				//remove old selection
    d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
-
-			file_json=this.value+".json";     						//create new again
+			     						
   			Create_chr_circle();									//create new again
   			Create_SNP_association(this.value+".json");  			//create new again
   			brush_weight(this.value+".json");						//create new again
+  			
+  	}else{
+  		 
+  		d3.select("#chart").selectAll('svg').remove();  		
+  		show_button();
+		read_file_to_chart(file_json);  		
+  		
+  	}		
 	
 	});
 
@@ -419,16 +430,17 @@ brush_weight("bdWTC.json");
 
 
  d3.select("#Plot_select").on("change", function change() {
+ //allows us chose the plot to vizualization	
+ 	
+   plot_chosen=this.value; 	
  	
    d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
    d3.select("#snps").selectAll("p").remove(); 					//remove old selection
    d3.select("#pairs").selectAll("p").remove();    				//remove old selection
    d3.select("body").selectAll('svg').remove(); 				//remove old selection
    d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
-  	
-d3.select("body").selectAll("#butz").remove();
-d3.select("body").selectAll("#butr").remove(); 			
-
+   
+   hide_button();		
 
 			if(this.value==="p_cir"){
 				
@@ -437,12 +449,10 @@ d3.select("body").selectAll("#butr").remove();
   				brush_weight(file_json);						//create new again
   				
 			}else{
-				create_buttons();
+				
+				show_button();
 				read_file_to_chart(file_json);
 			}
-
-//p_man
-			
 	
 	});
 
@@ -615,14 +625,12 @@ function two_dec( value){
 //--------------------manhattan plot
 
 function  read_file_to_chart(file_name) {
-	
+	//this function read um .json to inicialaze the variables and call the function create_chart() to craet the manhattan plot
 	
 data = new Array();
 allNodes= new Array();
 data_weight_pvalue= new Array();
-	
-	
-	
+		
 	
 d3.json(file_name, function(json) {
    var  links = json.links;// var links = json.links;
@@ -634,26 +642,26 @@ d3.json(file_name, function(json) {
 		
 
 		
-	function(d) { 
+	function(d) { //this will fill with data the array
 		
 		data_weight_pvalue.push(d.weight); 
 		
 	
 		if (allNodes[d.source].chrom===1){
 
-			data.push([allNodes[d.source].bp_position,d.weight]);	
+			data.push([allNodes[d.source].bp_position,d.weight,allNodes[d.source].degree]);	
 		
 		}else{
 			
-			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight]);
+			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight,allNodes[d.source].degree]);
 		}
 		
 		if (allNodes[d.target].chrom===1){
 			
-			data.push([allNodes[d.target].bp_position,d.weight]);	
+			data.push([allNodes[d.target].bp_position,d.weight,allNodes[d.target].degree]);	
 		
 		}else{
-			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight]);
+			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight,allNodes[d.target].degree]);
 		}
 		
 		});
@@ -669,7 +677,7 @@ create_chart(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; 
 }
 
 function create_chart (x1,x2,y1,y2){
-
+//creat the manhataan plot
 var x = d3.scale.linear()
 								 .domain([x1,x2])//.domain([0, chrom_lenght])
 								 .range([0, width_pm]);
@@ -679,14 +687,19 @@ var y = d3.scale.linear()
 								.domain([y1,y2])								 
 								.range([height_pm, 0]);
 
+var scale_weight = d3.scale.linear()
+								//.domain([d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1])
+								.domain([y1,y2])								 
+								.range([height_pm, 0]);
+
+
+
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width_pm + margin.right + margin.left)
     .attr("height", height_pm + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-   
-    ;
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 svg.append("g")
     .attr("class", "x axis")
@@ -704,7 +717,13 @@ var circle = svg.append("g").selectAll("circle")
     .data(data)
   .enter().append("circle")
     .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
-    .attr("r", 3.5);
+    .attr("r", 3.5)
+    .style("fill", function(d) { return graphColor(d[2]) })
+   // .append("title")
+   // .text(function(d) { return "degree: " + two_dec(d.degree) })
+    
+    ;
+    
     
 
 svg.append("g")
@@ -716,7 +735,7 @@ svg.append("g")
         );
     
  
-
+//get the values to allows make the zoom when click the button zoon
 function brushstart() {
   svg.classed("selecting", true);
 }
@@ -744,26 +763,41 @@ function brushend() {
 }
 
 
+function hide_button(){
+d3.select("body").select("#butz").transition()
+            .style("opacity", 0);
 
-
-function create_buttons(){
-	
-	
-
-	d3.select("body").append("button")
-    .attr("type", "button")
-    .attr("name", "butzoom")
-    .attr("id", "butz")  
-    .text( "Zoom");
-    
-    d3.select("body").append("button")
-    .attr("type", "button")
-    .attr("name", "butrest")
-    .attr("id", "butr")  
-    .text( "Reset");
-    
-    
+d3.select("body").select("#butr").transition()
+            .style("opacity", 0);            
 }
+
+function show_button(){
+d3.select("body").select("#butz").transition()
+            .style("opacity", 1);
+
+d3.select("body").select("#butr").transition()
+            .style("opacity", 1);            
+}
+
+d3.select("body").select("#butz").on("click", function change() {
+
+			
+    d3.select("#chart").selectAll('svg').remove();
+   create_chart(x_1,x_2,y_1,y_2);
+   
+    			
+});						
+
+
+d3.select("body").select("#butr").on("click", function change() {
+
+			
+    d3.select("#chart").selectAll('svg').remove();
+   create_chart(ix_1,ix_2,iy_1,iy_2);
+   
+   
+   			
+});		
 
 
 
