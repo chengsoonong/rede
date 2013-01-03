@@ -50,7 +50,41 @@ circle {
     width:800px;*/
 }
 
+#scale_bar {
+	
+	position:fixed;
+	
+	top:670px;
+	left:200px;		
+    /*float:left;
+    width:800px;*/
+}
+#min_num_scale_bar h1{
+	
+	position:fixed;
+	color:#08F5EC;
+	top:670px;
+	left:140px;		
+   font-size: 1.1em;
+}
+#max_num_scale_bar h1{
+	
+	position:fixed;
+	color:#F50808;
+	top:670px;
+	left:710px;		
+   font-size: 1.1em;
+}
+#degree_scale_bar{
+	
+	position:fixed;
+	
+	top:700px;
+	left:430px;		
+    font-size: 1.1em;
+}
 
+/*
 #two_weight_value{
 		
 	top:20px;
@@ -64,7 +98,7 @@ circle {
 	left:1200px;
 	    
 }
-
+*/
 
 #controls {
 	top:70px;
@@ -137,7 +171,8 @@ h4 {
 h5 {
     margin: 1em 0;
     font-size: 1.1em;
-    color:#333;
+    /*color:#333;*/
+     color:#826aa5;
 }
 
 h6 {

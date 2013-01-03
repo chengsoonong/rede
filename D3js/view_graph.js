@@ -1,16 +1,16 @@
 // Global variable for all
-var width =800 ,//800,
-height =800 ,//800,
-width2 =800 ,//800, //for transition
-height2 =800 ,//800, //for transition
+var width =800 ,//800,  ->  300
+height =800 ,//800,  -> 300
+width2 =800 ,//800,  -> 1500//for transition
+height2 =800 ,//800,   -> 400 //for transition
 
-//chromRingOuterRadius = Math.min(width, height) * .49,  //old adjustment
-//chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
 chromRingOuterRadius = Math.min(width, height) * .45,   //new adjustment
 chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
 //---------variable for manhattan plot
+
+var label_text;
 
 var margin = {top: 10, right: 10, bottom: 20, left: 40},
     width_pm = 960 - margin.right - margin.left,
@@ -55,6 +55,8 @@ var color = new Array(d3.rgb(153,102,0), d3.rgb(102,102,0), d3.rgb(153,153,30), 
 
 // Global variable for all
 var graphColor = d3.scale.category10();
+
+
 var svg ;
 var all_chrom;
 var allNodes ;
@@ -63,10 +65,7 @@ var links;
 var file_json;
 
 
-
-
-
-
+//******************************************************************************
 
 function Create_chr_circle(){  
 	// function to Create the SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
@@ -153,10 +152,11 @@ ticks.append("text")
 
 // when we click in vizualization it declaration below will reset the vizualization using the function reset		
 
-d3.select("#chart").selectAll('svg').on("click", reset());
+//d3.select("#chart").selectAll('svg').on("click", reset());
+//d3.select("#scale_bar").selectAll('svg').remove();
 
 };
-
+//******************************************************************************
 
 function Create_SNP_association(filename){
 //this function create all associations betewen the SNPs
@@ -197,8 +197,19 @@ d3.json(filename, function(json) {
 	.attr("r", 3)
 	.on("mouseover", fade(0))  //click mouseover mouseout
 	//.on("mouseout", reset(1))  //see creat chart
+	
+	 .on("mousedown", 
+	 
+	 function(g, i) {
+  		 	sid= allNodes[i].subgraph_id;
+ 			histogram_circle(file_json,sid);	
+			}	 
+	 
+	 )
+	
 	.attr("transform", function(d) { 
 	    return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
+ 
 
     
     // Draw the edges  - the association between SNPs
@@ -240,7 +251,7 @@ d3.json(filename, function(json) {
 });
 
 };
-
+//******************************************************************************
 
 
 
@@ -362,8 +373,7 @@ function reset_association(){
 });
 
 };
-
-
+//******************************************************************************
 
 
 // create the first vizualization with "bdWTC.json" like default
@@ -376,36 +386,21 @@ brush_weight("bdWTC.json");
 plot_chosen="p_cir";     //chosen the circle plot like default
 
 
-// merge to one html with radio buttons 
-		
-/*
-  
-  d3.selectAll("input").on("change", function change() {
-			
-   d3.select("#chart").selectAll('svg').remove();  				//remove old selection
-   d3.select("#snps").selectAll("p").remove(); 					//remove old selection
-   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
-   d3.select("body").selectAll('svg').remove(); 				//remove old selection
-   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
-
-			file_json=this.id+".json";     						//create new again
-  			Create_chr_circle();								//create new again
-  			Create_SNP_association(this.id+".json");  			//create new again
-  			brush_weight(this.id+".json");						//create new again
-   			
-});						
- 
- 
- */
 
 
+
+//******************************************************************************
+
+
+// merge to one html with radio buttons
 
  d3.select("#Dataset_select").on("change", function change() {
  	
  	file_json=this.value+".json";
  	
  	if( plot_chosen=== "p_cir" ){
- 	
+ 		
+ 	d3.select("#scale_bar").selectAll('svg').remove();
    d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
    d3.select("#snps").selectAll("p").remove(); 					//remove old selection
    d3.select("#pairs").selectAll("p").remove();    				//remove old selection
@@ -418,23 +413,25 @@ plot_chosen="p_cir";     //chosen the circle plot like default
   			
   	}else{
   		 
-  		d3.select("#chart").selectAll('svg').remove();  		
+  		d3.select("#chart").selectAll('svg').remove(); 
+  		d3.select("#scale_bar").selectAll('svg').remove(); 		
   		show_button();
 		read_file_to_chart(file_json);  		
   		
   	}		
 	
 	});
+//******************************************************************************
 
 
-
+ //allows us chose the plot to vizualization	
 
  d3.select("#Plot_select").on("change", function change() {
- //allows us chose the plot to vizualization	
  	
    plot_chosen=this.value; 	
- 	
-   d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
+   d3.select("#chart").selectAll('svg').remove();  	
+   d3.select("#scale_bar").selectAll('svg').remove();	
+   		    //remove old selection
    d3.select("#snps").selectAll("p").remove(); 					//remove old selection
    d3.select("#pairs").selectAll("p").remove();    				//remove old selection
    d3.select("body").selectAll('svg').remove(); 				//remove old selection
@@ -452,12 +449,15 @@ plot_chosen="p_cir";     //chosen the circle plot like default
 				
 				show_button();
 				read_file_to_chart(file_json);
+			
+
 			}
 	
 	});
+//******************************************************************************
 
 
-
+// declaration of the functions to plot crhom. in circle
 
 
 // Display the nodes and links for debugging
@@ -508,12 +508,21 @@ function link() {
 };
 
 
+	
+
 // Returns an event handler for fading
 function fade(opacity) {
+	var sid;
     return function(g, i) {
 	svg.selectAll("g circle")  //select the circles
             .filter(function(d) {
-		return d.subgraph_id != allNodes[i].subgraph_id;
+            	
+            	
+            	//sid= allNodes[i].subgraph_id;
+            	 
+            	 
+            	 
+		return d.subgraph_id != allNodes[i].subgraph_id ;
             })
 	    .transition()
             .style("opacity", opacity);
@@ -565,6 +574,11 @@ function fade(opacity) {
             })
 	.text(function(d) { return showInteract(d); });
    
+ //d3.select("#hc").append("svg").remove();    //  show histogram when mouseover
+ 
+ //  sid= allNodes[i].subgraph_id;
+ //histogram_circle(file_json,sid);
+   
             
     };
 };
@@ -572,8 +586,8 @@ function fade(opacity) {
 
 function reset() {
 	//this function recreate the datas in vizualization, removed them and create them 
-    return function() {
-               
+    //return function() {
+             d3.select("#scale_bar").selectAll('svg').remove();  
              d3.select("#chart").selectAll('svg').remove();  					//remove old selection 
    			 d3.select("#snps").selectAll("p").remove(); 
    			 d3.select("#pairs").selectAll("p").remove(); 
@@ -585,11 +599,8 @@ function reset() {
             brush_weight(file_json);
             
             
-    };
+ //   };
 };
-
-
-
  
 function groupTicks(d) {
 	// Returns an array with objects of tick angles and labels 
@@ -615,10 +626,7 @@ function two_dec( value){
 	return v.substring(0,index_twodec);;
 }
 
-
-
-
-
+//******************************************************************************
 
 
 
@@ -640,28 +648,26 @@ d3.json(file_name, function(json) {
   
 	json.links.forEach(
 		
-
-		
 	function(d) { //this will fill with data the array
 		
 		data_weight_pvalue.push(d.weight); 
 		
 	
-		if (allNodes[d.source].chrom===1){
+		if (allNodes[d.source].chrom===1){         //"chr"+d.chrom+':'+d.bp_position
 
-			data.push([allNodes[d.source].bp_position,d.weight,allNodes[d.source].degree]);	
+			data.push([allNodes[d.source].bp_position,d.weight,allNodes[d.source].degree ,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);	
 		
 		}else{
 			
-			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight,allNodes[d.source].degree]);
+			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight,allNodes[d.source].degree,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);
 		}
 		
 		if (allNodes[d.target].chrom===1){
 			
-			data.push([allNodes[d.target].bp_position,d.weight,allNodes[d.target].degree]);	
+			data.push([allNodes[d.target].bp_position,d.weight,allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position ]);	
 		
 		}else{
-			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight,allNodes[d.target].degree]);
+			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight,allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position]);
 		}
 		
 		});
@@ -675,65 +681,209 @@ create_chart(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; 
 });
 
 }
+//******************************************************************************
+
 
 function create_chart (x1,x2,y1,y2){
 //creat the manhataan plot
-var x = d3.scale.linear()
-								 .domain([x1,x2])//.domain([0, chrom_lenght])
-								 .range([0, width_pm]);
-
-var y = d3.scale.linear()
-								//.domain([d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1])
-								.domain([y1,y2])								 
-								.range([height_pm, 0]);
-
-var scale_weight = d3.scale.linear()
-								//.domain([d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1])
-								.domain([y1,y2])								 
-								.range([height_pm, 0]);
+var margin = {top: 20, right: 10, bottom: 20, left: 10};
+//Then define width and height as the inner dimensions of the chart area.
 
 
+			var w = 900 ;//- margin.left - margin.right;//900;
+			var h = 600 ;//- margin.top - margin.bottom;//600;
+			var padding = 30;
+
+			var w_scale_bar = 500;
+			var h_scale_bar = 30;
+			var barPadding = 0;
+			
+//------------------------------------------------------------------------------------
+			var dataset = d3.range(d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; }));
+			
+			var colorScale = d3.scale.linear()
+    			.domain([d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; })])
+    			.interpolate(d3.interpolateHsl)
+    			.range(["#08F5EC", "#F50808"]);
+			
+			//Create SVG element to receive the scale color bar
+			var svg3 = d3.select("#scale_bar")
+						.append("svg")
+						.attr("width", w_scale_bar)
+						.attr("height", h_scale_bar);
+
+			svg3.selectAll("rect")  //create color scale bar
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return i * (w_scale_bar / dataset.length);
+			   })
+			   .attr("y", 0)
+			   .attr("width", w_scale_bar / dataset.length - barPadding)
+			   .attr("height", 100)
+			   .attr("fill", function(d,i) {
+     				 return colorScale(d);
+    });
+			
+			 d3.select("#min_num_scale_bar").selectAll("h1").remove(); //remove the old numbers of color scale
+  				d3.select("#min_num_scale_bar").selectAll("h1")        //create the new numbers of color scale
+				.data([1])
+				.enter().append("h1")
+				.text(two_dec( d3.min(data,function(d) {return d[2]; })));
+			
+			d3.select("#max_num_scale_bar").selectAll("h1").remove(); //remove the old numbers of color scale
+  				d3.select("#max_num_scale_bar").selectAll("h1")           //create the new numbers of color scale
+				.data([1])
+				.enter().append("h1")
+				.text(two_dec( d3.max(data,function(d) {return d[2]; })));
+//------------------------------------------------------------------------------------			
+			
+			//Create scale functions
+			var xScale = d3.scale.linear()
+								 .domain([x1,x2])
+								 .range([padding, w - padding * 2]);//.range([padding, w - padding * 2]); //old 810
+
+			var yScale = d3.scale.linear()
+								 .domain([y1,y2])
+								 .range([h - padding, padding]);		
+
+			//Define X axis
+			var xAxis = d3.svg.axis()
+							  .scale(xScale)
+							  .orient("bottom")
+							  .ticks(5);
+
+			//Define Y axis
+			var yAxis = d3.svg.axis()
+							  .scale(yScale)
+							  .orient("left")
+							  .ticks(5);
+							  							  
+							  
+			//Create SVG element
+			//var svg = d3.select("#chart")
+			      svg = d3.select("#chart")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+				
+				
+						
+				
+						
+				var line_chrom =	svg.selectAll("line")
+			   .data(chrom_acum_length)
+			   .enter()
+			   .append("line")
+			   .attr("class", "linechrom")
+			   .attr("x1", function(d) {return xScale(d);   })
+			   .attr("y1", 32)
+			   .attr("x2", function(d) {return xScale(d);   })
+			   .attr("y2", h - padding)
+			   .attr("stroke-width", 1)
+			   .attr("stroke-dasharray", 5)			   
+			   .style("stroke", "black") //stroke-dasharray="5"
+			   
+			   .style("opacity", 0.2)
+				
+				;
+	
+	
+			/*//bug
+			
+			 svg.selectAll("text")
+			   .data(chrom_acum_length)
+			   .enter()
+			   .append("text")
+			   .text(function(d,i) { return i+1;  })
+			   .attr("class", "textchrom")
+			   .attr("x", function(d) {return xScale(d)-1;   })
+			   .attr("y", 30)
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "8px")
+			   //.attr("fill", "red");
+				.style("opacity", 0.2);	
+				*/		
+			
 
 
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width_pm + margin.right + margin.left)
-    .attr("height", height_pm + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height_pm + ")")
-    .call(d3.svg.axis().scale(x).orient("bottom"));
-
-svg.append("g")
-    .attr("class", "y axis")
-   
-    .call(d3.svg.axis().scale(y).orient("left"));
 
 
+			//Create circles
+		var circle =	svg.selectAll("circle")
+			   .data(data)
+			   .enter()
+			   .append("circle")
+			   .attr("cx", function(d) {
+			   		return xScale(d[0]);
+			   })
+			   .attr("cy", function(d) {
+			   		return yScale(d[1]);
+			   })
+			   .attr("r", 3.5)
+			   //.style("fill", function(d) { return graphColor(d[2]) })
+			   .style("fill", function(d) { return colorScale(d[2]) })
+			   //.on("mouseover", fade(0))
+			   ;
 
-var circle = svg.append("g").selectAll("circle")
-    .data(data)
-  .enter().append("circle")
-    .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
-    .attr("r", 3.5)
-    .style("fill", function(d) { return graphColor(d[2]) })
-   // .append("title")
-   // .text(function(d) { return "degree: " + two_dec(d.degree) })
-    
-    ;
-    
-    
+ label_text=svg.selectAll("text")
+			   .data(data)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d[3] + " ; " + d[1]+ " ; " + two_dec(d[2]);
+			   })
+			   .attr("x", function(d) {
+			   		return xScale(d[0]);
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d[1]);
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   //.attr("fill", "red")
+			   .style("fill", function(d) { return colorScale(d[2]) });
 
-svg.append("g")
-    .attr("class", "brush")
-    .call(d3.svg.brush().x(x).y(y)
-    .on("brushstart", brushstart)
-    .on("brush", brushmove)
-    .on("brushend", brushend)
-        );
-    
+				label_text.transition().duration(1000).style("opacity", 0); //it will fade the label in circles
+ 				//label_text.transition().style("opacity", 0); //it will fade the label in circles
+
+	
+	
+	
+	
+			
+			//Create X axis
+			svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(0," + (h - padding) + ")")
+				.call(xAxis)//;
+				.append("text")
+      			.attr("class", "label")
+      			.attr("x", w)
+      			.attr("y", -6)
+      			.style("text-anchor", "end")
+      			.text("Chromosome Lengths (nº bases)");
+			
+			//Create Y axis
+			svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(" + padding + ",0)")
+				.call(yAxis)
+				.append("text")
+      			.attr("class", "label")
+      			.attr("transform", "rotate(-90)")
+      			.attr("y", 6)
+      			.attr("dy", ".71em")
+      			.style("text-anchor", "end")
+      			.text("Weight");
+				
+			svg.append("g")
+    			.attr("class", "brush")
+    			.call(d3.svg.brush().x(xScale).y(yScale)
+    			.on("brushstart", brushstart)
+    			.on("brush", brushmove)
+    			.on("brushend", brushend));
  
 //get the values to allows make the zoom when click the button zoon
 function brushstart() {
@@ -761,47 +911,239 @@ function brushend() {
     
  
 }
+//******************************************************************************
 
 
-function hide_button(){
+
+function hide_button(){  //replace the function name because this function not only act in button 
+	
+	
 d3.select("body").select("#butz").transition()
             .style("opacity", 0);
 
-d3.select("body").select("#butr").transition()
-            .style("opacity", 0);            
-}
+//d3.select("body").select("#butr").transition().style("opacity", 0);
+            
+d3.select("body").select("#butpl").transition()
+            .style("opacity", 0);
 
-function show_button(){
+d3.select("body").select("#butrl").transition()
+            .style("opacity", 0);
+            
+ d3.select("#min_num_scale_bar").selectAll("h1").remove();    // numbers of  color scale bar 
+  d3.select("#max_num_scale_bar").selectAll("h1").remove();   // numbers of  color scale bar
+  
+  d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar
+}
+//******************************************************************************
+
+
+function show_button(){ //replace the function name because this function not only act in button
 d3.select("body").select("#butz").transition()
             .style("opacity", 1);
 
 d3.select("body").select("#butr").transition()
-            .style("opacity", 1);            
+            .style("opacity", 1);
+            
+d3.select("body").select("#butpl").transition()
+            .style("opacity", 1);
+
+d3.select("body").select("#butrl").transition()
+            .style("opacity", 1);
+           
+d3.select("#degree_scale_bar").transition()      // title of  color scale bar
+            .style("opacity", 1);                        
 }
+
+//******************************************************************************
+
+//buttons of manhattan plot
 
 d3.select("body").select("#butz").on("click", function change() {
 
-			
-    d3.select("#chart").selectAll('svg').remove();
+   d3.select("#chart").selectAll('svg').remove();
+   d3.select("#scale_bar").selectAll('svg').remove();
+   if(x_1)// if x_1 is not null make ..
    create_chart(x_1,x_2,y_1,y_2);
-   
+   else
+   	create_chart(ix_1,ix_2,iy_1,iy_2);
     			
 });						
 
 
 d3.select("body").select("#butr").on("click", function change() {
+				
+	if( plot_chosen=== "p_cir" ){
+	
+		//d3.select("#chart").selectAll('svg').on("click", reset());			
+		reset();
+		
+	}else{			
+				
+    	d3.select("#chart").selectAll('svg').remove();
+    	d3.select("#scale_bar").selectAll('svg').remove();
+    	x_1=ix_1;
+    	x_2=ix_2;
+    	y_1=iy_1;
+    	y_2=iy_2;
+   		create_chart(ix_1,ix_2,iy_1,iy_2);
+   	}
+});		
 
-			
+d3.select("body").select("#butpl").on("click", function change() {
+
+   d3.select("#chart").selectAll('svg').remove();
+   d3.select("#scale_bar").selectAll('svg').remove();
+   if(x_1)// if x_1 is not null make ..
+   create_chart(x_1,x_2,y_1,y_2);
+   else
+   	create_chart(ix_1,ix_2,iy_1,iy_2);
+   	label_text.transition().style("opacity", 1);
+    			
+});						
+
+
+d3.select("body").select("#butrl").on("click", function change() {
+				
     d3.select("#chart").selectAll('svg').remove();
-   create_chart(ix_1,ix_2,iy_1,iy_2);
-   
-   
+    d3.select("#scale_bar").selectAll('svg').remove();
+   if(x_1)// if x_1 is not null make ..
+   create_chart(x_1,x_2,y_1,y_2);
+   else
+   	create_chart(ix_1,ix_2,iy_1,iy_2);
+   label_text.transition().style("opacity", 0);
    			
 });		
 
+//******************************************************************************
 
 
 
 
 
+
+
+function histogram_circle(file,subgraph_id){
+	
+var margin = {top: 20, right: 20, bottom: 100, left: 40},
+    width = 500 - margin.left - margin.right, //500
+    height = 300 - margin.top - margin.bottom;//200
+
+var formatPercent = d3.format(".0%");
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .5, 1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    //.tickFormat(formatPercent)
+    ;
+
+var svg = d3.select("#hc").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+var data = new Array();
+var allNodes= new Array();
+var data_weight_pvalue= new Array();
+		
+	
+d3.json(file, function(json) {
+   
+
+ json.nodes.forEach( 	function(d) { 
+ 	
+ 	
+ 	if(d.subgraph_id===subgraph_id){
+ 	data.push(d); 
+ 	}
+ 	
+ 	}    );		
+ 
+
+//d.label
+
+  x.domain(data.map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }));
+  y.domain([0, d3.max(data, function(d) { return d.degree; })]);
+
+
+
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+		// now rotate text on x axis
+        // first move the text left so no longer centered on the tick
+        // then rotate up to get 90 degrees.
+svg.selectAll(".x text")  // select all the text elements for the xaxis
+          .attr("transform", function(d) {
+             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*4 + ")rotate(-90)";
+         });
+
+
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Degree");
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x("chr"+d.chrom+':'+d.bp_position); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.degree); })
+      .attr("height", function(d) { return height - y(d.degree); });
+
+  d3.select("input").on("change", change);
+
+  var sortTimeout = setTimeout(function() {
+    d3.select("input").property("checked", true).each(change);
+  }, 2000);
+
+  function change() {
+    clearTimeout(sortTimeout);
+
+    // Copy-on-write since tweens are evaluated after a delay.
+    var x0 = x.domain(data.sort(this.checked 
+        ? function(a, b) { return b.degree - a.degree; }
+        : function(a, b) { return d3.ascending("chr"+a.chrom+':'+a.bp_position, "chr"+b.chrom+':'+b.bp_position); })
+        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }))
+        .copy();
+
+    var transition = svg.transition().duration(750),
+        delay = function(d, i) { return i * 50; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return x0("chr"+d.chrom+':'+d.bp_position); });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+      .selectAll("g")
+        .delay(delay);
+  }
+});
+
+}
 

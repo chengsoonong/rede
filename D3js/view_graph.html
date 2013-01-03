@@ -17,39 +17,59 @@ $(document).ready(function(){
 </script>
 
 </head>
+<style>
 
+
+
+.axis text {
+  font: 10px sans-serif;
+ 
+}
+/*
+.x text {
+ text-decoration: underline;
+  -webkit-transform: rotate(-90deg); 
+ transform: rotate(90deg);
+  fill-opacity: 1;
+}
+*/
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .5;
+}
+
+.x.axis path {
+  display: none;
+}
+
+
+</style>
 <body>
 <button type="button" name="butzoom" id="butz" >Zoom</button>
-  	<button type="button" name="butreset" id="butr" >Reset</button>
+<button type="button" name="butreset" id="butr" >Reset</button>
+<button type="button" name="but_put_label" id="butpl" >label</button>
+<button type="button" name="but_remove_label" id="butrl" >remove label</button>
 
 <div id="container">
 	
 <div id="chart"></div>
 
+<div id="scale_bar"></div>
+<div id="min_num_scale_bar"></div>
+<div id="max_num_scale_bar"></div>
+<div id="degree_scale_bar">Degree</div>
 
 <div id="controls">
-  <!--<h3>Dataset</h3>
   
-  <form>
-  <input type="radio" name="dataset" id="bdWTC" checked>
-  <label for="bdWTC">Bipolar Disorder</label><br>
-  <input type="radio" name="dataset" id="cadWTC">
-  <label for="cadWTC">Coronary Artery Disease</label><br>
-  <input type="radio" name="dataset" id="cdWTC">
-  <label for="cdWTC">Crohn's Disease</label><br>
-  <input type="radio" name="dataset" id="htWTC">
-  <label for="htWTC">Hypertension</label><br>
-  <input type="radio" name="dataset" id="raWTC">
-  <label for="raWTC">Rheumatoid Arthritis</label><br>
-  <input type="radio" name="dataset" id="t1dWTC">
-  <label for="t1dWTC">Type 1 Diabetes</label><br>
-  <input type="radio" name="dataset" id="t2dWTC" >
-  <label for="t2dWTC">Type 2 Diabetes</label><br>
-  <input type="radio" name="dataset" id="bc571" >
-  <label for="bc571">Breast Cancer</label><br>
-  </form>
-  -->
-  <h3>Dataset <select id="Dataset_select">
+  <h5>Dataset <select id="Dataset_select">
  <option value="bdWTC">Bipolar Disorder</option>
  <option value="cadWTC">Coronary Artery Disease</option>
  <option value="cdWTC">Crohn's Disease</option>
@@ -59,23 +79,25 @@ $(document).ready(function(){
  <option value="t2dWTC">Type 2 Diabetes</option>
  <option value="bc571">Breast Cancer</option>
   </select>
-  </h3>
+  </h5>
   
-  <h3>Plot <select id="Plot_select">
+  <h5>Plot <select id="Plot_select">
  <option value="p_cir">Circular</option>
  <option value="p_man">Manhattan</option>
   </select>
-  </h3>
-  
- 
+  </h5>
  
  <br><br>
  <div id="two_weight_value">Weight: <span></span></div>	 
  <div id="brush_weight"></div>  
  
  <br><br>
+<div id="hc">
+ 	 <input type="checkbox"> Sort values
+ </div>  
  
- 
+
+
  
  <div id="snps_text">
  <h3>SNPs and their associations</h3>
@@ -89,7 +111,9 @@ $(document).ready(function(){
 <div id="footer">
   Copyright: Cheng Soon Ong, National ICT Australia, 2012
 </div>
+ 
 <script type="text/javascript" src="view_graph.js"></script>
+
 </div>
   </div> 
 </body>
