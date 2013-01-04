@@ -380,9 +380,9 @@ function reset_association(){
 
 hide_button();     //hide the buttons for zoom manhattan plot
 Create_chr_circle();
-Create_SNP_association("bdWTC.json");
-file_json="bdWTC.json";
-brush_weight("bdWTC.json");
+Create_SNP_association("bdWTC_GSS.json");
+file_json="bdWTC_GSS.json";
+brush_weight("bdWTC_GSS.json");
 plot_chosen="p_cir";     //chosen the circle plot like default
 
 
@@ -396,7 +396,7 @@ plot_chosen="p_cir";     //chosen the circle plot like default
 
  d3.select("#Dataset_select").on("change", function change() {
  	
- 	file_json=this.value+".json";
+ 	file_json=this.value+"_GSS.json";
  	
  	if( plot_chosen=== "p_cir" ){
  		
@@ -408,8 +408,8 @@ plot_chosen="p_cir";     //chosen the circle plot like default
    d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
 			     						
   			Create_chr_circle();									//create new again
-  			Create_SNP_association(this.value+".json");  			//create new again
-  			brush_weight(this.value+".json");						//create new again
+  			Create_SNP_association(this.value+"_GSS.json");  			//create new again
+  			brush_weight(this.value+"_GSS.json");						//create new again
   			
   	}else{
   		 
@@ -746,7 +746,36 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 
 			var yScale = d3.scale.linear()
 								 .domain([y1,y2])
-								 .range([h - padding, padding]);		
+								 .range([h - padding, padding]);	
+			
+			
+			
+			
+								 
+			var array_test1=[""];
+			var array_test2=[padding];
+			for  (var i=0;i<chrom_acum_length.length;i++){
+				var num=i+1;
+				
+				array_test1.push( "chr"+num );
+				array_test2.push( xScale(chrom_acum_length[i])   );
+			}				
+							
+								 
+							 
+					//Create scale top			 
+				var xScale_top = d3.scale.ordinal()
+   								 .domain(array_test1)
+    							.range(array_test2);	
+    							
+    			//Define X axis top
+			var xAxis_top = d3.svg.axis()
+							  .scale(xScale_top)
+							  .orient("top")
+							  //.ticks(5)
+							  ;							 
+								 
+							 	
 
 			//Define X axis
 			var xAxis = d3.svg.axis()
@@ -790,21 +819,21 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 				;
 	
 	
-			/*//bug
-			
+			//bug
+			/*
 			 svg.selectAll("text")
 			   .data(chrom_acum_length)
 			   .enter()
 			   .append("text")
 			   .text(function(d,i) { return i+1;  })
 			   .attr("class", "textchrom")
-			   .attr("x", function(d) {return xScale(d)-1;   })
+			   .attr("x", function(d,i) {return xScale(d);   })
 			   .attr("y", 30)
 			   .attr("font-family", "sans-serif")
 			   .attr("font-size", "8px")
 			   //.attr("fill", "red");
 				.style("opacity", 0.2);	
-				*/		
+			*/		
 			
 
 
@@ -864,6 +893,21 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
       			.attr("y", -6)
       			.style("text-anchor", "end")
       			.text("Chromosome Lengths (nº bases)");
+      			
+      			
+      		svg.append("g").attr("transform", "translate(0," + 30 + ")")
+				.attr("class", "xt axis")
+				//.attr("transform", "translate(" + padding + ",0)")
+				.call(xAxis_top);//;		
+      			
+     svg.selectAll(".xt text")  // select all the text elements for the xaxis
+          .attr("transform", function(d) { return "translate(" + this.getBBox().height + "," + this.getBBox().height*-0.5 + ")rotate(-45)";})
+          //.attr("transform", "rotate(-45)")
+         	;
+ 			
+      			
+      			
+      			
 			
 			//Create Y axis
 			svg.append("g")
@@ -874,6 +918,7 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
       			.attr("class", "label")
       			.attr("transform", "rotate(-90)")
       			.attr("y", 6)
+      			.attr("x", w)
       			.attr("dy", ".71em")
       			.style("text-anchor", "end")
       			.text("Weight");

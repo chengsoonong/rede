@@ -1,23 +1,31 @@
 TO DO
 
-- change format of location to UCSC genome browser format (chr2:31596785)
-- show degree of vertex as tooltip
 - zoom with minimap
-- select threshold for interaction strength
 - select subset for exporting to UCSC BED file
-- show manhattan plots on separate <div>
 - http://jbrowse.org/ on separate <div>
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
+- put button to load and save
+- make matrix show the snps associations datas in .json
+- show association in manhattan plot
+- improve the chrom. ordinal scale in manhattan plot
+- put histogram edges x subgraph_id circle plot 
+ 
 
+DONE 
 
-DONE
-
-- ticks on chromosome 
-- merge to one html with radio buttons (see view_graph.html)
-- fade of subgraph (links not working)
-- fade of SNPs and pairs in text 
+- (4/1/2013)  chrom. ordinal scale in manhattan plot
+- (23/12/2012)put histogram degree x SNPs in circle plot
+- (20/12/2012)color scale for degree in mahanttan plot
+- (15/12/2012)show manhattan plots on separate <div>
+- (15/12/2012)select threshold for interaction strength
+- (10/12/2012)change format of location to UCSC genome browser format (chr2:31596785)
+- (10/12/2012)show degree of vertex as tooltip
+- (12/2012) ticks on chromosome 
+- (12/2012) merge to one html with radio buttons (see view_graph.html)
+- (12/2012) fade of subgraph (links not working)
+- (12/2012) fade of SNPs and pairs in text 
 
 
 
