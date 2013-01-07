@@ -25,14 +25,11 @@ $(document).ready(function(){
   font: 10px sans-serif;
  
 }
-/*
+
 .x text {
- text-decoration: underline;
-  -webkit-transform: rotate(-90deg); 
- transform: rotate(90deg);
-  fill-opacity: 1;
+font-size: 10 px;
 }
-*/
+
 
 .axis path,
 .axis line {
@@ -73,7 +70,7 @@ $(document).ready(function(){
 <button type="button" name="butzoom" id="butz" >Zoom</button>
 <button type="button" name="butreset" id="butr" >Reset</button>
 <button type="button" name="but_put_label" id="butpl" >label</button>
-<button type="button" name="but_remove_label" id="butrl" >remove label</button>
+<button type="button" name="but_remove_label" id="butrl" >remove label</button> 
 
 <div id="container">
 	
@@ -84,9 +81,18 @@ $(document).ready(function(){
 <div id="max_num_scale_bar"></div>
 <div id="degree_scale_bar">Degree</div>
 
+
+
 <div id="controls">
+
   
-  <h5>Dataset <select id="Dataset_select">
+  <h5>Dataset 
+  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:cria(this.value);">  
+	<input type="button" onclick="filUpload.click();"  value="load">
+	
+	<input type="button" value="Show .json" onclick="openWin()" />
+  <!--	
+  	<select id="Dataset_select">
  <option value="bdWTC">Bipolar Disorder</option>
  <option value="cadWTC">Coronary Artery Disease</option>
  <option value="cdWTC">Crohn's Disease</option>
@@ -96,6 +102,9 @@ $(document).ready(function(){
  <option value="t2dWTC">Type 2 Diabetes</option>
  <option value="bc571">Breast Cancer</option>
   </select>
+  -->
+  
+  
   </h5>
   
   <h5>Plot <select id="Plot_select">
@@ -107,10 +116,13 @@ $(document).ready(function(){
  <br><br>
  <div id="two_weight_value">Weight: <span></span></div>	 
  <div id="brush_weight"></div>  
- 
+  <br><br>
+   <div id="hesid"></div> 
  <br><br>
+ 
+ 
 <div id="hc">
- 	 <input type="checkbox"> Sort values
+ 	 <input id="cb" type="checkbox"> Sort values
  </div>  
  
 
@@ -131,6 +143,7 @@ $(document).ready(function(){
  
 <script type="text/javascript" src="view_graph.js"></script>
 
+	
 </div>
   </div> 
 </body>

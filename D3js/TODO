@@ -10,11 +10,14 @@ TO DO
 - make matrix show the snps associations datas in .json
 - show association in manhattan plot
 - improve the chrom. ordinal scale in manhattan plot
-- put histogram edges x subgraph_id circle plot 
- 
+- show SNPs association in histogram degree x SNPs replecing the color bar  
+- make brush show the association
+- make the histogram edges x subgraph_id circle plot show the a subgraph selected 
 
 DONE 
 
+- (7/1/2013) put button to load and save
+- (5/1/2013) put histogram edges x subgraph_id circle plot
 - (4/1/2013)  chrom. ordinal scale in manhattan plot
 - (23/12/2012)put histogram degree x SNPs in circle plot
 - (20/12/2012)color scale for degree in mahanttan plot

@@ -8,6 +8,10 @@ height2 =800 ,//800,   -> 400 //for transition
 chromRingOuterRadius = Math.min(width, height) * .45,   //new adjustment
 chromRingInnerRadius = chromRingOuterRadius * 0.95;
 
+//var string_html="{\"directed\": false, \"graph\": [], \"nodes\": [<br>";
+    	var string_html;
+
+
 //---------variable for manhattan plot
 
 var label_text;
@@ -203,6 +207,18 @@ d3.json(filename, function(json) {
 	 function(g, i) {
   		 	sid= allNodes[i].subgraph_id;
  			histogram_circle(file_json,sid);	
+ 			
+ 			
+ 			
+ 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [<br>";
+
+			json_nodes_selected(file_json,sid);
+	
+		
+			json_links_selected(file_json,sid);	
+				
+
+ 			
 			}	 
 	 
 	 )
@@ -378,12 +394,33 @@ function reset_association(){
 
 // create the first vizualization with "bdWTC.json" like default
 
+hide_button();  
+
+
+function cria ( file ){
+	
+	file_json=file;
+	
+		d3.select("#hesid").selectAll('svg').remove();
+ 	d3.select("#scale_bar").selectAll('svg').remove();
+   d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
+   d3.select("#snps").selectAll("p").remove(); 					//remove old selection
+   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
+   d3.select("body").selectAll('svg').remove(); 				//remove old selection
+   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
+			     						
+	
+	
 hide_button();     //hide the buttons for zoom manhattan plot
 Create_chr_circle();
-Create_SNP_association("bdWTC_GSS.json");
-file_json="bdWTC_GSS.json";
-brush_weight("bdWTC_GSS.json");
+Create_SNP_association(file_json);//Create_SNP_association("bdWTC_GSS.json");
+//file_json="bdWTC_GSS.json";
+brush_weight(file_json);//brush_weight("bdWTC_GSS.json");
 plot_chosen="p_cir";     //chosen the circle plot like default
+
+histogram_edges_subgraphId(file_json);
+
+}
 
 
 
@@ -400,6 +437,7 @@ plot_chosen="p_cir";     //chosen the circle plot like default
  	
  	if( plot_chosen=== "p_cir" ){
  		
+ 	d3.select("#hesid").selectAll('svg').remove();
  	d3.select("#scale_bar").selectAll('svg').remove();
    d3.select("#chart").selectAll('svg').remove();  			    //remove old selection
    d3.select("#snps").selectAll("p").remove(); 					//remove old selection
@@ -410,7 +448,7 @@ plot_chosen="p_cir";     //chosen the circle plot like default
   			Create_chr_circle();									//create new again
   			Create_SNP_association(this.value+"_GSS.json");  			//create new again
   			brush_weight(this.value+"_GSS.json");						//create new again
-  			
+  			histogram_edges_subgraphId(file_json);
   	}else{
   		 
   		d3.select("#chart").selectAll('svg').remove(); 
@@ -436,6 +474,7 @@ plot_chosen="p_cir";     //chosen the circle plot like default
    d3.select("#pairs").selectAll("p").remove();    				//remove old selection
    d3.select("body").selectAll('svg').remove(); 				//remove old selection
    d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
+   d3.select("#hesid").selectAll('svg').remove();
    
    hide_button();		
 
@@ -444,6 +483,7 @@ plot_chosen="p_cir";     //chosen the circle plot like default
 				Create_chr_circle();							//create new again
   				Create_SNP_association(file_json);  			//create new again
   				brush_weight(file_json);						//create new again
+  				histogram_edges_subgraphId(file_json);
   				
 			}else{
 				
@@ -508,7 +548,6 @@ function link() {
 };
 
 
-	
 
 // Returns an event handler for fading
 function fade(opacity) {
@@ -563,8 +602,20 @@ function fade(opacity) {
 						return graphColor(d.subgraph_id);
 					}
 				})      
-	.text(function(d) { return showSnp(d); });
-    
+	.text(function(d) { 
+		
+	
+		
+//		string_html+="{\"label\": \""+d.label+"\", \"degree\": "+d.degree+", \"rs\": \""+d.rs+
+//		"\", \"bp_position\": "+d.bp_position+", \"chrom\": "+d.chrom+", \"id\": "+d.id+", \"subgraph_id\": "+d.subgraph_id+"}<br>";
+		
+		return showSnp(d); });
+   
+  
+  
+  //string_html+="], \"links\": [<br>";
+  
+  
     
  d3.select("#pairs").selectAll("p")
 	.data(links)
@@ -572,16 +623,44 @@ function fade(opacity) {
 	.filter(function(d) {
 		return d.subgraph_id === allNodes[i].subgraph_id;
             })
-	.text(function(d) { return showInteract(d); });
+	.text(function(d) { 
+		
+		
+	
+//string_html+= "{\"source:\" "+d.source+", \"subgraph_id\": "+d.subgraph_id+", \"weight\": "+d.weight+", \"target\": "+d.target+"},<br>";
+		
+		
+		return showInteract(d); });
    
  //d3.select("#hc").append("svg").remove();    //  show histogram when mouseover
  
  //  sid= allNodes[i].subgraph_id;
  //histogram_circle(file_json,sid);
    
+      
+    //   string_html+="], \"multigraph\": false}";
             
     };
 };
+
+      
+       function openWin()
+{
+//myWindow=window.open('','','width=200,height=100')	
+myWindow=window.open('','json file');
+//myWindow.document.write("\"string_html\"");
+myWindow.document.write(string_html);
+
+myWindow.focus();
+
+string_html="";
+}
+       
+
+
+
+
+
 
 
 function reset() {
@@ -593,10 +672,12 @@ function reset() {
    			 d3.select("#pairs").selectAll("p").remove(); 
    			 d3.select("body").selectAll('svg').remove(); 	
    			 d3.select("#two_weight_value").selectAll("h").remove();
-   				
+			  d3.select("#hesid").selectAll('svg').remove();
+			    				
   			Create_chr_circle();												//create new again
   			Create_SNP_association(file_json);        
             brush_weight(file_json);
+            histogram_edges_subgraphId(file_json);
             
             
  //   };
@@ -1063,15 +1144,58 @@ d3.select("body").select("#butrl").on("click", function change() {
 
 
 
+function json_nodes_selected(file,subgraph_id){  	
+d3.json(file, function(json) {
+ json.nodes.forEach( 	function(d) {
+ 	
+ 	if(d.subgraph_id===subgraph_id){
+ 
+		string_html+="{\"label\": \""+d.label+"\", \"degree\": "+d.degree+", \"rs\": \""+d.rs+
+		"\", \"bp_position\": "+d.bp_position+", \"chrom\": "+d.chrom+", \"id\": "+d.id+", \"subgraph_id\": "+d.subgraph_id+"}<br>";
+		
+ 	} }    );		
+string_html+="], \"links\": [<br>";
+});	
+
+
+
+		
+	
+}
+
+function json_links_selected(file,subgraph_id){
+
+d3.json(file, function(json) {
+	json.links.forEach( 	function(d) { 
+ 	
+ 	
+ 	if(d.subgraph_id===subgraph_id){
+ 		
+		string_html+= "{\"source:\" "+d.source+", \"subgraph_id\": "+d.subgraph_id+", \"weight\": "+d.weight+", \"target\": "+d.target+"},<br>";
+	 	 	 
+ 	}	}    );
+ 	
+ 	// remover a ultima virgula -imp
+ 	
+ 			
+string_html+="], \"multigraph\": false}";
+});	
+
+
+	
+				
+
+
+}
 
 
 
 
 function histogram_circle(file,subgraph_id){
 	
-var margin = {top: 20, right: 20, bottom: 100, left: 40},
-    width = 500 - margin.left - margin.right, //500
-    height = 300 - margin.top - margin.bottom;//200
+var margin = {top: 20, right: 20, bottom: 120, left: 40},
+    width = 850 - margin.left - margin.right, //500
+    height = 400 - margin.top - margin.bottom;//200
 
 var formatPercent = d3.format(".0%");
 
@@ -1130,6 +1254,14 @@ d3.json(file, function(json) {
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
+      
+ svg.append("text")
+     // .attr("transform", "rotate(-90)")
+      .attr("y", 365)
+      .attr("x", 400)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("SNPs");
 
 		// now rotate text on x axis
         // first move the text left so no longer centered on the tick
@@ -1159,15 +1291,21 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.degree); })
       .attr("height", function(d) { return height - y(d.degree); });
+      
+   svg.selectAll(".bar")  //show degree as tooltip - title
+       .data(data)
+	  .append("title")
+      .text(function(d) { return "chr"+d.chrom+':'+d.bp_position+" ; "+d.degree; });     
+      
 
-  d3.select("input").on("change", change);
-
+  d3.select("#cb").on("change", change);
+/*
   var sortTimeout = setTimeout(function() {
     d3.select("input").property("checked", true).each(change);
   }, 2000);
-
+*/
   function change() {
-    clearTimeout(sortTimeout);
+  //  clearTimeout(sortTimeout);
 
     // Copy-on-write since tweens are evaluated after a delay.
     var x0 = x.domain(data.sort(this.checked 
@@ -1191,4 +1329,171 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 });
 
 }
+
+
+
+
+
+
+
+
+
+
+function histogram_edges_subgraphId(file){
+	
+var margin = {top: 20, right: 20, bottom: 90, left: 40},
+    width = 850 - margin.left - margin.right, //500
+    height = 400 - margin.top - margin.bottom;//200
+
+var formatPercent = d3.format(".0%");
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .5, 1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left") ;
+
+var svg = d3.select("#hesid").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+var data_subgraph_id1 = new Array();
+var data_subgraph_id2 = new Array();
+	
+d3.json(file, function(json) {
+   
+
+ json.nodes.forEach( 	function(d) { 
+ 	
+ 	data_subgraph_id1.push(d.subgraph_id);    }    );
+ 	
+ data_subgraph_id1.sort(function(a, b){
+   return a > b? 1 : 0;
+});
+ 
+
+create_data_subgraph_id3()
+function create_data_subgraph_id3(){
+	
+	var max=d3.max(data_subgraph_id1, function(d) { return d; });
+	var min=d3.min(data_subgraph_id1, function(d) { return d; });
+	var li, ary;
+
+	while(min<max ){
+		
+		li=data_subgraph_id1.lastIndexOf(min);
+		ary=data_subgraph_id1.splice(0,li+1);
+		data_subgraph_id2.push(ary);
+		min=d3.min(data_subgraph_id1, function(d) { return d; })
+		
+	}
+	data_subgraph_id2.push(data_subgraph_id1);
+	
+}
+
+var data_obj=[];
+
+function creat_obj(subgraph_id,edgs ){
+	var obj={};
+	obj.n_subgraph_id  = subgraph_id;
+	obj.n_edgs  =edgs;
+	return obj;
+}
+
+for (var i=0;i<data_subgraph_id2.length;i++ ){
+ 	
+ 	data_obj.push(creat_obj(data_subgraph_id2[i][0],data_subgraph_id2[i].length-1));
+ }
+
+
+  x.domain(data_obj.map(function(d) { return d.n_subgraph_id; }));
+  y.domain([0, d3.max(data_obj, function(d) { return d.n_edgs; })]);
+
+
+
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+      
+      svg.append("text")
+     // .attr("transform", "rotate(-90)")
+      .attr("y", 330)
+      .attr("x", 400)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Subgraph_id");
+
+  	// now rotate text on x axis
+        // first move the text left so no longer centered on the tick
+        // then rotate up to get 90 degrees.
+svg.selectAll(".x text")  // select all the text elements for the xaxis
+          .attr("transform", function(d) {
+             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*1 + ")rotate(-90)";
+         });    
+
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Nº Edges");
+      
+
+  svg.selectAll(".bar")
+      .data(data_obj)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.n_subgraph_id); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.n_edgs); })
+      .attr("height", function(d) { return height - y(d.n_edgs); });
+
+ svg.selectAll(".bar")  //show degree as tooltip - title
+       .data(data_obj)
+	  .append("title")
+      .text(function(d) { return d.n_edgs; });  
+      
+ svg.selectAll(".text_b")
+			   .data(data_obj)
+			   .enter()
+			   .append("text") 
+			   .attr("class", "text_b")
+			   .text(function(d) { return d.n_edgs; })
+			  // .attr("text-anchor", "middle")
+			   .attr("x",function(d) { return x(d.n_subgraph_id); })
+			   .attr("y",function(d) { return y(d.n_edgs+0.5); })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black")
+			   ;     
+
+
+});
+
+}
+
+
+
+
+
+
 
