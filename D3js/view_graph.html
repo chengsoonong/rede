@@ -17,55 +17,7 @@ $(document).ready(function(){
 </script>
 
 </head>
-<style>
 
-
-
-.axis text {
-  font: 10px sans-serif;
- 
-}
-
-.x text {
-font-size: 10 px;
-}
-
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.bar {
-  fill: steelblue;
-  fill-opacity: .5;
-}
-
-.x.axis path {
-  display: none;
-}
-
-
-.xt.axis path {
-  display: none;
-}
-
-
-.xt text{
-  
-  
-  fill-opacity: 0.2;
-}
-.xt line{
-  
-  
- display: none;
-}
-
-
-</style>
 <body>
 <button type="button" name="butzoom" id="butz" >Zoom</button>
 <button type="button" name="butreset" id="butr" >Reset</button>
@@ -87,29 +39,18 @@ font-size: 10 px;
 
   
   <h5>Dataset 
-  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:cria(this.value);">  
+  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
 	<input type="button" onclick="filUpload.click();"  value="load">
 	
-	<input type="button" value="Show .json" onclick="openWin()" />
-  <!--	
-  	<select id="Dataset_select">
- <option value="bdWTC">Bipolar Disorder</option>
- <option value="cadWTC">Coronary Artery Disease</option>
- <option value="cdWTC">Crohn's Disease</option>
- <option value="htWTC">Hypertension</option>
- <option value="raWTC">Rheumatoid Arthritis</option>
- <option value="t1dWTC">Type 1 Diabetes</option>
- <option value="t2dWTC">Type 2 Diabetes</option>
- <option value="bc571">Breast Cancer</option>
-  </select>
-  -->
-  
+	<input type="button" value="Show .json" onclick="selected_json()" />
+ 
   
   </h5>
   
   <h5>Plot <select id="Plot_select">
  <option value="p_cir">Circular</option>
  <option value="p_man">Manhattan</option>
+ <option value="p_mat">Matrix</option>
   </select>
   </h5>
  
@@ -119,13 +60,11 @@ font-size: 10 px;
   <br><br>
    <div id="hesid"></div> 
  <br><br>
- 
+
  
 <div id="hc">
  	 <input id="cb" type="checkbox"> Sort values
  </div>  
- 
-
 
  
  <div id="snps_text">
@@ -138,11 +77,13 @@ font-size: 10 px;
 
 
 <div id="footer">
-  Copyright: Cheng Soon Ong, National ICT Australia, 2012
+  Copyright: Cheng Soon Ong, <br/>Cristóvão F. Iglesias Jr<br/> National ICT Australia, 2012, 2013
 </div>
  
 <script type="text/javascript" src="view_graph.js"></script>
-
+<script type="text/javascript" src="circle_plot.js"></script>
+<script type="text/javascript" src="manhattan_plot.js"></script>
+<script type="text/javascript" src="matrix_plot.js"></script>
 	
 </div>
   </div> 

@@ -6,25 +6,30 @@ TO DO
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
-- put button to load and save
-- make matrix show the snps associations datas in .json
+- ideia ->  http://www.jasondavies.com/coffee-wheel/
+- ideia ->  http://indiemaps.com/blog/2011/10/hexbins/
 - show association in manhattan plot
 - improve the chrom. ordinal scale in manhattan plot
 - show SNPs association in histogram degree x SNPs replecing the color bar  
 - make brush show the association
-- make the histogram edges x subgraph_id circle plot show the a subgraph selected 
+- make the histogram edges x subgraph_id circle plot show the a subgraph selected
+- show each SNPs and their associations in a specific chrom when selected (exemplos in d3js.org) 
+- put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
+
+
 
 DONE 
-
+- (9/1/2013) refactoring all code to improve the organization
+- (8/1/2013) make matrix show the snps associations datas in .json
 - (7/1/2013) put button to load and save
 - (5/1/2013) put histogram edges x subgraph_id circle plot
-- (4/1/2013)  chrom. ordinal scale in manhattan plot
-- (23/12/2012)put histogram degree x SNPs in circle plot
-- (20/12/2012)color scale for degree in mahanttan plot
-- (15/12/2012)show manhattan plots on separate <div>
-- (15/12/2012)select threshold for interaction strength
-- (10/12/2012)change format of location to UCSC genome browser format (chr2:31596785)
-- (10/12/2012)show degree of vertex as tooltip
+- (4/1/2013) chrom. ordinal scale in manhattan plot
+- (23/12/2012) put histogram degree x SNPs in circle plot
+- (20/12/2012) color scale for degree in mahanttan plot
+- (15/12/2012) show manhattan plots on separate <div>
+- (15/12/2012) select threshold for interaction strength
+- (10/12/2012) change format of location to UCSC genome browser format (chr2:31596785)
+- (10/12/2012) show degree of vertex as tooltip
 - (12/2012) ticks on chromosome 
 - (12/2012) merge to one html with radio buttons (see view_graph.html)
 - (12/2012) fade of subgraph (links not working)

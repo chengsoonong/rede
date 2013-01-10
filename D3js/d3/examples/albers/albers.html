@@ -50,7 +50,7 @@ d3.select("body")
   .append("g")
     .attr("id", "states");
 
-d3.json("../data/us-states.json", function(collection) {
+/*d3.json("../data/us-states.json", function(collection) {
   d3.select("#states")
     .selectAll("path")
       .data(collection.features)
@@ -60,17 +60,21 @@ d3.json("../data/us-states.json", function(collection) {
     .append("circle")
       .attr("r", 10)
       .attr("transform", "translate(" + xy(xy.origin()).join(",") + ")")
-});
+});*/
 
 function refresh() {
-  d3.selectAll("#states path")
+/*  d3.selectAll("#states path")
       .attr("d", path);
   d3.select("#states circle")
       .attr("transform", "translate(" + xy(xy.origin()).join(",") + ")")
+*/
   d3.select("#parallels span")
-      .text(xy.parallels());
+      .text([20,30]);
+
+/*
   d3.select("#lon span")
       .text(xy.origin()[0]);
+      
   d3.select("#lat span")
       .text(xy.origin()[1]);
   d3.select("#scale span")
@@ -79,16 +83,24 @@ function refresh() {
       .text(xy.translate()[0]);
   d3.select("#translate-y span")
       .text(xy.translate()[1]);
+      */
 }
 
-    </script><p>
+  </script><p>
+    
+        
+    <div id="parallels">parallels: <span></span></div><p>
+    
     <div id="lon">origin.longitude: <span>-98</span></div>
-    <div id="lat">origin.latitude: <span>38</span></div><p>
-    <div id="parallels">parallels: <span>29.5,45.5</span></div><p>
-    <div id="scale">scale: <span>1000</span></div><p>
-    <div id="translate-x">translate.x: <span>480</span></div>
-    <div id="translate-y">translate.y: <span>250</span></div>
+    
     <script type="text/javascript">
+
+
+    //<div id="lat">origin.latitude: <span>38</span></div><p>
+    
+    //<div id="scale">scale: <span>1000</span></div><p>
+    //<div id="translate-x">translate.x: <span>480</span></div>
+    //<div id="translate-y">translate.y: <span>250</span></div>
 
 $("#parallels").slider({
   range: true,
@@ -102,7 +114,7 @@ $("#parallels").slider({
   }
 });
 
-$("#lon").slider({
+/*$("#lon").slider({
   min: -180,
   max: 180,
   step: 1e-1,
@@ -160,7 +172,7 @@ $("#translate-y").slider({
     xy.translate(translate);
     refresh();
   }
-});
+});*/
 
     </script>
   </body>

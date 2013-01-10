@@ -39,7 +39,7 @@ circle {
   <body>
     <script type="text/javascript">
 
-var data = d3.range(800).map(Math.random);
+var data =d3.range(800).map(Math.random);
 
 var margin = {top: 10, right: 10, bottom: 10, left: 40},
     width = 120 - margin.right - margin.left,
@@ -79,15 +79,23 @@ function brushstart() {
   svg.classed("selecting", true);
 }
 
+ var v;
 function brushmove() {
-  var e = d3.event.target.extent();
+var  e = d3.event.target.extent();
   circle.classed("selected", function(d) { return e[0] <= d && d <= e[1]; });
+ v=e[1]; 
+  
+  
 }
 
 function brushend() {
   svg.classed("selecting", !d3.event.target.empty());
 }
 
+for (var i = 0;i<3;i++){
+  	
+  	document.write( );
+  }
     </script>
   </body>
 </html>

@@ -38,9 +38,13 @@ path {
     </style>
   </head>
   <body>
+  	
+  	<div id="teste">
+</div>
     <script type="text/javascript">
-
-var data = d3.svg.symbolTypes;
+//var data = [2.3 , 2, 1.344,5,7.8,1,0.6,1,1,2,4,5,6,7,8,8,9,123,2,33,44,55,66,77,88,99,00,11,12,32,43,54,54, 2, 1.344,5,75.8,41,0.63,12,111,12,14,115,16,71,18,18,91,1123,12,133,414,515,616,717,818,919];
+var data = ["1,2,3","4,5,6","7,8,9","10,2","3,3","1,2,3","10,2"];
+//var data =d3.svg.symbolTypes; 
 
 var margin = {top: 10, right: 10, bottom: 20, left:10},
     width = 960 - margin.right - margin.left,
@@ -48,7 +52,8 @@ var margin = {top: 10, right: 10, bottom: 20, left:10},
 
 var x = d3.scale.ordinal()
     .domain(data)
-    .rangePoints([0, width], 1);
+    .rangePoints([0, 500], 1);
+    
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.right + margin.left)
@@ -64,9 +69,11 @@ svg.append("g")
 var symbol = svg.append("g").selectAll("path")
     .data(data)
   .enter().append("path")
-    .attr("transform", function(d) { return "translate(" + x(d) + "," + (height / 2) + ")"; })
-    .attr("d", d3.svg.symbol().type(String).size(200));
-
+    .attr("transform", function(d) { return "translate(" + x(d) + "," + (height ) + ")"; })
+    .attr("d", d3.svg.symbol().size(50));
+	//.text(function(d) { return d; });
+	
+	  
 svg.append("g")
     .attr("class", "brush")
     .call(d3.svg.brush().x(x)
@@ -75,6 +82,13 @@ svg.append("g")
     .on("brushend", brushend))
   .selectAll("rect")
     .attr("height", height);
+/*
+svg.selectAll("text")
+			   .data(data)
+			   .enter()
+			   .append("text")
+			   .text("--1--");
+*/
 
 function brushstart() {
   svg.classed("selecting", true);
@@ -83,6 +97,16 @@ function brushstart() {
 function brushmove() {
   var s = d3.event.target.extent();
   symbol.classed("selected", function(d) { return s[0] <= (d = x(d)) && d <= s[1]; });
+  
+  //document.write(s[0]+"  "+s[1]);
+  d3.select("#teste").selectAll("p").remove();
+  d3.select("#teste").selectAll("p")
+	.data([1])
+	.enter().append("p")
+	.text(s[0]+"  "+s[1]);
+  
+  
+  
 }
 
 function brushend() {

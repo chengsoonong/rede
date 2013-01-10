@@ -85,7 +85,7 @@ var brushg = svg.append("g")
 brushg.selectAll(".resize").append("path")
     .attr("transform", "translate(0," +  height / 2 + ")")
     .attr("d", d3.svg.arc()
-    .outerRadius(height / 2)
+    .outerRadius(height / 10)
     .startAngle(0)
     .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; }));
 

@@ -23,9 +23,35 @@ var margin = {top: 20, right: 40, bottom: 20, left: 40},
     width = 960 - margin.right - margin.left,
     height = 500 - margin.top - margin.bottom;
 
+
+
+var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
+				180915260, 171115067, 159138663, 146364022,
+				141213431, 135534747, 135006516, 133851895,
+				115169878, 107349540, 102531392, 90354753,
+				81195210, 78077248, 59128983, 63025520,
+				48129895, 51304566, 155270560, 59373566);
+
+var chrom_acum_length= new Array();
+
+var plot_chosen;
+
+for (var i=0; i<chromLength.length;i++){
+	
+	chrom_lenght=chrom_lenght+chromLength[i];	
+	chrom_acum_length.push(chrom_lenght);
+	
+}
+
+/*
 var x = d3.time.scale()
     .domain([new Date(2011, 07, 01), new Date(2011, 07, 08)])
     .range([0, width]);
+  */  
+    
+var x = d3.scale.ordinal()
+    .domain(data)
+    .range([0,10,300,width]);
 
 var y = d3.scale.sqrt()
     .range([height, 0]);
