@@ -80,10 +80,11 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 
 			var dataset = d3.range(d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; }));
 			
-			var colorScale = d3.scale.linear()
+			var colorScale = d3.scale.log()
     			.domain([d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; })])
     			.interpolate(d3.interpolateHsl)
-    			.range(["#08F5EC", "#F50808"]);
+    			//.range(["#08F5EC", "#F50808"]);//39b9b8 00b300 00a166
+    			.range(["#00b300", "#F50808"]);
 			
 			//Create SVG element to receive the scale color bar
 			var svg3 = d3.select("#scale_bar")
@@ -117,7 +118,7 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 				.enter().append("h1")
 				.text(two_dec( d3.max(data,function(d) {return d[2]; })));
 				
-//----------------------------     create color scale      -------------------------------------------------			
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
 
 	
 			

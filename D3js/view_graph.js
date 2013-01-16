@@ -53,7 +53,7 @@ for (var i=0; i<chromLength.length;i++){	//this initializes chrom_lenght and chr
 var plot_chosen;  						//only here
 
 
-var graphColor = d3.scale.category10(); //circle_plot and here
+var graphColor = d3.scale.category20(); //circle_plot and here
 
 
 var svg ;								//circle_plot

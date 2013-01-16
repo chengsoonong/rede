@@ -155,7 +155,112 @@ d3.json(file_name, function(json) {
 			}
 	 ).attr("transform", function(d) { 
 	    return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
- 
+
+
+
+
+
+
+
+
+
+
+var w_scale_bar = 500;
+			var h_scale_bar = 30;
+			var barPadding = 0;
+
+var dataset = d3.range(d3.min(links,function(d) {return d.edgs_in_comm; }), 
+                      //(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2); 
+                        //d3.max(links,function(d) {return d.edgs_in_comm; })
+                        100
+                        );
+//var dataset = d3.range(1,10)
+
+var colorScaleedges = d3.scale.log()
+    			.domain([
+    				d3.min(links,function(d) {return d.edgs_in_comm; }),
+    				 
+    				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
+    				//d3.max(links,function(d) {return d.edgs_in_comm; })
+    				100    				
+    				])
+    				//50])
+    			.interpolate(d3.interpolateHsl)
+    			//.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
+    			.range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
+    			
+
+
+var colorScaleedges2 = d3.scale.linear()
+    			.domain([
+    				d3.min(links,function(d) {return d.edgs_in_comm; }),
+    				 
+    				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
+    				//d3.max(links,function(d) {return d.edgs_in_comm; })    				
+    				100
+    				
+    				])
+    				//50])
+    			.interpolate(d3.interpolateHsl)
+    			//.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
+    			.range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
+
+
+
+
+
+
+
+
+
+
+
+    			
+ 			//Create SVG element to receive the scale color bar
+			var svg3 = d3.select("#scale_bar_c")
+						.append("svg")
+						.attr("width", w_scale_bar)
+						.attr("height", h_scale_bar);
+
+			svg3.selectAll("rect")  //create color scale bar
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return i * (w_scale_bar / dataset.length);
+			   })
+			   .attr("y", 0)
+			   .attr("width", w_scale_bar / dataset.length - barPadding)
+			   .attr("height", 100)
+			   .style("opacity", 0.8)
+			   .attr("fill", function(d,i) {
+     				 			return colorScaleedges2(d);
+    						});
+			
+			 d3.select("#min_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
+  				d3.select("#min_num_scale_bar_c").selectAll("h1")        //create the new numbers of color scale
+				.data([1])
+				.enter().append("h1")
+				.text(d3.min(links,function(d) {return d.edgs_in_comm; }));
+			
+			d3.select("#max_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
+  				d3.select("#max_num_scale_bar_c").selectAll("h1")           //create the new numbers of color scale
+				.data([1])
+				.enter().append("h1")
+				.text( ">100");   			
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
     // Draw the edges  - the association between SNPs
@@ -163,7 +268,17 @@ d3.json(file_name, function(json) {
 	.data(links)
 	.enter().append("path")
 	.attr("class", "link")
-	.style("stroke", function(d) { return graphColor(d.subgraph_id); })
+    //.style("stroke", function(d) { return graphColor(d.subgraph_id ); })
+	//.style("stroke", function(d) { return graphColor(d.edgs_in_comm); })
+	.style("stroke", function(d) { 		
+		
+		if(d.edgs_in_comm >=100){
+		
+			return colorScaleedges(100); 
+		
+		}else 
+			return colorScaleedges(d.edgs_in_comm); 
+		})
 	.style("stroke-width", 1)
 	.style("opacity", 0.3)
 	.style("fill", "none")
@@ -273,6 +388,7 @@ function link() {
 function fade(opacity) {
 	var sid;
     return function(g, i) {
+	
 	svg.selectAll("g circle")  //select the circles
             .filter(function(d) {
             	            	 
@@ -289,12 +405,19 @@ function fade(opacity) {
 	  .append("title")
       .text(function(d) { return "degree: " + two_dec(d.degree) });  
         
+        
+       
+        
    svg.selectAll(".link") //select the association regarding to the circle selected
    			.filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
             }).remove();
        // .transition()
   		//	.style("opacity", opacity).remove();	
+  
+  
+  
+  
   
    d3.select("#snps").selectAll("p").remove(); //remove old text
    d3.select("#pairs").selectAll("p").remove(); //remove old text
@@ -520,7 +643,8 @@ var data_subgraph_id2 = new Array();
 	
 d3.json(file_name, function(json) {
    
- json.nodes.forEach( function(d) {  data_subgraph_id1.push(d.subgraph_id); } );  //-> [1,3,2,4,1,1,3,4,4,4,2]
+ json.links.forEach( function(d) {  data_subgraph_id1.push(d.subgraph_id); } );  //-> [1,3,2,4,1,1,3,4,4,4,2]
+ //json.nodes.forEach( function(d) {  data_subgraph_id1.push(d.subgraph_id); } );  //-> [1,3,2,4,1,1,3,4,4,4,2]
  	
  data_subgraph_id1.sort(function(a, b){ //-> [1,1,1,2,2,3,3,4,4,4]
    return a > b? 1 : 0; 
@@ -541,6 +665,8 @@ function create_data_subgraph_id2(){
 		
 		li=data_subgraph_id1.lastIndexOf(min);
 		ary=data_subgraph_id1.splice(0,li+1);
+		//document.write(ary+"<br>");
+		//ary=data_subgraph_id1.splice(0,li);
 		data_subgraph_id2.push(ary);
 		min=d3.min(data_subgraph_id1, function(d) { return d; })
 		
@@ -562,7 +688,8 @@ function creat_obj(subgraph_id,edgs ){
 for (var i=0;i<data_subgraph_id2.length;i++ ){
  	// from data_subgraph_id2 we will create a array with obj. with the couple egds and subgraph_id
  	 
- 	data_obj.push(creat_obj(data_subgraph_id2[i][0],data_subgraph_id2[i].length-1));
+ 	//data_obj.push(creat_obj(data_subgraph_id2[i][0],data_subgraph_id2[i].length-1));
+ 	data_obj.push(creat_obj(data_subgraph_id2[i][0],data_subgraph_id2[i].length));
  }
   
 
@@ -604,14 +731,105 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
       .text("Nº Edges");
       
 
+
+
+
+
   svg.selectAll(".bar")
       .data(data_obj)
     .enter().append("rect")
-      .attr("class", "bar")
+      .attr("class", "es bar")
       .attr("x", function(d) { return x(d.n_subgraph_id); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.n_edgs); })
-      .attr("height", function(d) { return height - y(d.n_edgs); });
+      .attr("height", function(d) { return height - y(d.n_edgs); })  
+          
+      .attr("fill", function(d) { return   graphColor(d.n_subgraph_id); })
+      
+      .attr("fill-opacity",.5)
+      .on("mousedown", function(g,i) { 
+	 	//when mousedown this selected the subgraph_id and create the string_html to show in html the seleced data 
+  		 	
+  		//d3.select("#chart").selectAll(".link").remove(); //remove the old association
+	    //reset_association();			 //create the new association 	
+  		//svg.selectAll(".link")  
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 d3.select("#chart") 	
+		.selectAll("g circle")
+   		.transition()
+  	     .style("opacity", 1);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 d3.select("#chart") 
+   	 .selectAll("g circle")  //select the circles
+            .filter(function(d) {
+            	            	 
+		return d.subgraph_id != data_obj[i].n_subgraph_id;
+            })
+	    .transition()
+            .style("opacity", 0);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	  d3.select("#chart") 	
+		.selectAll(".link")	
+   		.transition()
+  	     .style("opacity", 0.3);
+
+	  d3.select("#chart") 	
+		.selectAll(".link")
+		//.data(links) //select the association regarding to the circle selected
+   		.filter(function(d) { return d.subgraph_id != data_obj[i].n_subgraph_id;      })
+   		//.remove();
+		//	document.write(data_obj[i].n_subgraph_id); 	
+         .transition()
+  	     .style("opacity", 0);		
+		
+		
+			 			
+		});
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+      
 
  svg.selectAll(".bar")  //show degree as tooltip - title
        .data(data_obj)
@@ -737,7 +955,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
   svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
-      .attr("class", "bar")
+      .attr("class", "ds bar")
       .attr("x", function(d) { return x("chr"+d.chrom+':'+d.bp_position); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.degree); })

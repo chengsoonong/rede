@@ -52,7 +52,7 @@ font-size: 10 px;
   shape-rendering: crispEdges;
 }
 
-.bar {
+.ds.bar {
   fill: steelblue;
   fill-opacity: .5;
 }
@@ -131,10 +131,19 @@ font-size: 10 px;
     /*float:left;
     width:800px;*/
 }
+#scale_bar_c {
+	
+	position:fixed;
+	
+	top:850px;
+	left:200px;		
+    /*float:left;
+    width:800px;*/
+}
 #min_num_scale_bar h1{
 	
 	position:fixed;
-	color:#08F5EC;
+	color:#00b300;
 	top:670px;
 	left:140px;		
    font-size: 1.1em;
@@ -147,6 +156,22 @@ font-size: 10 px;
 	left:710px;		
    font-size: 1.1em;
 }
+#min_num_scale_bar_c h1{
+	
+	position:fixed;
+	color:#3192C9;
+	top:850px;
+	left:170px;		
+   font-size: 1.1em;
+}
+#max_num_scale_bar_c h1{
+	
+	position:fixed;
+	color:#FF7000;
+	top:850px;
+	left:710px;		
+   font-size: 1.1em;
+}
 #degree_scale_bar{
 	
 	position:fixed;
@@ -155,6 +180,15 @@ font-size: 10 px;
 	left:430px;		
     font-size: 1.1em;
 }
+#ec_scale_bar_c{
+	
+	position:fixed;
+	
+	top:900px;
+	left:350px;		
+    font-size: 1.1em;
+}
+
 
 /*
 #two_weight_value{
