@@ -1,20 +1,21 @@
 TO DO
 
 - zoom with minimap
-- select subset for exporting to UCSC BED file
-- http://jbrowse.org/ on separate <div>
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
-- ideia ->  http://www.jasondavies.com/coffee-wheel/
-- ideia ->  http://indiemaps.com/blog/2011/10/hexbins/
-- show association in manhattan plot
-- improve the chrom. ordinal scale in manhattan plot
+- idea ->  http://www.jasondavies.com/coffee-wheel/
+- idea ->  http://indiemaps.com/blog/2011/10/hexbins/
 - show SNPs association in histogram degree x SNPs replecing the color bar  
 - make brush show the association
-- show each SNPs and their associations in a specific chrom when selected (exemplos in d3js.org) 
+- show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
 - put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
+- Use HTML5 for file upload http://www.html5rocks.com/en/tutorials/file/dndfiles/
+- Select subgraph from histogram of subgraph sizes
 
+LATER
+- select subset for exporting to UCSC BED file
+- http://jbrowse.org/ on separate <div>
 
 
 
