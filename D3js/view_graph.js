@@ -1,3 +1,50 @@
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      //if (!f.type.match('image.*')) {
+      //  continue;
+     // }
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          //var span = document.createElement('span');
+          //span.innerHTML = ['<img class="thumb" src="', e.target.result,
+            //                '" title="', escape(theFile.name), '"/>'].join('');
+          //document.getElementById('list').insertBefore(span, null);
+          
+          upload_json(e.target.result)
+          
+          
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //------------------------------------------   Global variable   ---------------------------------------------- 
 
@@ -28,8 +75,6 @@ var data ;									//manhattan_plot and inside a function in circle_plot
 var ix_1,ix_2,iy_1,iy_2; 					//manhattan_plot and here 
 
 var x_1,x_2,y_1,y_2; 						//manhattan_plot, here and in future in matrix_plot 
-
-
 
 var chrom_lenght=0;							//manhattan_plot and here 
 
@@ -189,8 +234,10 @@ d3.json(file_name, function(json) {
 		string_html+="{\"label\": \""+d.label+"\", \"degree\": "+d.degree+", \"rs\": \""+d.rs+
 		"\", \"bp_position\": "+d.bp_position+", \"chrom\": "+d.chrom+", \"id\": "+d.id+", \"subgraph_id\": "+d.subgraph_id+"},";
 		
- 	} }    );		
-string_html+="], \"links\": [";
+ 	} }    );	
+ 	string_html=string_html.substring(0,string_html.lastIndexOf(","));
+ 		
+	string_html+="], \"links\": [";
 });	
 	
 	
@@ -203,12 +250,14 @@ function json_links_selected(file_name,subgraph_id){
  	
  	
  		if(d.subgraph_id===subgraph_id){
- 		
-			string_html+= "{\"source:\" "+d.source+", \"subgraph_id\": "+d.subgraph_id+", \"weight\": "+d.weight+", \"target\": "+d.target+"},";
+ 	 
+ string_html+= "{\"source:\" "+d.source+", \"subgraph_id\": "+d.subgraph_id+", \"weight\": "+d.weight+", \"target\": "+d.target+", \"edgs_in_comm\": "+d.edgs_in_comm+", \"comm_id\": "+d.comm_id+ "},";	        
+ //string_html+= "{\"source:\" "+d.source+", \"subgraph_id\": "+d.subgraph_id+", \"weight\": "+d.weight+", \"target\": "+d.target+"},";
 	 	 	 
 	 	}	}    );
  	
- 			// IMP -> 		remover a ultima virgula 	   <- IMP
+ 	     
+		string_html=string_html.substring(0,string_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP
  	 			
 		string_html+="], \"multigraph\": false}";
 });	

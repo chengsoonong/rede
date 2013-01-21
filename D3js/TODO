@@ -12,13 +12,17 @@ TO DO
 - improve the chrom. ordinal scale in manhattan plot
 - show SNPs association in histogram degree x SNPs replecing the color bar  
 - make brush show the association
-- make the histogram edges x subgraph_id circle plot show the a subgraph selected
 - show each SNPs and their associations in a specific chrom when selected (exemplos in d3js.org) 
 - put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
 
 
 
+
 DONE 
+
+- (17/1/2013) fix the load with html5
+- (16/1/2013) make the histogram edges x subgraph_id circle plot show the a subgraph selected
+- (12/1/2013) create json file using link communities methodology
 - (9/1/2013) refactoring all code to improve the organization
 - (8/1/2013) make matrix show the snps associations datas in .json
 - (7/1/2013) put button to load and save

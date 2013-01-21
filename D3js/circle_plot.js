@@ -757,6 +757,18 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
    	 
    	 
    	 
+   	 d3.select("#hc").select("svg").remove();
+   	 
+   	 sid= data_obj[i].n_subgraph_id;
+  		 	
+ 			histogram_degree_SNPs(file_json,sid);	
+ 			
+ 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
+
+			json_nodes_selected(file_json,sid);	
+		
+			json_links_selected(file_json,sid);
+   	 
    	 
    	 
    	 
@@ -804,6 +816,56 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
   	     .style("opacity", 0);		
 		
 		
+		
+		
+   d3.select("#snps").selectAll("p").remove(); //remove old text
+   d3.select("#pairs").selectAll("p").remove(); //remove old text
+  
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
+	.data(allNodes)
+	.enter().append("p")
+	.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})
+	.attr("target","_blank")	
+	.style("text-decoration",'none')	
+    .style("color", "black")      
+	.text(function(d) { return showSnp(d); });
+   
+  
+  
+  
+  
+
+ d3.select("#pairs").selectAll("p")
+	.data(links)
+	.enter().append("p")
+	.filter(function(d) {
+		return d.subgraph_id === data_obj[i].n_subgraph_id;
+            })
+	.text(function(d) { 
+		
+	
+		return showInteract(d); });
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 			 			
 		});
       
@@ -848,7 +910,146 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 			   .attr("font-family", "sans-serif")
 			   .attr("font-size", "11px")
 			   .attr("fill", "black")
-			   ;     
+			   .on("mousedown", function(g,i) { 
+	 	//when mousedown this selected the subgraph_id and create the string_html to show in html the seleced data 
+  		 	
+  		//d3.select("#chart").selectAll(".link").remove(); //remove the old association
+	    //reset_association();			 //create the new association 	
+  		//svg.selectAll(".link")  
+   	 
+   	 
+   	 
+   	    	 d3.select("#hc").select("svg").remove();
+   	 
+   	 		sid= data_obj[i].n_subgraph_id;
+  		 	
+ 			histogram_degree_SNPs(file_json,sid);	
+ 			
+ 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
+
+			json_nodes_selected(file_json,sid);	
+		
+			json_links_selected(file_json,sid);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 d3.select("#chart") 	
+		.selectAll("g circle")
+   		.transition()
+  	     .style("opacity", 1);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 d3.select("#chart") 
+   	 .selectAll("g circle")  //select the circles
+            .filter(function(d) {
+            	            	 
+		return d.subgraph_id != data_obj[i].n_subgraph_id;
+            })
+	    .transition()
+            .style("opacity", 0);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 
+   	  d3.select("#chart") 	
+		.selectAll(".link")	
+   		.transition()
+  	     .style("opacity", 0.3);
+
+	  d3.select("#chart") 	
+		.selectAll(".link")
+		//.data(links) //select the association regarding to the circle selected
+   		.filter(function(d) { return d.subgraph_id != data_obj[i].n_subgraph_id;      })
+   		//.remove();
+		//	document.write(data_obj[i].n_subgraph_id); 	
+         .transition()
+  	     .style("opacity", 0);		
+		
+		
+		
+		
+   d3.select("#snps").selectAll("p").remove(); //remove old text
+   d3.select("#pairs").selectAll("p").remove(); //remove old text
+  
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
+	.data(allNodes)
+	.enter().append("p")
+	.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})
+	.attr("target","_blank")	
+	.style("text-decoration",'none')	
+    .style("color", "black")      
+	.text(function(d) { return showSnp(d); });
+   
+  
+  
+  
+  
+
+ d3.select("#pairs").selectAll("p")
+	.data(links)
+	.enter().append("p")
+	.filter(function(d) {
+		return d.subgraph_id === data_obj[i].n_subgraph_id;
+            })
+	.text(function(d) { 
+		
+	
+		return showInteract(d); });
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			 			
+		});     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 });

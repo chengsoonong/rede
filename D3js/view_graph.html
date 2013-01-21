@@ -18,6 +18,7 @@ $(document).ready(function(){
 
 </head>
 
+
 <body>
 <button type="button" name="butzoom" id="butz" >Zoom</button>
 <button type="button" name="butreset" id="butr" >Reset</button>
@@ -43,10 +44,12 @@ $(document).ready(function(){
 
   
   <h5>Dataset 
+  	<input type="file" id="files" name="files[]" multiple >
+  <!--
   	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
 	<input type="button" onclick="filUpload.click();"  value="load">
-	
-	<input type="button" value="Show .json" onclick="selected_json()" />
+	-->
+	<input type="button" value="Show .json" onclick="selected_json()" >
  
   
   </h5>
@@ -93,3 +96,5 @@ $(document).ready(function(){
   </div> 
 </body>
 </html>
+
+
