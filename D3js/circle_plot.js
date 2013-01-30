@@ -1115,21 +1115,26 @@ var svg = d3.select("#hc").append("svg")
 
 
 var data = new Array();
-var allNodes= new Array();
-var data_weight_pvalue= new Array();  //remover, não preciso
-		
+var allNodes_hes = new Array();
+
+var links_hes = new Array();
 	
 d3.json(file_name, function(json) {
    
-
- json.nodes.forEach( 	function(d) { 
+ allNodes_hes = json.nodes;// var links = json.links;
+     
+ json.links.forEach(	
+	function(d) { 
+		if(d.subgraph_id===subgraph_id){
+ 				links_hes.push(d)  
+ 	}});
  	
  	
+ json.nodes.forEach( 
+ function(d) { 
  	if(d.subgraph_id===subgraph_id){
  	data.push(d); 
- 	}
- 	
- 	}    );		
+ 	}});		
  
 
 //d.label
@@ -1173,14 +1178,75 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
       .style("text-anchor", "end")
       .text("Degree");
 
-  svg.selectAll(".bar")
+  var bar_hDS=svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "ds bar")
       .attr("x", function(d) { return x("chr"+d.chrom+':'+d.bp_position); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.degree); })
-      .attr("height", function(d) { return height - y(d.degree); });
+      .attr("height", function(d) { return height - y(d.degree); })
+      //.on("mouseover", function(g,i) {
+      .on("mouseover", function(g,i){
+      	
+      	//d3.select(this).style("fill", "red");
+      
+        l=[]
+        //document.write(links_hes[4]); 
+         
+		for ( var e in links_hes){			
+		//document.write("chr"+allNodes_hes[links_hes[i].source].chrom+':'+allNodes_hes[links_hes[i].source].bp_position);
+		
+	
+		
+		if("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position==="chr"+data[i].chrom+':'+data[i].bp_position 
+ 		|| "chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position==="chr"+data[i].chrom+':'+data[i].bp_position){
+		
+				l.push("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position);
+		      	l.push("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position);
+		      			 }
+		    			 
+		      			 
+		      			 
+		      		}    
+      
+      
+      bar_hDS
+      .filter(function(d) {
+      	
+      	
+      			if(include_in_arr(l,"chr"+d.chrom+':'+d.bp_position)){
+      				
+      				
+      							
+			//("chr"+d.chrom+':'+d.bp_position) !=("chr"+data[i].chrom+':'+data[i].bp_position);
+			return d;
+			
+		} } )
+	    .transition()
+            .style("fill", "red");
+      
+       l=[]
+      
+/*      	 d3.select("#chart") 
+   	 .selectAll("g circle")  //select the circles
+            .filter(function(d) {
+            	            	 
+		return d.subgraph_id != data[i].n_subgraph_id;
+            })
+	    .transition()
+            .style("opacity", 0);
+*/      
+      
+      
+      })
+      .on("mouseout", function(){bar_hDS.style("fill", "steelblue")}) 	 
+      ;
+      
+      
+      
+      
+      
       
    svg.selectAll(".bar")  //show degree as tooltip - title
        .data(data)
