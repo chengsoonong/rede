@@ -1,27 +1,29 @@
 TO DO
 
-- zoom with minimap
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
-- genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
-- idea ->  http://www.jasondavies.com/coffee-wheel/
-- idea ->  http://indiemaps.com/blog/2011/10/hexbins/
-- show SNPs association in histogram degree x SNPs replecing the color bar  
-- make brush show the association
+- show SNPs association in histogram degree x SNPs replecing the color bar when a snps is selected 
 - show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
 - put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
-- Use HTML5 for file upload http://www.html5rocks.com/en/tutorials/file/dndfiles/
-- Select subgraph from histogram of subgraph sizes
+- put the matrix SNPs X comunities in circle plot
+- put zoom in big matrix SNPs associations (matrix plot)
 
 LATER
 - select subset for exporting to UCSC BED file
 - http://jbrowse.org/ on separate <div>
+- genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
+- idea ->  http://www.jasondavies.com/coffee-wheel/
+- idea ->  http://indiemaps.com/blog/2011/10/hexbins/
+- idea -> http://bl.ocks.org/4063582
 
 
+DONE
 
-DONE 
-
-- (17/1/2013) fix the load with html5
+- (29/1/2013) make the statistical test drop box work with brush in cicle plot and manhattan plot   
+- (27/1/2013) created one drop box to statistical tests
+- (23/1/2013) make brush show the association in the circle and text 
+- (20/1/2013) created the code in python to read the  'snp_sig_sel2w.txt' and create a .json with diferent Stat. tests
+- (17/1/2013) Use HTML5 for file upload http://www.html5rocks.com/en/tutorials/file/dndfiles/
 - (16/1/2013) make the histogram edges x subgraph_id circle plot show the a subgraph selected
 - (12/1/2013) create json file using link communities methodology
 - (9/1/2013) refactoring all code to improve the organization

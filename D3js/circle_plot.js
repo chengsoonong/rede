@@ -106,7 +106,9 @@ function Create_SNP_association(file_name){
 // Plot nodes and links for the default dataset
 d3.json(file_name, function(json) {
     links = json.links;// var links = json.links;
-	   
+	var subgraphs = json.subgraphs;	   
+    communities = json.communities;
+
 
     json.nodes.forEach(
 	function(d) { allNodes.push(d) }   //allNodes[]
@@ -169,16 +171,16 @@ var w_scale_bar = 500;
 			var h_scale_bar = 30;
 			var barPadding = 0;
 
-var dataset = d3.range(d3.min(links,function(d) {return d.edgs_in_comm; }), 
+var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities); }), 
                       //(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2); 
                         //d3.max(links,function(d) {return d.edgs_in_comm; })
                         100
                         );
 //var dataset = d3.range(1,10)
 
-var colorScaleedges = d3.scale.log()
+ colorScaleedges = d3.scale.log()
     			.domain([
-    				d3.min(links,function(d) {return d.edgs_in_comm; }),
+    				d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
     				 
     				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
     				//d3.max(links,function(d) {return d.edgs_in_comm; })
@@ -191,9 +193,9 @@ var colorScaleedges = d3.scale.log()
     			
 
 
-var colorScaleedges2 = d3.scale.linear()
+ colorScaleedges2 = d3.scale.linear()
     			.domain([
-    				d3.min(links,function(d) {return d.edgs_in_comm; }),
+    				d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
     				 
     				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
     				//d3.max(links,function(d) {return d.edgs_in_comm; })    				
@@ -241,7 +243,7 @@ var colorScaleedges2 = d3.scale.linear()
   				d3.select("#min_num_scale_bar_c").selectAll("h1")        //create the new numbers of color scale
 				.data([1])
 				.enter().append("h1")
-				.text(d3.min(links,function(d) {return d.edgs_in_comm; }));
+				.text(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities); }));
 			
 			d3.select("#max_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
   				d3.select("#max_num_scale_bar_c").selectAll("h1")           //create the new numbers of color scale
@@ -270,14 +272,16 @@ var colorScaleedges2 = d3.scale.linear()
 	.attr("class", "link")
     //.style("stroke", function(d) { return graphColor(d.subgraph_id ); })
 	//.style("stroke", function(d) { return graphColor(d.edgs_in_comm); })
-	.style("stroke", function(d) { 		
-		
-		if(d.edgs_in_comm >=100){
+	.style("stroke", function(d) {		
+		//if(d.edgs_in_comm >=100){
+		if(n_edgs_in_comm(d.comm_id,communities) >=100){	
 		
 			return colorScaleedges(100); 
 		
 		}else 
-			return colorScaleedges(d.edgs_in_comm); 
+			//return colorScaleedges(d.edgs_in_comm); 
+			
+			return colorScaleedges(n_edgs_in_comm(d.comm_id,communities));
 		})
 	.style("stroke-width", 1)
 	.style("opacity", 0.3)
@@ -285,11 +289,23 @@ var colorScaleedges2 = d3.scale.linear()
 	.attr("d", link());
 
     
+  
+
+    
+    
+
+    
+    
+    
+    
+    
     
     // Write out the data in text
  d3.select("#snps").selectAll("p")
 	.data(allNodes)
 	.enter().append("p")
+
+		
 	.append("link").attr("href",function(d){
 				
 	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
@@ -332,8 +348,12 @@ function showSnp(d)
 
 function showInteract(d)
 {
-    return "Source: " + d.source + " Target: " + d.target
-	+ " Weight: " + d.weight + " Subgraph: " + d.subgraph_id;
+//"fltGSS_prtv": 0.65, "fltGSS": 17.62, "fltGSS_cntr": 17.62, "fltSS": 23.99, "fltDSS": 19.02, "fltChi2": 18.35}
+    //return "Source: " + d.source + " Target: " + d.target+ " Weight: " + d.weight + " Subgraph: " + d.subgraph_id;
+    return "Source: " + d.source + "  Target: " + d.target+ 
+    "  fltGSS_prtv: " + d.fltGSS_prtv + "  fltGSS: " + d.fltGSS+
+    "  fltGSS_cntr: " + d.fltGSS_cntr + "  fltSS: " + d.fltSS+
+    "  fltDSS: " + d.fltDSS + "  fltChi2: " + d.fltChi2+ "  Subgraph: " + d.subgraph_id;
 };
 
 //Transform radians to degrees
@@ -480,7 +500,8 @@ d3.json(file_name, function(json) {
     links = json.links;// var links = json.links;
 
 	json.links.forEach(
-	function(d) { data_weight_pvalue.push(d.weight) }   //data_weight_pvalue[]
+		
+	function(d) { data_weight_pvalue.push(d[st_chosen]) }   //data_weight_pvalue[]
     );
       	
 	//Width and height
@@ -564,15 +585,81 @@ function brushmove() {
 	reset_association();			 //create the new association
 	   
 	svg.selectAll(".link") // this declaretion selected the association between specifics  weight values 
-   			.filter(function(d) { return   d.weight  <=  s[0]	||  d.weight >=s[1];  }).remove();	
+   			.filter(function(d) { return  d[st_chosen]  <=  s[0]	|| d[st_chosen] >=s[1];  }).remove();	
+   			
+   			
+
+   	 d3.select("#chart") 	
+		.selectAll("g circle")
+   		.transition()
+  	     .style("opacity", 0);
+   	 
+   	 
+   	 
+   	 
+   	 
+   	 d3.select("#chart") 
+   	 .selectAll("g circle")
+	.filter(function(d,i) {		
+    	if (include_in_arr(nodes_selected(s[0],s[1]),i)){  // nodes_selected (s[0],s[1]) )
+    			return d;
+    			}})
+	    .transition()
+            .style("opacity", 1);
+
+
+
+
+
+
+
+
+	
+		
+ d3.select("#snps").selectAll("p").remove(); //remove old text
+ 
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
+	.data(allNodes)
+	.enter().append("p")
+	.filter(function(d,i) {		
+    	if (include_in_arr(nodes_selected(s[0],s[1]),i)){  // nodes_selected (s[0],s[1]) )
+    			return d;
+    			}})
+	//.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})
+	.attr("target","_blank")	
+	.style("text-decoration",'none')	
+    .style("color", "black")      
+	.text(function(d) { return showSnp(d); });
+
+
+	
+//brush selecte the pairs 	
+d3.select("#pairs").selectAll("p").remove(); 
+
+d3.select("#pairs").selectAll("p")
+	.data(links)
+	.enter().append("p")	
+	.text(function(d) { 	
+		return showInteract(d); });   			
+   			
+d3.select("#pairs").selectAll("p")
+   			.filter(function(d) { return   d[st_chosen]  <=  s[0]	|| d[st_chosen] >=s[1];  }).remove();	 			
+   			
+   			
+   			
+   			
 }
 
 function brushend() { //selected de circles in x cordenate for diferent vizualization
   svg2.classed("selecting", !d3.event.target.empty());
 }
 	
-	
-	
+
 function reset_association(){
 	 //create the new association		
     // Draw the edges
@@ -580,7 +667,12 @@ function reset_association(){
 	.data(links)
 	.enter().append("path")
 	.attr("class", "link")
-	.style("stroke", function(d) { return graphColor(d.subgraph_id); })
+	.style("stroke", function(d) {		
+		if(n_edgs_in_comm(d.comm_id,communities) >=100){
+			return colorScaleedges(100);
+		}else
+			return colorScaleedges(n_edgs_in_comm(d.comm_id,communities));
+		})	
 	.style("stroke-width", 1)
 	.style("opacity", 0.3)
 	.style("fill", "none")
@@ -606,7 +698,7 @@ function histogram_edges_subgraphId(file_name){
 	//it will create the histogram edges X subgraphId in circle_plot
 	
 	
-var margin = {top: 20, right: 20, bottom: 90, left: 40},
+var margin = {top: 30, right: 20, bottom: 90, left: 40},
     width = 850 - margin.left - margin.right, //500
     height = 400 - margin.top - margin.bottom;//200
 
@@ -852,45 +944,8 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 		return showInteract(d); });
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 			 			
 		});
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-
-
-
-
-
-
-
       
 
  svg.selectAll(".bar")  //show degree as tooltip - title
@@ -1012,43 +1067,8 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	
 		return showInteract(d); });
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-			 			
+					
 		});     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1096,7 +1116,7 @@ var svg = d3.select("#hc").append("svg")
 
 var data = new Array();
 var allNodes= new Array();
-var data_weight_pvalue= new Array();
+var data_weight_pvalue= new Array();  //remover, não preciso
 		
 	
 d3.json(file_name, function(json) {

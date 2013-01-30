@@ -188,6 +188,14 @@ font-size: 10 px;
 	left:350px;		
     font-size: 1.1em;
 }
+#load_data{
+	
+	position:fixed;
+	
+	top:400px;
+	left:350px;		
+    font-size: 5.1em;
+}
 
 
 /*

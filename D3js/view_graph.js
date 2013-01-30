@@ -97,6 +97,8 @@ for (var i=0; i<chromLength.length;i++){	//this initializes chrom_lenght and chr
 
 var plot_chosen;  						//only here
 
+var st_chosen;  						//only here
+
 
 var graphColor = d3.scale.category20(); //circle_plot and here
 
@@ -108,6 +110,19 @@ var data_weight_pvalue; 				//circle_plot and manhattan_plot
 var links;    							//all plots
 var file_json;  						//circle_plot and here
 
+
+
+
+var colorScaleedges ;
+var colorScaleedges2 ;
+
+var communities;
+
+
+
+
+
+
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
@@ -117,7 +132,10 @@ var file_json;  						//circle_plot and here
 
 //------------------------------------------ load -  first vizualization   ---------------------------------------------- 
 
+plot_chosen="load";   						  //chosen the circle plot like default
+st_chosen="fltGSS";
 hide_selection();  //hide the manhattan's buttons in the first vizualization
+
 
 function upload_json ( file_name ){
 	//this function make the upload of a json file and create the first vizualization with this selected file	
@@ -125,6 +143,10 @@ function upload_json ( file_name ){
 	graphColor = d3.scale.category10(); 		//reset this varieble
     file_json=file_name;     						 //initializes this goblal variable
 	plot_chosen="p_cir";   						  //chosen the circle plot like default
+	
+	
+	st_chosen="fltGSS";
+	
 	
     d3.select("#hesid").selectAll('svg').remove();					//remove old selection
     d3.select("#scale_bar").selectAll('svg').remove();				//remove old selection
@@ -135,6 +157,7 @@ function upload_json ( file_name ){
     d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
 	
 	hide_selection();    					 	//hide the buttons for zoom manhattan plot
+	show_selection();
 	Create_chr_circle();
 	Create_SNP_association(file_json);		//Create_SNP_association("bdWTC_GSS.json");
 	
@@ -150,7 +173,7 @@ function upload_json ( file_name ){
 
 
 
-//------------------------------------------  chose the plot   ---------------------------------------------- 
+//------------------------------------------  chose the plot  - drop box ---------------------------------------------- 
  //allows us chose the plot to vizualization	
 
  d3.select("#Plot_select").on("change", function change() {
@@ -165,7 +188,8 @@ function upload_json ( file_name ){
    d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
    d3.select("#hesid").selectAll('svg').remove();				//remove old selection
    
-   hide_selection();		
+   hide_selection();
+   show_selection();		
 
 			if(this.value==="p_cir"){
 				
@@ -181,7 +205,7 @@ function upload_json ( file_name ){
   				histogram_edges_subgraphId(file_json);
   				
 			}else if( this.value==="p_man"){
-				show_selection();
+				//show_selection();
 								
 				d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
   				d3.select("body").select("#cb").transition().style("opacity", 0);
@@ -202,12 +226,87 @@ function upload_json ( file_name ){
 				matrix_plot( file_json);  // plot matrix of the snps association 
 
 			}
+			
+			
+			
+			
+			
 	
 	});
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chose the plot ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chose the plot - drop box ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+  
+
+
+
+
+
+
+
+
+
+
+//------------------------------------------  Statistical Test - drop box----------------------------------------------
+ 
+ 
+ 
+ 
+ 
+ d3.select("#st_select").on("change", function change() {
+ 	
+   st_chosen=this.value; 
+   
+   
+   	if(plot_chosen==="p_cir"){
+   		   reset();
+    
+  			d3.select("#st_name").selectAll("h").remove(); //remove the old text
+  			d3.select("#st_name").selectAll("h")           //create the new text
+				.data([1])
+				.enter().append("h")
+				.text(st_chosen);
+  				
+			}else if( plot_chosen==="p_man"){
+			
+								
+    	d3.select("#chart").selectAll('svg').remove();
+    	d3.select("#scale_bar").selectAll('svg').remove();
+    /*	x_1=ix_1;
+    	x_2=ix_2;
+    	y_1=iy_1;
+    	y_2=iy_2;
+   		manhattan_plot(ix_1,ix_2,iy_1,iy_2);
+   		*/
+   		read_file_to_manhattan_plot(file_json);
+				
+			}else{
+				
+				d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
+  				d3.select("body").select("#cb").transition().style("opacity", 0);
+              	d3.select("body").select("#hc").transition().style("opacity", 0);
+  				d3.select("body").select("#snps_text").transition().style("opacity", 0);
+  				d3.select("body").select("#footer").transition().style("opacity", 0);
+            
+				matrix_plot( file_json);  // plot matrix of the snps association 
+
+			}
+		
+
+  
+ });
+ 
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Statistical Test - drop box^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+    
   
 //------------------------------------------load and save -  show the data selected in json file    ----------------------------------------------      
 function selected_json(){
@@ -299,8 +398,42 @@ function two_dec( value){
 	var index_point=v.indexOf(point);
 	var index_twodec=index_point+3;
 	
-	return v.substring(0,index_twodec);;
+	return v.substring(0,index_twodec);
 }
+
+
+function n_edgs_in_comm (comm_id,d){
+	ret=0
+	for( var i in d){
+		if (d[i]["comm_id"] === comm_id) {
+			ret=d[i]["edge_count"];
+			
+			break
+			};
+	}
+	return ret;
+}    
+
+
+function nodes_selected (s1,s2) {
+		l=[]		
+		
+		for (var i in links){			
+			if(links[i][st_chosen]  >=  s1 &&  links[i][st_chosen] <= s2 ){	
+					l.push(links[i]["target"]);
+					l.push(links[i]["source"]);						 
+				};
+			}
+		
+		return l; 
+		}		
+   			
+
+
+function include_in_arr(arr,obj) {
+    return (arr.indexOf(obj) != -1);
+}
+    
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ operational functions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -316,7 +449,28 @@ function two_dec( value){
 
 function hide_selection(){  
 	// function hide in buttons and scale
-		
+
+   if (plot_chosen==="load"){
+   	
+   	d3.select("body").select("#butz").transition().style("opacity", 0);
+	d3.select("body").select("#butpl").transition().style("opacity", 0);
+	d3.select("body").select("#butrl").transition().style("opacity", 0);
+            
+ 	d3.select("#min_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar 
+  	d3.select("#max_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar
+  	d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar  
+  	
+  	
+  	d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
+  	d3.select("#max_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar
+  	d3.select("#ec_scale_bar_c").transition().style("opacity", 0);  // title of  color scale bar
+  	d3.select("#scale_bar_c").transition().style("opacity", 0);
+ 	
+
+  	
+  	}else if(plot_chosen==="p_cir"){
+
+	
 	d3.select("body").select("#butz").transition().style("opacity", 0);
 	d3.select("body").select("#butpl").transition().style("opacity", 0);
 	d3.select("body").select("#butrl").transition().style("opacity", 0);
@@ -324,18 +478,57 @@ function hide_selection(){
  	d3.select("#min_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar 
   	d3.select("#max_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar
   	d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar  
+  	
+  	d3.select("#load_data").remove();	
+  	
+  	
+			}else if( plot_chosen==="p_man"){
+			
+
+  	d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
+  	d3.select("#max_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar
+  	d3.select("#ec_scale_bar_c").transition().style("opacity", 0);  // title of  color scale bar
+  	d3.select("#scale_bar_c").transition().style("opacity", 0);
+ 	
+	d3.select("#load_data").remove();
+				
+			}
+			//else{}  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
 }
 
 
 function show_selection(){ 
 	//function show in buttons and scale
+
+	
+  	  	if(plot_chosen==="p_cir"){
+
+  	d3.select("#ec_scale_bar_c").transition().style("opacity", 1);  // title of  color scale bar
+  	d3.select("#scale_bar_c").transition().style("opacity", 1);
+
+  	  		
+			}else if( plot_chosen==="p_man"){
+			
 	
 	d3.select("body").select("#butz").transition().style("opacity", 1);
 	d3.select("body").select("#butr").transition().style("opacity", 1);
 	d3.select("body").select("#butpl").transition().style("opacity", 1);
-	d3.select("body").select("#butrl").transition().style("opacity", 1); 
-	          
-	d3.select("#degree_scale_bar").transition().style("opacity", 1);    // title of  color scale bar                        
+	d3.select("body").select("#butrl").transition().style("opacity", 1);
+	d3.select("#degree_scale_bar").transition().style("opacity", 1);    // title of  color scale bar  
+	
+
+				
+			}
+			//else{}  	
+	           
 }
 
 

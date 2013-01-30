@@ -9,7 +9,7 @@ function  read_file_to_manhattan_plot(file_name) {
 	
 data = new Array();
 allNodes= new Array();
-data_weight_pvalue= new Array();
+var data_weight_pvalue= new Array();
 		
 	
 d3.json(file_name, function(json) {
@@ -22,24 +22,24 @@ d3.json(file_name, function(json) {
 		
 	function(d) { //this will fill with data the array
 		
-		data_weight_pvalue.push(d.weight); 
+		data_weight_pvalue.push(d[st_chosen]); 
 		
 	
 		if (allNodes[d.source].chrom===1){         //"chr"+d.chrom+':'+d.bp_position
 
-			data.push([allNodes[d.source].bp_position,d.weight,allNodes[d.source].degree ,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);	
+			data.push([allNodes[d.source].bp_position,d[st_chosen],allNodes[d.source].degree ,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);	
 		
 		}else{
 			
-			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d.weight,allNodes[d.source].degree,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);
+			data.push([allNodes[d.source].bp_position +chrom_acum_length[allNodes[d.source].chrom-2] ,d[st_chosen],allNodes[d.source].degree,"chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position ]);
 		}
 		
 		if (allNodes[d.target].chrom===1){
 			
-			data.push([allNodes[d.target].bp_position,d.weight,allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position ]);	
+			data.push([allNodes[d.target].bp_position,d[st_chosen],allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position ]);	
 		
 		}else{
-			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d.weight,allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position]);
+			data.push([allNodes[d.target].bp_position +chrom_acum_length[allNodes[d.target].chrom-2] ,d[st_chosen],allNodes[d.target].degree,"chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position]);
 		}
 		
 		});

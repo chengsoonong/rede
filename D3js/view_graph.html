@@ -29,6 +29,9 @@ $(document).ready(function(){
 	
 <div id="chart"></div>
 
+
+<div id="load_data"><h5>Load your data</h5></div>
+
 <div id="scale_bar"></div>
 <div id="min_num_scale_bar"></div>
 <div id="max_num_scale_bar"></div>
@@ -53,16 +56,29 @@ $(document).ready(function(){
  
   
   </h5>
-  
+ <br>
   <h5>Plot <select id="Plot_select">
  <option value="p_cir">Circular</option>
  <option value="p_man">Manhattan</option>
  <option value="p_mat">Matrix</option>
   </select>
   </h5>
+  
+<br>
+  <h5>Statistical Test <select id="st_select">
+ <option value="fltGSS">fltGSS</option> 	
+ <option value="fltGSS_prtv">fltGSS_prtv</option> 
+ <option value="fltGSS_cntr">fltGSS_cntr</option>
+ <option value="fltSS">fltSS</option>
+ <option value="fltDSS">fltDSS</option>
+ <option value="fltChi2">fltChi2</option>
+  </select>
+  </h5>
+
  
- <br><br>
- <div id="two_weight_value">Weight: <span></span></div>	 
+ <div id="two_weight_value">
+ 	Values: <span></span></div>	
+  
  <div id="brush_weight"></div>  
   <br><br>
    <div id="hesid"></div> 
