@@ -65,20 +65,30 @@ function manhattan_plot(x1,x2,y1,y2){
 //creat the manhataan plot
 
 var margin = {top: 20, right: 10, bottom: 20, left: 10};
+
+var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 //Then define width and height as the inner dimensions of the chart area.
 
 
-			var w = 900 ;//- margin.left - margin.right;//900;
+			var w = 800 ;//- margin.left - margin.right;//900;
 			var h = 600 ;//- margin.top - margin.bottom;//600;
 			var padding = 30;
 			
+			var w_scale_bar = 500- margin_s.left - margin_s.right;
+			var h_scale_bar = 65- margin_s.top - margin_s.bottom;
+			var barPadding = 0;
+			
+			/*
 			var w_scale_bar = 500;
 			var h_scale_bar = 30;
 			var barPadding = 0;
-		
+		*/
 //--------------------------- create color scale  --------------------------------------------------
 
-			var dataset = d3.range(d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; }));
+			var dataset = d3.range(d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; })+1);
+			
+			//alert(dataset)
+			
 			
 			var colorScale = d3.scale.log()
     			.domain([d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; })])
@@ -89,8 +99,16 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 			//Create SVG element to receive the scale color bar
 			var svg3 = d3.select("#scale_bar")
 						.append("svg")
-						.attr("width", w_scale_bar)
-						.attr("height", h_scale_bar);
+						//.attr("width", w_scale_bar)
+						//.attr("height", h_scale_bar);
+						
+						 .attr("width", w_scale_bar + margin_s.left + margin_s.right)
+  						   .attr("height", h_scale_bar + margin_s.top + margin_s.bottom)
+				    	   .append("g")
+ 					       .attr("transform", "translate(" + margin_s.left + "," + margin_s.top + ")");
+
+						
+						
 
 			svg3.selectAll("rect")  //create color scale bar
 			   .data(dataset)
@@ -101,10 +119,35 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 			   })
 			   .attr("y", 0)
 			   .attr("width", w_scale_bar / dataset.length - barPadding)
-			   .attr("height", 100)
+			   .attr("height", h_scale_bar)
 			   .attr("fill", function(d,i) {
-     				 return colorScale(d);
-    });
+     				 return colorScale(d);    });
+     				 
+     		 svg3.selectAll(".text_smp")
+			   .data(dataset)
+			   .enter()
+			   .append("text") 
+			   .attr("class", "text_smp")
+			   .text(function(d) { 
+			   	return d; 
+			   	
+			   	})
+			   .attr("x", function(d, i) {
+			   		return (i+0.5) * (w_scale_bar / dataset.length);
+			   })
+			   .attr("y", 40)
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", 
+			   
+			   function(d) {
+			   	
+  							return colorScale(d);
+  						
+    						});
+			
+							 
+     		/*		 
 			
 			 d3.select("#min_num_scale_bar").selectAll("h1").remove(); //remove the old numbers of color scale
   				d3.select("#min_num_scale_bar").selectAll("h1")        //create the new numbers of color scale
@@ -117,6 +160,8 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 				.data([1])
 				.enter().append("h1")
 				.text(two_dec( d3.max(data,function(d) {return d[2]; })));
+				
+			*/	
 				
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
 

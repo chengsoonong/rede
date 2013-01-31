@@ -164,17 +164,23 @@ d3.json(file_name, function(json) {
 
 
 
+//---------------------------------scale bar -----------------------------------------------
+var margin = {top: 5, right: 30, bottom: 35, left: 10};
+
+var w_scale_bar = 500- margin.left - margin.right;
+var h_scale_bar = 65- margin.top - margin.bottom;
+var barPadding = 0;
 
 
-
+/*
 var w_scale_bar = 500;
-			var h_scale_bar = 30;
-			var barPadding = 0;
-
+var h_scale_bar = 30;
+var barPadding = 0;
+*/
 var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities); }), 
                       //(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2); 
                         //d3.max(links,function(d) {return d.edgs_in_comm; })
-                        100
+                        100+1
                         );
 //var dataset = d3.range(1,10)
 
@@ -207,22 +213,17 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
     			//.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
     			.range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
 
-
-
-
-
-
-
-
-
-
-
     			
  			//Create SVG element to receive the scale color bar
 			var svg3 = d3.select("#scale_bar_c")
 						.append("svg")
-						.attr("width", w_scale_bar)
-						.attr("height", h_scale_bar);
+						//.attr("width", w_scale_bar)
+						//.attr("height", h_scale_bar);
+						
+						   .attr("width", w_scale_bar + margin.left + margin.right)
+  						   .attr("height", h_scale_bar + margin.top + margin.bottom)
+				    	   .append("g")
+ 					       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 			svg3.selectAll("rect")  //create color scale bar
 			   .data(dataset)
@@ -233,11 +234,83 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 			   })
 			   .attr("y", 0)
 			   .attr("width", w_scale_bar / dataset.length - barPadding)
-			   .attr("height", 100)
+			   .attr("height", h_scale_bar)
 			   .style("opacity", 0.8)
 			   .attr("fill", function(d,i) {
      				 			return colorScaleedges2(d);
     						});
+			
+			
+			
+			
+			 svg3.selectAll(".text_scb")
+			   .data(dataset)
+			   .enter()
+			   .append("text") 
+			   .attr("class", "text_scb")
+			   .text(function(d) { 
+			   	
+			   	switch (d)
+					{
+						case 1:
+  							return 1;
+  							break;
+						case 25:
+  							return 5;
+  							break;
+						case 50:
+  							return 10;
+  							break;
+						case 75:
+  							return 50;
+  							break;
+  						case 100:
+  							return ">100";
+  							break;	
+						}
+			   	
+			   	//if (1===d ||5===d || 10===d  || 50===d ||99===d)
+			   	//return 50; 
+			   	
+			   	})
+			   .attr("x", function(d, i) {
+			   		return i * (w_scale_bar / dataset.length);
+			   })
+			   .attr("y", 40)
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .style("opacity", 0.8)
+			   .attr("fill", function(d) {
+			   	switch (d)
+					{
+						case 1:
+  							return colorScaleedges(1);
+  							break;
+						case 25:
+  							return colorScaleedges(5);
+  							break;
+						case 50:
+  							return colorScaleedges(10);
+  							break;
+						case 75:
+  							return colorScaleedges(50);
+  							break;
+  						case 100:
+  							return colorScaleedges(101);
+  							break;		
+						}
+     				 			
+     				 			//return colorScaleedges(d);
+    						});
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			 d3.select("#min_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
   				d3.select("#min_num_scale_bar_c").selectAll("h1")        //create the new numbers of color scale
@@ -261,7 +334,7 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 
 
 
-
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ scale bar ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     
@@ -1196,7 +1269,13 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.degree); })
       .attr("height", function(d) { return height - y(d.degree); })      
-      .on("mouseover", function(g,i){
+      //.on("mouseover", function(g,i){  //mousedown
+      	.on("mousedown", function(g,i){ 
+      	
+      	
+      	bar_hDS.style("fill", "steelblue")
+      	
+      	
         l=[]
         
 		for ( var e in links_hes){			
@@ -1215,20 +1294,81 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	    .transition()
         .style("fill", "red");
       
-       l=[]
+
        
        
        
        
        
+     /*  
+       
+        d3.select("#snps").selectAll("p")  .transition()
+	//.data(allNodes)
+	.filter(function(d) { 	//return d.subgraph_id === data_obj[i].n_subgraph_id;   })
+	if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return d;} 
+      			} )
+	
+     .style("color", "red");
+      */ 
+       
+      /* 
+     d3.select("#snps").selectAll("p").remove(); //remove old text
+   d3.select("#pairs").selectAll("p").remove(); //remove old text
+  
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
+	.data(allNodes)
+	.enter().append("p")
+	.filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})
+	.attr("target","_blank")	
+	.style("text-decoration",'none')	
+    .style("color", function(d) {  //highlights the SNP selected
+					if (d.id != allNodes[i].id) {	
+						return "black";
+					} else {
+						return graphColor(d.subgraph_id);
+					}
+				})      
+	.text(function(d) { return showSnp(d); });     
+       */
        
        
-       
-       
-       
-       
-       
-       
+       	
+		
+		
+   d3.select("#snps").selectAll("p").remove(); //remove old text
+ 
+  
+    // Write out the data selected in text 
+ d3.select("#snps").selectAll("p")  
+	.data(allNodes_hes)
+	.enter().append("p")
+	.filter(function(d) { 	return d.subgraph_id === data[i].subgraph_id;   })
+	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+			})
+	.attr("target","_blank")	
+	.style("text-decoration",'none')	
+        .style("color", function(d) {  //highlights the SNP selected
+					if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return "red";} 
+					else{
+      				return "black";			
+      				
+      			}
+					
+				})          
+	.text(function(d) { return showSnp(d); });
+   
+  
+  
+  
+  
+
        
        
        
@@ -1237,7 +1377,9 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
        
       
       })
-      .on("mouseout", function(){bar_hDS.style("fill", "steelblue")});
+     // .on("mouseout", function(){bar_hDS.style("fill", "steelblue")})
+      
+      ;
       
       
       

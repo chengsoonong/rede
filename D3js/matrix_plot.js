@@ -4,8 +4,8 @@ function matrix_plot( file_name){
 // this function create the matrix show each SNPs association
 
 var margin = {top: 90, right: 150, bottom: 90, left: 100},
-    width = 1000 - margin.left - margin.right, //500
-    height = 1000 - margin.top - margin.bottom;//200
+    width = 800 - margin.left - margin.right, //500
+    height = 800 - margin.top - margin.bottom;//200
 
 var allNodes= new Array();
 

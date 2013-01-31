@@ -176,7 +176,7 @@ font-size: 10 px;
 	
 	position:fixed;
 	
-	top:700px;
+	top:720px;
 	left:430px;		
     font-size: 1.1em;
 }
@@ -193,8 +193,8 @@ font-size: 10 px;
 	position:fixed;
 	
 	top:400px;
-	left:350px;		
-    font-size: 5.1em;
+	left:200px;		
+    font-size: 4.1em;
 }
 
 
@@ -216,9 +216,17 @@ font-size: 10 px;
 
 #controls {
 	top:70px;
-    float:right;
+   /* float:right;
     width:360px;
-    font-size:small;
+    
+    */
+    font-size:small;	
+	
+	padding-left:500px;
+	
+		
+    
+    
 }
 
 #snps {

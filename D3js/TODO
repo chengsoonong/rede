@@ -7,6 +7,7 @@ TO DO
 - put the matrix SNPs X comunities in circle plot
 - put zoom in big matrix SNPs associations (matrix plot)
 
+
 LATER
 - select subset for exporting to UCSC BED file
 - http://jbrowse.org/ on separate <div>
@@ -17,6 +18,10 @@ LATER
 
 
 DONE
+
+- (31/1/2013) put numbers in scale color bar in circle plot
+- (31/1/2013) clear the matrix , removing numbers of the other plot
+- (31/1/2013) hide the buttons in matrix view
 - (30/1/2013) show SNPs association in histogram degree x SNPs replecing the color bar when a snps is selected 
 - (29/1/2013) make the statistical test drop box work with brush in cicle plot and manhattan plot   
 - (27/1/2013) created one drop box to statistical tests

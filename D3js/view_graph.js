@@ -493,14 +493,26 @@ function hide_selection(){
 	d3.select("#load_data").remove();
 				
 			}
-			//else{}  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
+			else{
+				d3.select("body").select("#butz").transition().style("opacity", 0);
+				d3.select("body").select("#butpl").transition().style("opacity", 0);
+				d3.select("body").select("#butrl").transition().style("opacity", 0);
+    			d3.select("body").select("#butr").transition().style("opacity", 0);
+  
+ 				d3.select("#min_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar 
+  				d3.select("#max_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar
+  				d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar  
+		  	
+  				d3.select("#load_data").remove();	
+	  	
+  			  	d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
+  				d3.select("#max_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar
+	  			d3.select("#ec_scale_bar_c").transition().style("opacity", 0);  // title of  color scale bar
+  				d3.select("#scale_bar_c").transition().style("opacity", 0);
+ 	
+				d3.select("#load_data").remove();				
+				
+			}  	
   	
 }
 
@@ -513,7 +525,7 @@ function show_selection(){
 
   	d3.select("#ec_scale_bar_c").transition().style("opacity", 1);  // title of  color scale bar
   	d3.select("#scale_bar_c").transition().style("opacity", 1);
-
+    d3.select("body").select("#butr").transition().style("opacity", 1);
   	  		
 			}else if( plot_chosen==="p_man"){
 			
