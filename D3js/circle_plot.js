@@ -1139,7 +1139,17 @@ d3.json(file_name, function(json) {
 
 //d.label
 
-  x.domain(data.map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }));
+  //x.domain(data.map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }));
+  
+  x.domain(
+  
+  data.sort("true"==="true"
+        ? function(a, b) { return b.degree - a.degree; }
+        : function(a, b) { return d3.ascending("chr"+a.chrom+':'+a.bp_position, "chr"+b.chrom+':'+b.bp_position); })
+        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; })
+  
+  );
+  
   y.domain([0, d3.max(data, function(d) { return d.degree; })]);
 
 
@@ -1185,66 +1195,49 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
       .attr("x", function(d) { return x("chr"+d.chrom+':'+d.bp_position); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.degree); })
-      .attr("height", function(d) { return height - y(d.degree); })
-      //.on("mouseover", function(g,i) {
+      .attr("height", function(d) { return height - y(d.degree); })      
       .on("mouseover", function(g,i){
-      	
-      	//d3.select(this).style("fill", "red");
-      
         l=[]
-        //document.write(links_hes[4]); 
-         
+        
 		for ( var e in links_hes){			
-		//document.write("chr"+allNodes_hes[links_hes[i].source].chrom+':'+allNodes_hes[links_hes[i].source].bp_position);
-		
 	
+		if(x("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position)===x("chr"+data[i].chrom+':'+data[i].bp_position) 
+ 		|| x("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position)===x("chr"+data[i].chrom+':'+data[i].bp_position)){
 		
-		if("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position==="chr"+data[i].chrom+':'+data[i].bp_position 
- 		|| "chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position==="chr"+data[i].chrom+':'+data[i].bp_position){
-		
-				l.push("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position);
-		      	l.push("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position);
-		      			 }
-		    			 
-		      			 
-		      			 
-		      		}    
-      
-      
-      bar_hDS
-      .filter(function(d) {
-      	
-      	
-      			if(include_in_arr(l,"chr"+d.chrom+':'+d.bp_position)){
-      				
-      				
-      							
-			//("chr"+d.chrom+':'+d.bp_position) !=("chr"+data[i].chrom+':'+data[i].bp_position);
-			return d;
-			
-		} } )
+				l.push(x("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position));
+		      	l.push(x("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position));
+		      			 }		    			 
+		      		} 
+		      		
+         bar_hDS.filter(function(d) {
+      			if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return d;} 
+      			} )
 	    .transition()
-            .style("fill", "red");
+        .style("fill", "red");
       
        l=[]
-      
-/*      	 d3.select("#chart") 
-   	 .selectAll("g circle")  //select the circles
-            .filter(function(d) {
-            	            	 
-		return d.subgraph_id != data[i].n_subgraph_id;
-            })
-	    .transition()
-            .style("opacity", 0);
-*/      
-      
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
       
       })
-      .on("mouseout", function(){bar_hDS.style("fill", "steelblue")}) 	 
-      ;
-      
-      
-      
+      .on("mouseout", function(){bar_hDS.style("fill", "steelblue")});
       
       
       
@@ -1253,35 +1246,54 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	  .append("title")
       .text(function(d) { return "chr"+d.chrom+':'+d.bp_position+" ; "+d.degree; });     
       
-
-  d3.select("#cb").on("change", change);
 /*
+  d3.select("#cb").on("change", change);
+
   var sortTimeout = setTimeout(function() {
     d3.select("input").property("checked", true).each(change);
   }, 2000);
 */
+
+/*
   function change() {
   //  clearTimeout(sortTimeout);
 
+
+
     // Copy-on-write since tweens are evaluated after a delay.
-    var x0 = x.domain(data.sort(this.checked 
+    var x0 = x.domain(
+    	
+    	
+    	
+    	data.sort(this.checked 
         ? function(a, b) { return b.degree - a.degree; }
         : function(a, b) { return d3.ascending("chr"+a.chrom+':'+a.bp_position, "chr"+b.chrom+':'+b.bp_position); })
-        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }))
-        .copy();
+        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; })
+        
+        ).copy();
+
+
+
 
     var transition = svg.transition().duration(750),
         delay = function(d, i) { return i * 50; };
 
-    transition.selectAll(".bar")
+         transition.selectAll(".bar")
         .delay(delay)
-        .attr("x", function(d) { return x0("chr"+d.chrom+':'+d.bp_position); });
+        .attr("x", function(d) { return x0("chr"+d.chrom+':'+d.bp_position); })
+
+      ;
+        
+       
 
     transition.select(".x.axis")
         .call(xAxis)
       .selectAll("g")
         .delay(delay);
   }
+  */
+  
+  
 });
 
 }

@@ -2,7 +2,6 @@ TO DO
 
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
-- show SNPs association in histogram degree x SNPs replecing the color bar when a snps is selected 
 - show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
 - put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
 - put the matrix SNPs X comunities in circle plot
@@ -18,7 +17,7 @@ LATER
 
 
 DONE
-
+- (30/1/2013) show SNPs association in histogram degree x SNPs replecing the color bar when a snps is selected 
 - (29/1/2013) make the statistical test drop box work with brush in cicle plot and manhattan plot   
 - (27/1/2013) created one drop box to statistical tests
 - (23/1/2013) make brush show the association in the circle and text 
