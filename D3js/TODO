@@ -6,7 +6,8 @@ TO DO
 - put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
 - put the matrix SNPs X comunities in circle plot
 - put zoom in big matrix SNPs associations (matrix plot)
-
+- the json file will not have "label". Replace "label" with "chrom" and "bp_position"
+- create a little bix to help localization on the a big plot such as manhattan plot and matrix plot 
 
 LATER
 - select subset for exporting to UCSC BED file

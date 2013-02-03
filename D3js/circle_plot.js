@@ -378,13 +378,16 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 	.data(allNodes)
 	.enter().append("p")
 
-		
+
 	.append("link").attr("href",function(d){
 				
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
+	/*return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
 	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;
+*/
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;
 				
 			})
+		
 			.attr("target","_blank")
 			.style("text-decoration",'none')
 			.style("color", '#000')
@@ -415,7 +418,7 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 // Display the nodes and links for debugging
 function showSnp(d)
 {
-    return "chr"+d.chrom+':'+d.bp_position + "    " + d.rs + " Subgraph:" + d.subgraph_id;
+    return "id:"+d.id+"    chr"+d.chrom+':'+d.bp_position + "    " + d.rs + " Subgraph:" + d.subgraph_id;
 
 };
 
@@ -521,8 +524,7 @@ function fade(opacity) {
 	.enter().append("p")
 	.filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;				
 			})
 	.attr("target","_blank")	
 	.style("text-decoration",'none')	
@@ -701,8 +703,7 @@ function brushmove() {
     			}})
 	//.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;		
 			})
 	.attr("target","_blank")	
 	.style("text-decoration",'none')	
@@ -992,8 +993,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	.enter().append("p")
 	.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;		
 			})
 	.attr("target","_blank")	
 	.style("text-decoration",'none')	
@@ -1116,8 +1116,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	.enter().append("p")
 	.filter(function(d) { 	return d.subgraph_id === data_obj[i].n_subgraph_id;   })
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;		
 			})
 	.attr("target","_blank")	
 	.style("text-decoration",'none')	
@@ -1349,8 +1348,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	.enter().append("p")
 	.filter(function(d) { 	return d.subgraph_id === data[i].subgraph_id;   })
 	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
+	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;			
 			})
 	.attr("target","_blank")	
 	.style("text-decoration",'none')	
