@@ -1,5 +1,6 @@
 TO DO
 
+- plot ROC curve based on contingency table
 - show contingency tables or statistics such as odds ratio in separate <div>
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
