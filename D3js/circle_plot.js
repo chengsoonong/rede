@@ -1108,7 +1108,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 		
 		
    d3.select("#snps").selectAll("p").remove(); //remove old text
-   d3.select("#pairs").selectAll("p").remove(); //remove old text
+   
   
     // Write out the data selected in text 
  d3.select("#snps").selectAll("p")  
@@ -1126,7 +1126,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
   
   
   
-  
+  d3.select("#pairs").selectAll("p").remove(); //remove old text
 
  d3.select("#pairs").selectAll("p")
 	.data(links)
@@ -1297,46 +1297,7 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
        
        
        
-       
-       
-     /*  
-       
-        d3.select("#snps").selectAll("p")  .transition()
-	//.data(allNodes)
-	.filter(function(d) { 	//return d.subgraph_id === data_obj[i].n_subgraph_id;   })
-	if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return d;} 
-      			} )
-	
-     .style("color", "red");
-      */ 
-       
-      /* 
-     d3.select("#snps").selectAll("p").remove(); //remove old text
-   d3.select("#pairs").selectAll("p").remove(); //remove old text
-  
-    // Write out the data selected in text 
- d3.select("#snps").selectAll("p")  
-	.data(allNodes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
-    .style("color", function(d) {  //highlights the SNP selected
-					if (d.id != allNodes[i].id) {	
-						return "black";
-					} else {
-						return graphColor(d.subgraph_id);
-					}
-				})      
-	.text(function(d) { return showSnp(d); });     
-       */
-       
-       
-       	
+
 		
 		
    d3.select("#snps").selectAll("p").remove(); //remove old text
@@ -1363,12 +1324,36 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 	.text(function(d) { return showSnp(d); });
    
   
+  /*  //selected pairs
+    
   
-  
+  d3.select("#pairs").selectAll("p").remove(); //remove old text
+
+ d3.select("#pairs").selectAll("p")
+	.data(links_hes)
+	.enter().append("p")
+	.filter(function(d) { 	return d.subgraph_id === data[i].subgraph_id;   })
+	 .style("color", function(d) {  //highlights the SNP selected
+	 	
+	 	
+	 	
+	 	
+					if(include_in_arr(l,x("chr"+allNodes_hes[d.source].chrom+':'+allNodes_hes[d.source].bp_position))){return "red";} 
+					else{
+      				return "black";			
+      				
+      			}
+					
+				})          
+	.text(function(d) { 
+		
+	
+		return showInteract(d); });
+		
   
 
        
-       
+    */   
        
        
        
