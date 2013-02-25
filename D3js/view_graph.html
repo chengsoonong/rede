@@ -65,6 +65,14 @@ $(document).ready(function(){
   </h5>
   
 <br>
+
+
+<h5>Statistical Test  <div id="st_select2"></div></h5>
+  <br><br>
+   <div id="minmap_mp"></div> 
+   <div id="minmap_matrixp"></div> 
+ <br><br>
+<!--
   <h5>Statistical Test <select id="st_select">
  <option value="fltGSS">fltGSS</option> 	
  <option value="fltGSS_prtv">fltGSS_prtv</option> 
@@ -74,7 +82,11 @@ $(document).ready(function(){
  <option value="fltChi2">fltChi2</option>
   </select>
   </h5>
-
+-->
+  <div id="two_weight_value_test">
+ 	test: <span></span></div>	
+ 
+ 
  
  <div id="two_weight_value">
  	Values: <span></span></div>	
@@ -88,7 +100,29 @@ $(document).ready(function(){
 <div id="hc">
  	<!-- <input id="cb" type="checkbox"> Sort values -->
  </div>  
+ 
+ <h5> ROC plot and Contegency table  
+ 	
+ 	  <!--
+  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
+	<input type="button" onclick="filUpload.click();"  value="load">
+	<p><a href="Javascript:show_roc_ct()">search</a>
+	-->
+ 	
+ 	<p>
+ 	<input id="search_snps" type="text" value=""> 
+ 	<input type="button" onclick="Javascript:show_roc_ct();"  value="search">
+ 	</p>
+ 	
+ 	</h5>
+ 
 
+ <br><br>
+ <div id="table_snps"></div>
+<br><br>
+ <div id="rp"></div>
+ <br><br>
+ <div id="contp"></div>
  
  <div id="snps_text">
  <h3>SNPs and their associations</h3>
@@ -107,7 +141,9 @@ $(document).ready(function(){
 <script type="text/javascript" src="circle_plot.js"></script>
 <script type="text/javascript" src="manhattan_plot.js"></script>
 <script type="text/javascript" src="matrix_plot.js"></script>
-	
+<script type="text/javascript" src="ROC_plot.js"></script>
+<script type="text/javascript" src="cont_plot.js"></script>
+<script type="text/javascript" src="table_snp_pairs.js"></script>	
 </div>
   </div> 
 </body>

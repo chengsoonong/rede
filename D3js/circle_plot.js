@@ -165,7 +165,7 @@ d3.json(file_name, function(json) {
 
 
 //---------------------------------scale bar -----------------------------------------------
-var margin = {top: 5, right: 30, bottom: 35, left: 10};
+var margin = {top: 5, right: 50, bottom: 45, left: 10};
 
 var w_scale_bar = 500- margin.left - margin.right;
 var h_scale_bar = 65- margin.top - margin.bottom;
@@ -278,8 +278,9 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 			   })
 			   .attr("y", 40)
 			   .attr("font-family", "sans-serif")
-			   .attr("font-size", "11px")
-			   .style("opacity", 0.8)
+			   .attr("font-size", "17.5px")
+			   .style("opacity", 0.8)    
+			   .style("font-weight", "bold")
 			   .attr("fill", function(d) {
 			   	switch (d)
 					{
@@ -323,15 +324,6 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 				.data([1])
 				.enter().append("h1")
 				.text( ">100");   			
-
-
-
-
-
-
-
-
-
 
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ scale bar ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -398,9 +390,32 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
  d3.select("#pairs").selectAll("p")
 	.data(links)
 	.enter().append("p")
-	.text(function(d) { return showInteract(d); });
+	//.append("link").attr("href","view_graph.html")
+	.attr("target","_blank")
+			.style("text-decoration",'none')
+			.style("color", '#000')
+	.text(function(d) { return showInteract(d); })
 	
 	
+	.on("mousedown", function(g,i) { 
+		
+    	d3.select("#table_snps").selectAll('table').remove();
+		create_table_snps(links[i])
+	
+		//"roc_id":0 file_json "bd.json"
+		d3.select("#rp").selectAll('svg').remove();
+		//ROC_plot (links[i].roc_id,file_json)
+		ROC_plot (links[i].ct_id,file_json)
+		
+		d3.select("#contp").selectAll('svg').remove();
+		cont_plot (links[i].ct_id,file_json)
+		
+		
+		})
+	 ;
+	 
+	 
+
 });
 
 };
@@ -424,12 +439,44 @@ function showSnp(d)
 
 function showInteract(d)
 {
+	
+	/*
+	 prb_a: allNodes[links[i].source].prb,
+  					prb_b: allNodes[links[i].target].prb,			
+			        prbCode_a: allNodes[links[i].source].prbCode,
+  					prbCode_b: allNodes[links[i].target].prbCode,			
+			        browser_a: "chr"+allNodes[links[i].source].chrom+':'+allNodes[links[i].source].bp_position,
+  					browser_b: "chr"+allNodes[links[i].target].chrom+':'+allNodes[links[i].target].bp_position,
+		    	    rs_a: allNodes[links[i].source].rs,
+		    	    rs_b: allNodes[links[i].target].rs,
+		    	    id_links: i
+	*/
+	
+	
+	
+	str= allNodes[d.source].rs+" "+
+	     allNodes[d.target].rs+" "+
+	     "chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position+" "+
+	     "chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position+" "
+	
+	
+	for (var i in d ){		
+		if (i!="comm_id" &&  i!="ct_id" &&  i!= "source"  &&  i!= "target"){
+			//statOptions[i]=i
+			//st_1.push(i) //get the first element to be visualited
+			
+			str = str + i +": "+d[i]+" "
+			}}
+				
+	return str;
+	
 //"fltGSS_prtv": 0.65, "fltGSS": 17.62, "fltGSS_cntr": 17.62, "fltSS": 23.99, "fltDSS": 19.02, "fltChi2": 18.35}
     //return "Source: " + d.source + " Target: " + d.target+ " Weight: " + d.weight + " Subgraph: " + d.subgraph_id;
-    return "Source: " + d.source + "  Target: " + d.target+ 
-    "  fltGSS_prtv: " + d.fltGSS_prtv + "  fltGSS: " + d.fltGSS+
-    "  fltGSS_cntr: " + d.fltGSS_cntr + "  fltSS: " + d.fltSS+
-    "  fltDSS: " + d.fltDSS + "  fltChi2: " + d.fltChi2+ "  Subgraph: " + d.subgraph_id;
+  
+  //  return "Source: " + d.source + "  Target: " + d.target+ 
+  //  "  fltGSS_prtv: " + d.fltGSS_prtv + "  fltGSS: " + d.fltGSS+
+  //  "  fltGSS_cntr: " + d.fltGSS_cntr + "  fltSS: " + d.fltSS+
+  //  "  fltDSS: " + d.fltDSS + "  fltChi2: " + d.fltChi2+ "  Subgraph: " + d.subgraph_id;
 };
 
 //Transform radians to degrees
