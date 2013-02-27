@@ -14,6 +14,14 @@ $(document).ready(function(){
     $("#snps,#pairs").slideToggle("slow");
   });
 });
+
+$(document).ready(function(){
+  $("#TRCT").click(function(){
+    $("#table_snps,#rp,#contp").slideToggle("slow");
+  });
+});
+
+
 </script>
 
 </head>
@@ -29,6 +37,11 @@ $(document).ready(function(){
 	
 <div id="chart"></div>
 
+<h5 id="up">Upper Right</h5><div id="scalecolor1_dropbox"></div>
+<h5 id="ll">Lower Left</h5><div id="scalecolor2_dropbox"></div>
+
+<div id="scalecolor_matrix1"></div>
+<div id="scalecolor_matrix2"></div>
 
 <div id="load_data"><h5>Load your data</h5></div>
 
@@ -39,8 +52,7 @@ $(document).ready(function(){
 
 
 <div id="scale_bar_c"></div>
-<!--<div id="min_num_scale_bar_c"></div>
-<div id="max_num_scale_bar_c"></div>-->
+
 <div id="ec_scale_bar_c">nº edges per communitites</div>
 
 <div id="controls">
@@ -48,10 +60,7 @@ $(document).ready(function(){
   
   <h5>Dataset 
   	<input type="file" id="files" name="files[]" multiple >
-  <!--
-  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
-	<input type="button" onclick="filUpload.click();"  value="load">
-	-->
+
 	<input type="button" value="Show .json" onclick="selected_json()" >
  
   
@@ -67,24 +76,14 @@ $(document).ready(function(){
 <br>
 
 
-<h5>Statistical Test  <div id="st_select2"></div></h5>
-  <br><br>
+<h5><div id="st_select2">Statistical Test  </div></h5>
+
+
+  <br><br> 
    <div id="minmap_mp"></div> 
    <div id="minmap_matrixp"></div> 
- <br><br>
-<!--
-  <h5>Statistical Test <select id="st_select">
- <option value="fltGSS">fltGSS</option> 	
- <option value="fltGSS_prtv">fltGSS_prtv</option> 
- <option value="fltGSS_cntr">fltGSS_cntr</option>
- <option value="fltSS">fltSS</option>
- <option value="fltDSS">fltDSS</option>
- <option value="fltChi2">fltChi2</option>
-  </select>
-  </h5>
--->
-  <div id="two_weight_value_test">
- 	test: <span></span></div>	
+ <br><br> 
+ <div id="scale_bar_mat"></div>
  
  
  
@@ -98,31 +97,32 @@ $(document).ready(function(){
 
  
 <div id="hc">
- 	<!-- <input id="cb" type="checkbox"> Sort values -->
+ 
  </div>  
  
- <h5> ROC plot and Contegency table  
+ <h5 id="TRCT"> ROC plot and Contegency table  </h5>
  	
- 	  <!--
-  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
-	<input type="button" onclick="filUpload.click();"  value="load">
-	<p><a href="Javascript:show_roc_ct()">search</a>
-	-->
- 	
+ 
  	<p>
  	<input id="search_snps" type="text" value=""> 
  	<input type="button" onclick="Javascript:show_roc_ct();"  value="search">
  	</p>
  	
- 	</h5>
- 
-
  <br><br>
- <div id="table_snps"></div>
+ <div id="table_snps"></div>  
 <br><br>
  <div id="rp"></div>
  <br><br>
  <div id="contp"></div>
+ 
+ 
+ 
+ 
+  <br><br>
+  <div id="hds_matrix"></div>
+ 
+ 
+ 
  
  <div id="snps_text">
  <h3>SNPs and their associations</h3>

@@ -1,14 +1,17 @@
 TO DO
 
-- put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
+
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
+
 - put the matrix SNPs X comunities in circle plot
-- put zoom in big matrix SNPs associations (matrix plot) - mini map
+
 - idea -> http://bl.ocks.org/4063582
+
 - It should be able to visualise files with no subgraphs or communities.
-- creat public datas
 - replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
+
+- creat public datas
 
 LATER
 
@@ -19,10 +22,11 @@ LATER
 - idea ->  http://www.jasondavies.com/coffee-wheel/
 - idea ->  http://indiemaps.com/blog/2011/10/hexbins/
 
-
-
 DONE
 
+- (27/2/2013) hide and show ROC plot and Contegency table when click in title "ROC plot and Contegency table"
+- (27/2/2013) conection betwen roc and ct's button with circle plot to show the pair in circle
+- (25/2/2013) put zoom in big matrix SNPs associations (matrix plot) - mini map
 - (21/2/2013) create a little box to help localization on the a big plot such as manhattan plot and matrix plot 
 - (21/2/2013) It should be able to take in all type of statistics, given in the file, e.g. DSS, GSS. 
 - (15/2/2013) plot ROC curve based on contingency table 

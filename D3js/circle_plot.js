@@ -138,7 +138,7 @@ d3.json(file_name, function(json) {
 	.style("stroke", function(d) { return graphColor(d.subgraph_id) })
 	.attr("cx", chromRingInnerRadius-20)
 	.attr("r", 3)
-	.on("mouseover", fade(0))  //click mouseover mouseout
+	//.on("mouseover", fade(0))  //click mouseover mouseout
 	//.on("mouseout", reset(1))  //see creat chart
 	
 	 .on("mousedown", function(g, i) { 
@@ -702,13 +702,16 @@ function brushmove() {
 	.data([1])
 	.enter().append("h")
 	.text(two_dec(s[0])+" - "+two_dec(s[1]));
-		
-	svg.selectAll(".link").remove(); //remove the old association
-	reset_association();			 //create the new association
+	
+	
+	d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);	
+	//svg.selectAll(".link").remove(); //remove the old association
+	//reset_association();			 //create the new association
 	   
 	svg.selectAll(".link") // this declaretion selected the association between specifics  weight values 
-   			.filter(function(d) { return  d[st_chosen]  <=  s[0]	|| d[st_chosen] >=s[1];  }).remove();	
-   			
+   			//.filter(function(d) { return  d[st_chosen]  <=  s[0]	|| d[st_chosen] >=s[1];  }).remove();	
+   				.filter(function(d) { return  d[st_chosen]  <=  s[0]	|| d[st_chosen] >=s[1];  })
+   				.transition().style("opacity", 0);
    			
 
    	 d3.select("#chart") 	
@@ -781,7 +784,7 @@ function brushend() { //selected de circles in x cordenate for diferent vizualiz
 }
 	
 
-function reset_association(){
+function reset_association(){ //I am not using this function more
 	 //create the new association		
     // Draw the edges
  svg.selectAll("path.link")
