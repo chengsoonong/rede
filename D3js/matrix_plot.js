@@ -255,7 +255,7 @@ svg.selectAll("path1")
             })
             */
    //.style("fill", '#0d1dee') //blue colorScale
-   .style("fill", function(d) { return colorScale2(d[st_chosen]); })
+   .style("fill", function(d) { return colorScale1(d[st_chosen1]); })
     .attr("transform", function(d) { return "translate(" + x(d.label_x) + "," + y(d.label_y) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("30"));
     
@@ -269,7 +269,7 @@ svg.selectAll("path2")
 		
             })
             */
-  .style("fill", function(d) { return colorScale1(d[st_chosen]); })
+  .style("fill", function(d) { return colorScale2(d[st_chosen2]); })
     .attr("transform", function(d) { return "translate(" + x(d.label_y) + "," + y(d.label_x) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("30"));    
     
