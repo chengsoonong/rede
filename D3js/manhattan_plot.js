@@ -49,12 +49,12 @@ d3.json(file_name, function(json) {
       	iy_1=d3.min(data_weight_pvalue, function(d) { return d; })-1;
       	iy_2=d3.max(data_weight_pvalue, function(d) { return d; })+1;
       	
+  data_from_HDS="no"    	
       	
-      	
-manhattan_plot_minmap(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1, 0, 0, 0, 0);      	
+manhattan_plot_minmap(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1, 0, 0, 0, 0,data);      	
 
 
-manhattan_plot(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1);
+manhattan_plot(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1,data);
 
 
 
@@ -69,7 +69,7 @@ manhattan_plot(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d
 //******************************************************************************
 
 
-function manhattan_plot(x1,x2,y1,y2){
+function manhattan_plot(x1,x2,y1,y2,data){
 //creat the manhataan plot
 			
 
@@ -172,7 +172,7 @@ function manhattan_plot(x1,x2,y1,y2){
 
 
 
-
+//alert(data.length+"m2"); 
 
 
 
@@ -401,7 +401,16 @@ function brushend() {
 						//xScale_top("chr5"),30, 10, 10
 
 
-function manhattan_plot_minmap(x1,x2,y1,y2,rect_x1, rect_y1, rect_x2, rect_y2){
+
+
+
+
+
+
+
+
+
+function manhattan_plot_minmap(x1,x2,y1,y2,rect_x1, rect_y1, rect_x2, rect_y2,data){
 //creat the manhataan plot
 			
 var margin_s = {top: 5, right: 30, bottom: 35, left: 10};

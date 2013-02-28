@@ -255,7 +255,7 @@ svg.selectAll("path1")
             })
             */
    //.style("fill", '#0d1dee') //blue colorScale
-   .style("fill", function(d) { return colorScale2(d[st_chosen]); })
+   .style("fill", function(d) { return colorScale2(d[st_chosen2]); })
     .attr("transform", function(d) { return "translate(" + x(d.label_x) + "," + y(d.label_y) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("30"));
     
@@ -269,7 +269,7 @@ svg.selectAll("path2")
 		
             })
             */
-  .style("fill", function(d) { return colorScale1(d[st_chosen]); })
+  .style("fill", function(d) { return colorScale1(d[st_chosen1]); })
     .attr("transform", function(d) { return "translate(" + x(d.label_y) + "," + y(d.label_x) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("30"));    
     
@@ -545,7 +545,7 @@ d3.json(file_name, function(json) {
 var margin = {top: 50, right: 20, bottom: 50, left: 250},
     width = 500 - margin.left - margin.right, //500
     //height = 1750*3500/200 - margin.top - margin.bottom;//200
-    height = 34.1796875*data.length - margin.top - margin.bottom;//200
+    height = 34.1796875*allNodes_hes.length - margin.top - margin.bottom;//200
 
 
 
@@ -574,7 +574,7 @@ var svg = d3.select("#hds_matrix").append("svg")
 
 
 
-  y.domain(data.map(function(d,i) { return "id:"+i+ "  chr"+d.chrom+':'+d.bp_position; }));
+  y.domain(allNodes_hes.map(function(d,i) { return "id:"+i+ "  chr"+d.chrom+':'+d.bp_position; }));
  /* 
   x.domain(
   
@@ -585,7 +585,7 @@ var svg = d3.select("#hds_matrix").append("svg")
   
   );
   */
-  x.domain([0, d3.max(data, function(d) { return d.degree; })]);
+  x.domain([0, d3.max(allNodes_hes, function(d) { return d.degree; })]);
 
 
 
@@ -634,7 +634,7 @@ chart.selectAll("rect")
 
 
   var bar_hDS=svg.selectAll(".bar")
-      .data(data)
+      .data(allNodes_hes)
     .enter().append("rect")
       .attr("class", "ds bar")
       .attr("y", function(d) { return y("chr"+d.chrom+':'+d.bp_position); })
@@ -649,17 +649,22 @@ chart.selectAll("rect")
         l=[]
         
         list_idx_in_links = []
+        list_idx_in_links2 = []
         
 		for ( var e in links_hes){			
 	
-		if(y("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position)===y("chr"+data[i].chrom+':'+data[i].bp_position) 
- 		|| y("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position)===y("chr"+data[i].chrom+':'+data[i].bp_position)){
+		if(y("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position)===y("chr"+allNodes_hes[i].chrom+':'+allNodes_hes[i].bp_position) 
+ 		|| y("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position)===y("chr"+allNodes_hes[i].chrom+':'+allNodes_hes[i].bp_position)){
 		
 				l.push(y("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position));
 		      	l.push(y("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position));
 		      	
-		      	list_idx_in_links.push(links_hes[e].ct_id);
+		      	//list_idx_in_links.push(links_hes[e].ct_id);
+		      	list_idx_in_links.push(links_hes[e].source+"-"+links_hes[e].target  );
 		      	
+		      	list_idx_in_links2.push(links_hes[e]);
+		      //	alert(links_hes[e].source);
+		      //	alert(links_hes[e]); 
 		      			 }		    			 
 		      		} 
 		      		
@@ -693,15 +698,79 @@ chart.selectAll("rect")
     d3.select("#chart").selectAll(".link") //select the association regarding to the circle selected
    			.filter(function(d,i) {
    				
-      			if(include_in_arr(list_idx_in_links,d.ct_id)){return d;}
+      			if(include_in_arr(list_idx_in_links,d.source+"-"+d.target)){return d;}
       			 
       			} )
       			.transition()
   				.style("opacity", 0.3);	
+  				
+  				
+  				
+  				
   
 		}else if(plot_chosen==="p_man"){
 			
 			//alert("to do something in manhattan plot")
+
+
+ data_select_from_HDS = new Array();
+allNodes= []//new Array();
+var data_weight_pvalue= new Array();
+	
+json.nodes.forEach( 	function(d) { allNodes.push(d) }    );	
+//alert(list_idx_in_links2.length);
+
+for (var i in list_idx_in_links2){ //this will fill with data the array 
+	
+	
+		
+		data_weight_pvalue.push(list_idx_in_links2[i][st_chosen]); 
+		
+	
+		if (allNodes[list_idx_in_links2[i].source].chrom===1){         //"chr"+d.chrom+':'+d.bp_position
+
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].source].degree ,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);	
+		
+		}else{
+			
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].source].chrom-2] ,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].source].degree,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);
+		}
+		
+		if (allNodes[list_idx_in_links2[i].target].chrom===1){
+			
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position ]);	
+		
+		}else{
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].target].chrom-2] ,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position]);
+		}
+		
+		}
+      	
+      	ix_1=0;
+      	ix_2=chrom_lenght;
+      	iy_1=d3.min(data_weight_pvalue, function(d) { return d; })-1;
+      	iy_2=d3.max(data_weight_pvalue, function(d) { return d; })+1;
+      	
+      	//alert(data_select_from_HDS.length); 
+      	
+      	data_from_HDS="yes"
+      	
+      	d3.select("#chart").selectAll('svg').remove();
+   		d3.select("#scale_bar").selectAll('svg').remove();
+  
+   			   		 
+  		 	d3.select("#minmap_mp").selectAll('svg').remove();   		
+   		 
+      	
+manhattan_plot_minmap(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1, 0, 0, 0, 0,data_select_from_HDS);      	
+
+
+manhattan_plot(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d; })-1, d3.max(data_weight_pvalue, function(d) { return d; })+1,data_select_from_HDS);
+
+
+
+
+
 			
 		}else{
 			
@@ -721,7 +790,7 @@ chart.selectAll("rect")
       
       
    svg.selectAll(".bar")  //show degree as tooltip - title
-       .data(data)
+       .data(allNodes_hes)
 	  .append("title")
       .text(function(d) { return "chr"+d.chrom+':'+d.bp_position+" ; "+d.degree; });     
   

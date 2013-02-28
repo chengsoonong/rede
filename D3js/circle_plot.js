@@ -9,7 +9,7 @@
 function Create_chr_circle(){  
 	// function to Create the SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
 		
- svg = d3.select("#chart")  // Selects  the element with id="chart"
+svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
     .attr("width", width2)
     .attr("height", height2)
@@ -18,7 +18,7 @@ function Create_chr_circle(){
     .attr("transform", "translate(" + width2 / 2 + "," + height2 / 2 + ")");  //This transform moves the element by pixels in both the X and Y directions.
 
 // // Genome object for drawing Plot the chromosomes in a circle
- all_chrom = Genome();
+all_chrom = Genome();
 
 
 allNodes = new Array(); //create array that will receive objects with information about SNP from .json 
@@ -42,14 +42,14 @@ svg.selectAll("text")      // write the numbers in chromosomes
     .append("text")
     .attr("class", "ring")
     .attr("transform", function(d) {
-	var angle = (d.startAngle+d.endAngle)/2;
-	if (angle < Math.PI) {
-	    return "rotate("+ degrees(angle) + ")"
-		+ "translate(" + (chromRingInnerRadius+3) + ")";}
-	else {
-	    return "rotate("+ degrees(angle) + ")"
-		+ "translate(" + (chromRingInnerRadius+3) + ")"
-		+ "rotate(180)translate(-16)";}
+    var angle = (d.startAngle+d.endAngle)/2;
+    if (angle < Math.PI) {
+        return "rotate("+ degrees(angle) + ")"
+        + "translate(" + (chromRingInnerRadius+3) + ")";}
+    else {
+        return "rotate("+ degrees(angle) + ")"
+        + "translate(" + (chromRingInnerRadius+3) + ")"
+        + "rotate(180)translate(-16)";}
     })
     .text(function(d) { return d.index+1 });
 
@@ -57,15 +57,15 @@ svg.selectAll("text")      // write the numbers in chromosomes
 // ticks on chromosome       
 
 var ticks = svg.append("g")
-  .selectAll("g")
-    .data(all_chrom.chromosomes())
-  .enter().append("g")
-  .selectAll("g")
-  .data(groupTicks)
-  .enter().append("g")
-    .attr("transform", function(d) {
-      return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-          + "translate(" + chromRingOuterRadius + ",0)";
+    .selectAll("g")
+     .data(all_chrom.chromosomes())
+    .enter().append("g")
+    .selectAll("g")
+    .data(groupTicks)
+    .enter().append("g")
+     .attr("transform", function(d) {
+        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+            + "translate(" + chromRingOuterRadius + ",0)";
     });
 
 ticks.append("line")
@@ -106,57 +106,57 @@ function Create_SNP_association(file_name){
 // Plot nodes and links for the default dataset
 d3.json(file_name, function(json) {
     links = json.links;// var links = json.links;
-	var subgraphs = json.subgraphs;	   
+    var subgraphs = json.subgraphs;	   
     communities = json.communities;
-
-
+    
+    
     json.nodes.forEach(
-	function(d) { allNodes.push(d) }   //allNodes[]
+    function(d) { allNodes.push(d) }   //allNodes[]
     );
-
-
+    
+    
     // Draw the marks for each snp   - small marks in chromosome 
-  svg.selectAll("path.vertex")
-	.data(allNodes)
-	.enter().append("path")
-	.attr("class", "vertex") //"vertex"
-	.style("fill", function(d) { return color[d.chrom-1]; })
-	.style("stroke", function(d) { return color[d.chrom-1]; })
-	.attr("d", d3.svg.arc()
-	      .innerRadius(chromRingInnerRadius-10)
-	      .outerRadius(chromRingInnerRadius-3)          // getAngle() is a function of Genome   
-	      .startAngle(function(node) { return all_chrom.getAngle(node.chrom, node.bp_position) - 0.001; })
-	      .endAngle(function(node) { return all_chrom.getAngle(node.chrom, node.bp_position) + 0.001; }))
+svg.selectAll("path.vertex")
+    .data(allNodes)
+    .enter().append("path")
+    .attr("class", "vertex") //"vertex"
+    .style("fill", function(d) { return color[d.chrom-1]; })
+    .style("stroke", function(d) { return color[d.chrom-1]; })
+    .attr("d", d3.svg.arc()
+          .innerRadius(chromRingInnerRadius-10)
+          .outerRadius(chromRingInnerRadius-3)          // getAngle() is a function of Genome   
+          .startAngle(function(node) { return all_chrom.getAngle(node.chrom, node.bp_position) - 0.001; })
+          .endAngle(function(node) { return all_chrom.getAngle(node.chrom, node.bp_position) + 0.001; }))
    
  
     // Draw the nodes for each snp   - small circles
- svg.selectAll("circle.vertex")
-	.data(allNodes)
-	.enter().append("circle")
-	.attr("class", "vertex")//"vertex"
-	.style("fill", function(d) { return graphColor(d.subgraph_id) })
-	.style("stroke", function(d) { return graphColor(d.subgraph_id) })
-	.attr("cx", chromRingInnerRadius-20)
-	.attr("r", 3)
+svg.selectAll("circle.vertex")
+    .data(allNodes)
+    .enter().append("circle")
+    .attr("class", "vertex")//"vertex"
+    .style("fill", function(d) { return graphColor(d.subgraph_id) })
+    .style("stroke", function(d) { return graphColor(d.subgraph_id) })
+    .attr("cx", chromRingInnerRadius-20)
+    .attr("r", 3)
 	//.on("mouseover", fade(0))  //click mouseover mouseout
 	//.on("mouseout", reset(1))  //see creat chart
 	
-	 .on("mousedown", function(g, i) { 
+    .on("mousedown", function(g, i) { 
 	 	//when mousedown this selected the subgraph_id and create the string_html to show in html the seleced data 
-  		 	
-  		 	sid= allNodes[i].subgraph_id;
-  		 	
- 			histogram_degree_SNPs(file_json,sid);	
- 			
- 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
-
-			json_nodes_selected(file_json,sid);	
-		
-			json_links_selected(file_json,sid);
-			 			
-			}
-	 ).attr("transform", function(d) { 
-	    return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
+            
+            sid= allNodes[i].subgraph_id;
+            
+            histogram_degree_SNPs(file_json,sid);	
+            
+            string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
+            
+            json_nodes_selected(file_json,sid);	
+            
+            json_links_selected(file_json,sid);
+             			
+            }
+    ).attr("transform", function(d) { 
+        return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
 
 
 
@@ -185,124 +185,124 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 //var dataset = d3.range(1,10)
 
  colorScaleedges = d3.scale.log()
-    			.domain([
-    				d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
-    				 
-    				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
-    				//d3.max(links,function(d) {return d.edgs_in_comm; })
-    				100    				
-    				])
-    				//50])
-    			.interpolate(d3.interpolateHsl)
-    			//.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
-    			.range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
+                .domain([
+                    d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
+                     
+                    //(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
+                    //d3.max(links,function(d) {return d.edgs_in_comm; })
+                    100    				
+                    ])
+                    //50])
+                .interpolate(d3.interpolateHsl)
+                //.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
+                .range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
     			
 
 
  colorScaleedges2 = d3.scale.linear()
-    			.domain([
-    				d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
-    				 
-    				//(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
-    				//d3.max(links,function(d) {return d.edgs_in_comm; })    				
-    				100
-    				
-    				])
-    				//50])
-    			.interpolate(d3.interpolateHsl)
-    			//.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
-    			.range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
+                .domain([
+                    d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities) }),
+                     
+                    //(d3.max(links,function(d) {return d.edgs_in_comm; })+d3.min(links,function(d) {return d.edgs_in_comm; }))/2
+                    //d3.max(links,function(d) {return d.edgs_in_comm; })    				
+                    100
+                    
+                    ])
+                    //50])
+                .interpolate(d3.interpolateHsl)
+                //.range(["#08F5EC", "#F50808"]); //#003cff 01b900 39b9b8
+                .range(["#3192C9", "#FF7000"]);//range(["#00b300", "#F50808"]);
 
     			
- 			//Create SVG element to receive the scale color bar
-			var svg3 = d3.select("#scale_bar_c")
-						.append("svg")
-						//.attr("width", w_scale_bar)
-						//.attr("height", h_scale_bar);
-						
-						   .attr("width", w_scale_bar + margin.left + margin.right)
-  						   .attr("height", h_scale_bar + margin.top + margin.bottom)
-				    	   .append("g")
- 					       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            //Create SVG element to receive the scale color bar
+            var svg3 = d3.select("#scale_bar_c")
+                    .append("svg")
+                //.attr("width", w_scale_bar)
+                //.attr("height", h_scale_bar);
+                
+                   .attr("width", w_scale_bar + margin.left + margin.right)
+                   .attr("height", h_scale_bar + margin.top + margin.bottom)
+                   .append("g")
+                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-			svg3.selectAll("rect")  //create color scale bar
-			   .data(dataset)
-			   .enter()
-			   .append("rect")
-			   .attr("x", function(d, i) {
-			   		return i * (w_scale_bar / dataset.length);
-			   })
-			   .attr("y", 0)
-			   .attr("width", w_scale_bar / dataset.length - barPadding)
-			   .attr("height", h_scale_bar)
-			   .style("opacity", 0.8)
-			   .attr("fill", function(d,i) {
+            svg3.selectAll("rect")  //create color scale bar
+               .data(dataset)
+               .enter()
+               .append("rect")
+               .attr("x", function(d, i) {
+               		return i * (w_scale_bar / dataset.length);
+               })
+               .attr("y", 0)
+               .attr("width", w_scale_bar / dataset.length - barPadding)
+               .attr("height", h_scale_bar)
+               .style("opacity", 0.8)
+               .attr("fill", function(d,i) {
      				 			return colorScaleedges2(d);
     						});
 			
 			
 			
 			
-			 svg3.selectAll(".text_scb")
-			   .data(dataset)
-			   .enter()
-			   .append("text") 
-			   .attr("class", "text_scb")
-			   .text(function(d) { 
-			   	
-			   	switch (d)
-					{
-						case 1:
-  							return 1;
-  							break;
-						case 25:
-  							return 5;
-  							break;
-						case 50:
-  							return 10;
-  							break;
-						case 75:
-  							return 50;
-  							break;
-  						case 100:
-  							return ">100";
-  							break;	
-						}
-			   	
-			   	//if (1===d ||5===d || 10===d  || 50===d ||99===d)
-			   	//return 50; 
-			   	
-			   	})
-			   .attr("x", function(d, i) {
-			   		return i * (w_scale_bar / dataset.length);
-			   })
-			   .attr("y", 40)
-			   .attr("font-family", "sans-serif")
-			   .attr("font-size", "17.5px")
-			   .style("opacity", 0.8)    
-			   .style("font-weight", "bold")
-			   .attr("fill", function(d) {
-			   	switch (d)
-					{
-						case 1:
-  							return colorScaleedges(1);
-  							break;
-						case 25:
-  							return colorScaleedges(5);
-  							break;
-						case 50:
-  							return colorScaleedges(10);
-  							break;
-						case 75:
-  							return colorScaleedges(50);
-  							break;
-  						case 100:
-  							return colorScaleedges(101);
-  							break;		
-						}
-     				 			
-     				 			//return colorScaleedges(d);
-    						});
+             svg3.selectAll(".text_scb")
+               .data(dataset)
+               .enter()
+               .append("text") 
+               .attr("class", "text_scb")
+               .text(function(d) { 
+               	
+               	switch (d)
+                    {
+                        case 1:
+                            return 1;
+                            break;
+                        case 25:
+                            return 5;
+                            break;
+                        case 50:
+                            return 10;
+                            break;
+                        case 75:
+                            return 50;
+                            break;
+                        case 100:
+                            return ">100";
+                            break;	
+                        }
+               	
+               	//if (1===d ||5===d || 10===d  || 50===d ||99===d)
+               	//return 50; 
+               	
+               	})
+               .attr("x", function(d, i) {
+               		return i * (w_scale_bar / dataset.length);
+               })
+               .attr("y", 40)
+               .attr("font-family", "sans-serif")
+               .attr("font-size", "17.5px")
+               .style("opacity", 0.8)    
+               .style("font-weight", "bold")
+               .attr("fill", function(d) {
+               	switch (d)
+                    {
+                        case 1:
+                            return colorScaleedges(1);
+                            break;
+                        case 25:
+                            return colorScaleedges(5);
+                            break;
+                        case 50:
+                            return colorScaleedges(10);
+                            break;
+                        case 75:
+                            return colorScaleedges(50);
+                            break;
+                        case 100:
+                            return colorScaleedges(101);
+                            break;		
+                        }
+                        
+                        //return colorScaleedges(d);
+                    });
 			
 			
 			
@@ -313,17 +313,17 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
 			
 			
 			
-			 d3.select("#min_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
-  				d3.select("#min_num_scale_bar_c").selectAll("h1")        //create the new numbers of color scale
-				.data([1])
-				.enter().append("h1")
-				.text(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities); }));
-			
-			d3.select("#max_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
-  				d3.select("#max_num_scale_bar_c").selectAll("h1")           //create the new numbers of color scale
-				.data([1])
-				.enter().append("h1")
-				.text( ">100");   			
+             d3.select("#min_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
+                d3.select("#min_num_scale_bar_c").selectAll("h1")        //create the new numbers of color scale
+                .data([1])
+                .enter().append("h1")
+                .text(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id,communities); }));
+                
+            d3.select("#max_num_scale_bar_c").selectAll("h1").remove(); //remove the old numbers of color scale
+               d3.select("#max_num_scale_bar_c").selectAll("h1")           //create the new numbers of color scale
+               .data([1])
+               .enter().append("h1")
+               .text( ">100");   			
 
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ scale bar ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -332,26 +332,26 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
     
     // Draw the edges  - the association between SNPs
  svg.selectAll("path.link")
-	.data(links)
-	.enter().append("path")
-	.attr("class", "link")
+    .data(links)
+    .enter().append("path")
+    .attr("class", "link")
     //.style("stroke", function(d) { return graphColor(d.subgraph_id ); })
-	//.style("stroke", function(d) { return graphColor(d.edgs_in_comm); })
-	.style("stroke", function(d) {		
-		//if(d.edgs_in_comm >=100){
-		if(n_edgs_in_comm(d.comm_id,communities) >=100){	
-		
-			return colorScaleedges(100); 
-		
-		}else 
-			//return colorScaleedges(d.edgs_in_comm); 
-			
-			return colorScaleedges(n_edgs_in_comm(d.comm_id,communities));
-		})
-	.style("stroke-width", 1)
-	.style("opacity", 0.3)
-	.style("fill", "none")
-	.attr("d", link());
+    //.style("stroke", function(d) { return graphColor(d.edgs_in_comm); })
+    .style("stroke", function(d) {		
+        //if(d.edgs_in_comm >=100){
+        if(n_edgs_in_comm(d.comm_id,communities) >=100){	
+            
+            return colorScaleedges(100); 
+            
+        }else 
+            //return colorScaleedges(d.edgs_in_comm); 
+            
+            return colorScaleedges(n_edgs_in_comm(d.comm_id,communities));
+        })
+    .style("stroke-width", 1)
+    .style("opacity", 0.3)
+    .style("fill", "none")
+    .attr("d", link());
 
     
   
@@ -367,52 +367,52 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.comm_id
     
     // Write out the data in text
  d3.select("#snps").selectAll("p")
-	.data(allNodes)
-	.enter().append("p")
+    .data(allNodes)
+    .enter().append("p")
 
 
-	.append("link").attr("href",function(d){
+    .append("link").attr("href",function(d){
 				
 	/*return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
 	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;
 */
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;
-				
-			})
-		
-			.attr("target","_blank")
-			.style("text-decoration",'none')
-			.style("color", '#000')
-	.text(function(d) { return showSnp(d); });
-	
-	
+    return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;
+            	
+            })
+            
+            .attr("target","_blank")
+            .style("text-decoration",'none')
+            .style("color", '#000')
+    .text(function(d) { return showSnp(d); });
+    
+    
     
  d3.select("#pairs").selectAll("p")
-	.data(links)
-	.enter().append("p")
-	//.append("link").attr("href","view_graph.html")
-	.attr("target","_blank")
-			.style("text-decoration",'none')
-			.style("color", '#000')
-	.text(function(d) { return showInteract(d); })
-	
-	
-	.on("mousedown", function(g,i) { 
-		
-    	d3.select("#table_snps").selectAll('table').remove();
-		create_table_snps(links[i])
-	
-		//"roc_id":0 file_json "bd.json"
-		d3.select("#rp").selectAll('svg').remove();
-		//ROC_plot (links[i].roc_id,file_json)
-		ROC_plot (links[i].ct_id,file_json)
-		
-		d3.select("#contp").selectAll('svg').remove();
-		cont_plot (links[i].ct_id,file_json)
-		
-		
-		})
-	 ;
+    .data(links)
+    .enter().append("p")
+    //.append("link").attr("href","view_graph.html")
+    .attr("target","_blank")
+            .style("text-decoration",'none')
+            .style("color", '#000')
+    .text(function(d) { return showInteract(d); })
+    
+    
+    .on("mousedown", function(g,i) { 
+        
+        d3.select("#table_snps").selectAll('table').remove();
+        create_table_snps(links[i])
+        
+        //"roc_id":0 file_json "bd.json"
+        d3.select("#rp").selectAll('svg').remove();
+        //ROC_plot (links[i].roc_id,file_json)
+        ROC_plot (links[i].ct_id,file_json)
+        
+        d3.select("#contp").selectAll('svg').remove();
+        cont_plot (links[i].ct_id,file_json)
+        
+        
+        })
+     ;
 	 
 	 
 
@@ -454,22 +454,22 @@ function showInteract(d)
 	
 	
 	
-	str= allNodes[d.source].rs+" "+
-	     allNodes[d.target].rs+" "+
-	     "chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position+" "+
-	     "chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position+" "
+    str= allNodes[d.source].rs+" "+
+         allNodes[d.target].rs+" "+
+         "chr"+allNodes[d.source].chrom+':'+allNodes[d.source].bp_position+" "+
+         "chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position+" "
 	
 	
-	for (var i in d ){		
-		if (i!="comm_id" &&  i!="ct_id" &&  i!= "source"  &&  i!= "target"){
-			//statOptions[i]=i
-			//st_1.push(i) //get the first element to be visualited
-			
-			str = str + i +": "+d[i]+" "
-			}}
-				
-	return str;
-	
+    for (var i in d ){		
+        if (i!="comm_id" &&  i!="ct_id" &&  i!= "source"  &&  i!= "target"){
+            //statOptions[i]=i
+            //st_1.push(i) //get the first element to be visualited
+            
+            str = str + i +": "+d[i]+" "
+            }}
+            	
+    return str;
+    
 //"fltGSS_prtv": 0.65, "fltGSS": 17.62, "fltGSS_cntr": 17.62, "fltSS": 23.99, "fltDSS": 19.02, "fltChi2": 18.35}
     //return "Source: " + d.source + " Target: " + d.target+ " Weight: " + d.weight + " Subgraph: " + d.subgraph_id;
   
@@ -504,24 +504,24 @@ function link() {
     radius = chromRingInnerRadius-22;
 
     function link(d) {
-	var startAngle = genome.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
-	endAngle = genome.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
-	offset = radius*(0.1*Math.min(allNodes[d.source].subgraph_id,9)-0.1);
-
-	var startX = Math.sin(startAngle)*radius,
-	startY = -Math.cos(startAngle)*radius,
-	endX = Math.sin(endAngle)*radius,
-	endY = -Math.cos(endAngle)*radius;
-
-	var c1X = Math.sin(startAngle)*offset,
-	c1Y = -Math.cos(startAngle)*offset,
-	c2X = Math.sin(endAngle)*offset,
-	c2Y = -Math.cos(endAngle)*offset;
-
-	return "M" + startX + "," + startY
-	    + "C" + c1X + "," + c1Y
-	    + " " + c2X + "," + c2Y
-	    + " " + endX + "," + endY
+    var startAngle = genome.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
+    endAngle = genome.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
+    offset = radius*(0.1*Math.min(allNodes[d.source].subgraph_id,9)-0.1);
+    
+    var startX = Math.sin(startAngle)*radius,
+    startY = -Math.cos(startAngle)*radius,
+    endX = Math.sin(endAngle)*radius,
+    endY = -Math.cos(endAngle)*radius;
+    
+    var c1X = Math.sin(startAngle)*offset,
+    c1Y = -Math.cos(startAngle)*offset,
+    c2X = Math.sin(endAngle)*offset,
+    c2Y = -Math.cos(endAngle)*offset;
+    
+    return "M" + startX + "," + startY
+        + "C" + c1X + "," + c1Y
+        + " " + c2X + "," + c2Y
+        + " " + endX + "," + endY
     }
     return link;
 };
@@ -529,30 +529,30 @@ function link() {
 
 // Returns an event handler for fading
 function fade(opacity) {
-	var sid;
-    return function(g, i) {
-	
-	svg.selectAll("g circle")  //select the circles
-            .filter(function(d) {
-            	            	 
-		return d.subgraph_id != allNodes[i].subgraph_id ;
-            })
-	    .transition()
-            .style("opacity", opacity);
-            
-            
-    svg.selectAll("g circle")  //show degree as tooltip - title
-            .filter(function(d) {
-		return d.subgraph_id === allNodes[i].subgraph_id;
-            })
-	  .append("title")
-      .text(function(d) { return "degree: " + two_dec(d.degree) });  
+    var sid;
+     return function(g, i) {
+    
+    svg.selectAll("g circle")  //select the circles
+             .filter(function(d) {
+             	            	 
+    	return d.subgraph_id != allNodes[i].subgraph_id ;
+             })
+        .transition()
+             .style("opacity", opacity);
+             
+             
+     svg.selectAll("g circle")  //show degree as tooltip - title
+             .filter(function(d) {
+        return d.subgraph_id === allNodes[i].subgraph_id;
+             })
+      .append("title")
+       .text(function(d) { return "degree: " + two_dec(d.degree) });  
+         
+         
         
-        
-       
-        
-   svg.selectAll(".link") //select the association regarding to the circle selected
-   			.filter(function(d) {
+         
+    svg.selectAll(".link") //select the association regarding to the circle selected
+    			.filter(function(d) {
 		return d.subgraph_id != allNodes[i].subgraph_id;
             }).remove();
        // .transition()
@@ -567,21 +567,21 @@ function fade(opacity) {
   
     // Write out the data selected in text 
  d3.select("#snps").selectAll("p")  
-	.data(allNodes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;				
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
+    .data(allNodes)
+    .enter().append("p")
+    .filter(function(d) { 	return d.subgraph_id === allNodes[i].subgraph_id;   })
+    .append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
+    return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;				
+    		})
+    .attr("target","_blank")	
+    .style("text-decoration",'none')	
     .style("color", function(d) {  //highlights the SNP selected
-					if (d.id != allNodes[i].id) {	
-						return "black";
-					} else {
-						return graphColor(d.subgraph_id);
-					}
-				})      
+                    if (d.id != allNodes[i].id) {	
+                    	return "black";
+                    } else {
+                    	return graphColor(d.subgraph_id);
+                    }
+                })      
 	.text(function(d) { return showSnp(d); });
    
   
