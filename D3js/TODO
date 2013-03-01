@@ -1,21 +1,18 @@
 TO DO
 
-
-- graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
-- show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
-
-- put the matrix SNPs X comunities in circle plot
-
-- idea -> http://bl.ocks.org/4063582
-
-- It should be able to visualise files with no subgraphs or communities.
 - replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
+- It should be able to visualise files with no subgraphs or communities.
+- put the matrix SNPs X comunities in circle plot
+- show a specfic chromosome when clicking on it in circular plot. 
+  Zoom such that it fills whole circle.
 
-- creat public datas
+- Cleanup code to follow google javascript style
+- graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
+- create public data
 
 LATER
 
-- show a specfic chrom
+- idea -> http://bl.ocks.org/4063582
 - select subset for exporting to UCSC BED file
 - http://jbrowse.org/ on separate <div>
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
