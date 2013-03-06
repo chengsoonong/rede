@@ -1,14 +1,14 @@
 TO DO
 
-- replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
-- It should be able to visualise files with no subgraphs or communities.
-- put the matrix SNPs X comunities in circle plot
-- show a specfic chromosome when clicking on it in circular plot. 
-  Zoom such that it fills whole circle.
+
 
 - Cleanup code to follow google javascript style
-- graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 - create public data
+
+- show a specfic chromosome when clicking on it in circular plot. 
+  Zoom such that it fills whole circle.
+- sort SNP list options: chromosome, probe_graph, degree
+- graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 
 LATER
 
@@ -21,6 +21,9 @@ LATER
 
 DONE
 
+- (4/3/2013) create the plot  matrix SNPs X comunities
+- (3/3/2013) It should be able to visualise files with no subgraphs or communities.
+- (1/3/2013) replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
 - (27/2/2013) hide and show ROC plot and Contegency table when click in title "ROC plot and Contegency table"
 - (27/2/2013) conection betwen roc and ct's button with circle plot to show the pair in circle
 - (25/2/2013) put zoom in big matrix SNPs associations (matrix plot) - mini map

@@ -217,6 +217,7 @@ function manhattan_plot(x1,x2,y1,y2,data){
 			for  (var i=0;i<chrom_acum_length.length;i++){
 				var num=i+1;
 				
+				
 				array_test1.push( "chr"+num );
 				array_test2.push( xScale(chrom_acum_length[i])   );
 			}				
@@ -587,7 +588,7 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 			   .attr("cy", function(d) {
 			   		return yScale(d[1]);
 			   })
-			   .attr("r", 3.5)
+			   .attr("r", 1.5)
 			   //.style("fill", function(d) { return graphColor(d[2]) })
 			   .style("fill", function(d) { return colorScale(d[2]) })
 			   //.on("mouseover", fade(0))

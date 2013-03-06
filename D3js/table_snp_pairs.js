@@ -15,7 +15,7 @@ tmpDataset.push("rs_b");
 
 
 for (var e in dat){
-	if("comm_id"!=e &&	"source"!=e &&	"target" !=e && "subgraph_id" !=e &&	"ct_id"!=e){
+	if("assoc_group"!=e &&	"source"!=e &&	"target" !=e && "probe_group" !=e &&	"ct_id"!=e){
 	tmpDataset.push(e);
 	}
 }
@@ -32,7 +32,7 @@ tmpDataset.push(allNodes[dat.source].rs);
 tmpDataset.push(allNodes[dat.target].rs);
 
 for (var e in dat){
-		if("comm_id"!=e &&	"source"!=e &&	"target" !=e && "subgraph_id" !=e &&	"ct_id"!=e){
+		if("assoc_group"!=e &&	"source"!=e &&	"target" !=e && "probe_group" !=e &&	"ct_id"!=e){
 	tmpDataset.push(dat[e]);
 	}
 	
