@@ -1,4 +1,15 @@
+/**
+ * @fileoverview  This file has the function to create the table with information about snps pairs
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
 
+
+
+/**
+ * From data about snps pairs in dat this function create a table  
+ * @param {array} dat
+ */ 
 function create_table_snps(dat){	
 		
 var dataset = [], tmpDataset = []; //, i, j;

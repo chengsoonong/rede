@@ -1,9 +1,30 @@
+/**
+ * @fileoverview All functions and variables to create the Matrix plot 
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
 
 
+
+
+/**
+ * Global variable only for matrix_plot.js. 
+ * @type {array} data_obj_m
+ */
 var data_obj_m=[];
+/**
+ * Global variable only for matrix_plot.js. 
+ * @type {array} array_SNPs
+ */
 var array_SNPs=[];
 
 
+
+
+/**
+ * Read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
+ * @param {string} file_name
+ */ 
 function  read_file_to_matrix_plot(file_name) {
 	//this function read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
 	
@@ -73,7 +94,13 @@ function  read_file_to_matrix_plot(file_name) {
 
 
 
-
+/**
+ * creat the matrix plot and do the zoom from x1, x2, y1, y2 values. 
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ */
 function matrix_plot( x1,x2,y1,y2){
 // this function create the matrix show each SNPs association
 
@@ -354,22 +381,20 @@ function brushend() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * this function create the minimap from matrix that show all SNPs association and do the zoom from x1, x2, y1, y2 values. 
+ * If mrect_x1, mrect_y1, mrect_x2, mrect_y2 are diferent from zero (0) this create a rectangle 
+ * to help a see the location of the zoom.
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ * @param {number} mrect_x1
+ * @param {number} mrect_x2
+ * @param {number} mrect_y1
+ * @param {number} mrect_y2 
+ * @param {array} data
+ */
 function matrix_plot_minmap( x1,x2,y1,y2, mrect_x1, mrect_y1, mrect_x2, mrect_y2){
 // this function create the minimap from matrix that show all SNPs association
 

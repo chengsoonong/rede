@@ -3,6 +3,7 @@ TO DO
 
 
 - Cleanup code to follow google javascript style
+- put the instructions for users in readme
 - create public data
 
 - show a specfic chromosome when clicking on it in circular plot. 

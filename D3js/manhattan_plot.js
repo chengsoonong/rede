@@ -1,11 +1,54 @@
+/**
+ * @fileoverview All functions and variables to create the Manhattan plot 
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
+
+
+//------------------------------------------   Global variables   ---------------------------------------------- 
+
+/**
+ * Global variable only for manhattan_plot.js to create the scale in manhattan plot.
+ * @type {number} chrom_lenght
+ */
+var chrom_lenght=0;							 
+/**
+ * Global variable only for manhattan_plot.js to create the scale in manhattan plot.
+ * @type {array} chrom_acum_length
+ */
+var chrom_acum_length= new Array(); 		
+/**
+ * Constant only for manhattan_plot.js to create the scale in manhattan plot.
+ * @const
+ * @type {array} chromLength
+ */
+var chromLength = new Array 				
+               (249250621, 243199373, 198022430, 191154276,
+                180915260, 171115067, 159138663, 146364022,
+                141213431, 135534747, 135006516, 133851895,
+                115169878, 107349540, 102531392, 90354753,
+                81195210, 78077248, 59128983, 63025520,
+                48129895, 51304566, 155270560, 59373566);
+
+//this initializes chrom_lenght and chrom_acum_length to be used in manhattan plot
+for (var i=0; i<chromLength.length;i++){ 
+    chrom_lenght=chrom_lenght+chromLength[i];	
+    chrom_acum_length.push(chrom_lenght);	
+}
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 
 
-
-
+//---------------------------------------read json file --------------------------------------
+ 
+/**
+ * Read a .json to inicialaze the variables and call the function manhattan_plot() to craete the manhattan plot
+ * @param {string} file_name
+ */ 
 function  read_file_to_manhattan_plot(file_name) {
-	//this function read a .json to inicialaze the variables and call the function manhattan_plot() to craete the manhattan plot
+	
 	
 data = new Array();
 allNodes= new Array();
@@ -61,24 +104,24 @@ manhattan_plot(0, chrom_lenght,d3.min(data_weight_pvalue, function(d) { return d
 });
 
 }
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ read json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 
+//------------------------------------- create manhattan plot ---------------------------------------
 
-//******************************************************************************
+/**
+ * creat the manhataan plot from the dots in data and do the zoom from x1, x2, y1, y2 values. 
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ * @param {array} data
+ */
+function manhattan_plot(x1, x2, y1, y2, data){
+//creat the manhataan plot  			
 
-
-function manhattan_plot(x1,x2,y1,y2,data){
-//creat the manhataan plot
-			
-
-	
-			/*
-			var w_scale_bar = 500;
-			var h_scale_bar = 30;
-			var barPadding = 0;
-		*/
 //--------------------------- create color scale  --------------------------------------------------
 	var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 //Then define width and height as the inner dimensions of the chart area.
@@ -149,31 +192,8 @@ function manhattan_plot(x1,x2,y1,y2,data){
   						
     						});
 			
-							 
-     		/*		 
-			
-			 d3.select("#min_num_scale_bar").selectAll("h1").remove(); //remove the old numbers of color scale
-  				d3.select("#min_num_scale_bar").selectAll("h1")        //create the new numbers of color scale
-				.data([1])
-				.enter().append("h1")
-				.text(two_dec( d3.min(data,function(d) {return d[2]; })));
-			
-			d3.select("#max_num_scale_bar").selectAll("h1").remove(); //remove the old numbers of color scale
-  				d3.select("#max_num_scale_bar").selectAll("h1")           //create the new numbers of color scale
-				.data([1])
-				.enter().append("h1")
-				.text(two_dec( d3.max(data,function(d) {return d[2]; })));
-				
-			*/	
-				
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
-
-
-
-
-
-//alert(data.length+"m2"); 
-
 
 
 
@@ -399,18 +419,24 @@ function brushend() {
 
 
 
-						//xScale_top("chr5"),30, 10, 10
+					
 
 
 
-
-
-
-
-
-
-
-
+/**
+ * creat a mini manhataan plot from the dots in data and do the zoom from x1, x2, y1, y2 values. 
+ * If rect_x1, rect_y1, rect_x2, rect_y2 are diferent from zero (0) this create a rectangle 
+ * to help a see the location of the zoom.
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ * @param {number} rect_x1
+ * @param {number} rect_x2
+ * @param {number} rect_y1
+ * @param {number} rect_y2 
+ * @param {array} data
+ */
 function manhattan_plot_minmap(x1,x2,y1,y2,rect_x1, rect_y1, rect_x2, rect_y2,data){
 //creat the manhataan plot
 			
@@ -421,11 +447,6 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 			var h_scale_bar = 65- margin_s.top - margin_s.bottom;
 			var barPadding = 0;
 			
-			/*
-			var w_scale_bar = 500;
-			var h_scale_bar = 30;
-			var barPadding = 0;
-		*/
 //--------------------------- create color scale  --------------------------------------------------
 
 			var dataset = d3.range(d3.min(data,function(d) {return d[2]; }), d3.max(data,function(d) {return d[2]; })+1);
@@ -442,17 +463,6 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 	
 				
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
-
-
-
-
-
-
-
-
-
-
-
 
 			var margin = {top: 30, right: 50, bottom: 40, left: 60};
 
@@ -539,40 +549,6 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 			   .style("stroke", "black") //stroke-dasharray="5"
 			   .style("opacity", 0.2);
 	
-		/*
-		//Create SVG element to receive the scale color bar
-			var svg3 = d3.select("#scale_bar")
-						.append("svg")
-						//.attr("width", w_scale_bar)
-						//.attr("height", h_scale_bar);
-						
-						 .attr("width", w_scale_bar + margin_s.left + margin_s.right)
-  						   .attr("height", h_scale_bar + margin_s.top + margin_s.bottom)
-				    	   .append("g")
- 					       .attr("transform", "translate(" + margin_s.left + "," + margin_s.top + ")");
-
-			*/			
-	
-	/*
-						rect_x1, rect_y1, rect_x2, rect_y2
-						xScale_top("chr5"),30, 10, 10
-	
-						
-			svg.selectAll("rect")  //create color scale bar
-			   .data([0])
-			   .enter()
-			   .append("rect")
-			   .attr("x", xScale_top("chr5"))
-			   .attr("y", 30)
-			   .attr("width",10 )
-			   .attr("height", 10)
-			   .attr("fill", "rgba(255, 255, 0, 0.1)")
-			   .attr("stroke", "rgba(255, 0, 0, 1)");
-	*/
-	
-	
-	
-	
 	
 
 	
@@ -614,43 +590,6 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 	}
 	
 
-
-/*
- label_text=svg.selectAll("text")
-			   .data(data)
-			   .enter()
-			   .append("text")
-			   .text(function(d) {
-			   		return d[3] + " ; " + d[1]+ " ; " + d[2];//two_dec(d[2]);
-			   })
-			   .attr("x", function(d) {
-			   		return xScale(d[0]);
-			   })
-			   .attr("y", function(d) {
-			   		return yScale(d[1]);
-			   })
-			   .attr("font-family", "sans-serif")
-			   .attr("font-size", "11px")
-			   //.attr("fill", "red")
-			   .style("fill", function(d) { return colorScale(d[2]) });
-
-				label_text.transition().duration(1000).style("opacity", 0); //it will fade the label in circles
- 				//label_text.transition().style("opacity", 0); //it will fade the label in circles
-
-	
-			
-			//Create X axis
-			svg.append("g")
-				.attr("class", "axis")
-				.attr("transform", "translate(0," + (h ) + ")")
-				.call(xAxis)//;
-				.append("text")
-      			.attr("class", "label")
-      			.attr("x", w)
-      			.attr("y", -6)
-      			.style("text-anchor", "end")
-      			.text("Chromosome Lengths (nº bases)");
-      */			
       			
       		svg.append("g").attr("transform", "translate(0," + h + ")")
 				.attr("class", "xt_min axis")
@@ -668,30 +607,14 @@ var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
 				.attr("class", "axis")
 				//.attr("transform", "translate(" + padding + ",0)")
 				.call(yAxis)
-				/*
-				.append("text")
-      			.attr("class", "label")
-      			.attr("transform", "rotate(-90)")
-      			//.attr("y", h/2)
-      			//.attr("x", w)
-      			.attr("x", -130)
-      			.attr("y", -15)
-      			.attr("dy", ".71em")
-      			.style("text-anchor", "end")
-      			.text("Statistical Test")
-      			*/
+			
       			;
       			
-      			
-      			
-
- 
- 
- 
+      		
 }
 
 
 
 
-
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ create manhattan plot ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

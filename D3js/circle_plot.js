@@ -1,15 +1,83 @@
+/**
+ * @fileoverview All functions to create the circle plot 
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
 
 
 
+
+//------------------------------------------   Global variables   ---------------------------------------------- 
+
+/**
+ * Constant only for circle_plot.js to create the SVG
+ * @const
+ * @type {number}
+ */
+var width =800,//800,  ->  300
+    height =800 ,//800,  -> 300
+    width2 =800 ,//800,  -> 1500				//for transition
+    height2 =800 ,//800,   -> 400 				//for transition
+    chromRingOuterRadius = Math.min(width, height) * .45,   
+    chromRingInnerRadius = chromRingOuterRadius * 0.95;
+/**
+ * Constant only for circle_plot.js to create the color of the chrommossomos
+ * (TODO: change to function reading from ucsc_colour.csv)
+ * @const
+ * @type {array}
+ */
+var color = new Array
+               (d3.rgb(153,102,0), d3.rgb(102,102,0), d3.rgb(153,153,30), d3.rgb(204,0,0), 
+                d3.rgb(255,0,0), d3.rgb(255,0,204), d3.rgb(255,204,204), d3.rgb(255,153,0),
+                d3.rgb(255,204,0),d3.rgb(255,255,0),d3.rgb(204,255,0),d3.rgb(0,255,0),
+                d3.rgb(53,128,0),d3.rgb(0,0,204),d3.rgb(102,153,255),d3.rgb(153,204,255),
+                d3.rgb(0,255,255),d3.rgb(204,255,255),d3.rgb(153,0,204),d3.rgb(204,51,255),
+                d3.rgb(204,153,255),d3.rgb(102,102,102),d3.rgb(153,153,153),d3.rgb(204,204,204));
+/**
+ * Constant only for circle_plot.js to create the color of the nodes 
+ * @const
+ * @type {d3} graphColor
+ */
+var graphColor = d3.scale.category20(); 
+/**
+ * Global variable only for circle_plot.js to create the circle plot
+ * @type {svg} svg
+ */
+var svg ;						
+/**
+ * Global variable only for circle_plot.js to create the circle plot
+ * @type {object} all_chrom
+ */
+var all_chrom;   						
+/**
+ * Global variable only for circle_plot.js to create color bar scale.
+ * @type {d3} colorScaleedges
+ */
+var colorScaleedges;
+/**
+ * Global variable only for circle_plot.js to create color bar scale.
+ * @type {d3} colorScaleedges2
+ */
+var colorScaleedges2;
+/**
+ * Global variable that is used in circle_plot.js. It will be used to get the information about of the communitties in json file. 
+ * @type {array[objects]} communities   
+ */
+var communities;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+
+    
 
 
 // ---------------------------------- create the circle plot ----------------------------------------
 
-
+/**
+ * Create the SVG element to Plot the chromosomes in a circle and the ticks on chromosome   
+ */
 function Create_chr_circle(){  
-	// function to Create the SVG element , to Plot the chromosomes in a circle and the ticks on chromosome   
-		
-svg = d3.select("#chart")  // Selects  the element with id="chart"
+	   		
+    svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
     .attr("width", width2)
     .attr("height", height2)
@@ -87,24 +155,16 @@ ticks.append("text")
       return d.angle > Math.PI ? "rotate(180)translate(-16)" : null;
     })
     .text(function(d) { return d.label; });    
-    
-
-// when we click in vizualization it declaration below will reset the vizualization using the function reset		
-
-//d3.select("#chart").selectAll('svg').on("click", reset());
-//d3.select("#scale_bar").selectAll('svg').remove();
 
 };
 
-
-
-
+/**
+ * Create all associations betewen the SNPs   
+ */
 function Create_SNP_association(file_name){
-//this function create all associations betewen the SNPs
 
 
-// Plot nodes and links for the default dataset
-d3.json(file_name, function(json) {
+d3.json(file_name, function(json) {// Plot nodes and links for the default dataset
     links = json.links;// var links = json.links;
     var subgraphs = json.subgraphs;	   
     communities = json.communities;
@@ -445,8 +505,9 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
 
 // ------------------------   declaration of the functions to plot crhom. in circle  --------------------------------------
 
-
-// Display the nodes and links for debugging
+/**
+ * Display the nodes and links for debugging   
+ */
 function showSnp(d)
 {
     return "id:"+d.id+"    chr"+d.chrom+':'+d.bp_position + "    " + d.rs + " Subgraph:" + d.probe_group;
@@ -630,9 +691,11 @@ function fade(opacity) {
 
 // ---------------------------------------- brush weight  --------------------------------------------
 
-  
-function brush_weight(file_name){
-//this function create the brush on weight value to vizualizate SNPs association in specific weight range 
+/**
+ * this function create the brush on weight value to vizualizate SNPs association in specific weight range
+ * @param {string} file_name
+ */  
+function brush_weight(file_name){ 
 
 d3.json(file_name, function(json) {
     links = json.links;// var links = json.links;
@@ -800,25 +863,7 @@ function brushend() { //selected de circles in x cordenate for diferent vizualiz
 }
 	
 
-function reset_association(){ //I am not using this function more
-	 //create the new association		
-    // Draw the edges
- svg.selectAll("path.link")
-	.data(links)
-	.enter().append("path")
-	.attr("class", "link")
-	.style("stroke", function(d) {		
-		if(n_edgs_in_comm(d.assoc_group,communities) >=100){
-			return colorScaleedges(100);
-		}else
-			return colorScaleedges(n_edgs_in_comm(d.assoc_group,communities));
-		})	
-	.style("stroke-width", 1)
-	.style("opacity", 0.3)
-	.style("fill", "none")
-	.attr("d", link());
-	
-} 	
+ 	
 	
 });
 
@@ -831,713 +876,4 @@ function reset_association(){ //I am not using this function more
 
 
 
-// ---------------------------------------- histogram edges X probe_group --------------------------------------------
 
-
-function histogram_edges_subgraphId(file_name){
-	//it will create the histogram edges X subgraphId in circle_plot
-	
-	
-var margin = {top: 30, right: 20, bottom: 90, left: 40},
-    width = 850 - margin.left - margin.right, //500
-    height = 400 - margin.top - margin.bottom;//200
-
-
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .5, 1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left") ;
-
-var svg = d3.select("#hesid").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-var data_probe_group1 = new Array();  
-//this array will receive the probe_group of the json file, exemplo -> [1,3,2,4,1,1,3,4,4,4,2] .
-//Next it will be sorted,  exemplo -> [1,1,1,2,2,3,3,4,4,4]
-
-var data_probe_group2 = new Array();  
-//this array will receive small array from data_probe_group1.
-//the lenght the each sub-array represent the number the edges in a subgraph, 
-//exemplo -> [[1,1,1],[2,2],[3,3],[4,4,4]], in this array the 1ª element is the subgraph 1 and has 3 edges.    
-	
-d3.json(file_name, function(json) {
-   
- json.links.forEach( function(d) {  data_probe_group1.push(d.probe_group); } );  //-> [1,3,2,4,1,1,3,4,4,4,2]
- //json.nodes.forEach( function(d) {  data_probe_group1.push(d.probe_group); } );  //-> [1,3,2,4,1,1,3,4,4,4,2]
- 	
- data_probe_group1.sort(function(a, b){ //-> [1,1,1,2,2,3,3,4,4,4]
-   return a > b? 1 : 0; 
-});
- 
-
-create_data_probe_group2()
-
-function create_data_probe_group2(){
-	//this function will create the array data_probe_group2 from data_probe_group1,
-	//exemplo: [1,1,1,2,2,3,3,4,4,4] -> [[1,1,1],[2,2],[3,3],[4,4,4]].
-	
-	var max=d3.max(data_probe_group1, function(d) { return d; });
-	var min=d3.min(data_probe_group1, function(d) { return d; });
-	var li, ary;
-
-	while(min<max ){
-		
-		li=data_probe_group1.lastIndexOf(min);
-		ary=data_probe_group1.splice(0,li+1);
-		//document.write(ary+"<br>");
-		//ary=data_probe_group1.splice(0,li);
-		data_probe_group2.push(ary);
-		min=d3.min(data_probe_group1, function(d) { return d; })
-		
-	}
-	data_probe_group2.push(data_probe_group1);
-	
-}
-
-var data_obj=[]; //array with obj. with the couple egds and probe_group
-
-function creat_obj(probe_group,edgs ){
-	//function to create the obj. with the couple egds and probe_group
-	var obj={};
-	obj.n_probe_group  = probe_group;
-	obj.n_edgs  =edgs;
-	return obj;
-}
-
-for (var i=0;i<data_probe_group2.length;i++ ){
- 	// from data_probe_group2 we will create a array with obj. with the couple egds and probe_group
- 	 
- 	//data_obj.push(creat_obj(data_probe_group2[i][0],data_probe_group2[i].length-1));
- 	data_obj.push(creat_obj(data_probe_group2[i][0],data_probe_group2[i].length));
- }
-  
-
-
-  x.domain(data_obj.map(function(d) { return d.n_probe_group; }));
-  y.domain([0, d3.max(data_obj, function(d) { return d.n_edgs; })]);
-
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-      
-      svg.append("text")
-     // .attr("transform", "rotate(-90)")
-      .attr("y", 330)
-      .attr("x", 400)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("probe_group");
-
-  		// now rotate text on x axis
-        // first move the text left so no longer centered on the tick
-        // then rotate up to get 90 degrees.
-svg.selectAll(".x text")  // select all the text elements for the xaxis
-          .attr("transform", function(d) {
-             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*1 + ")rotate(-90)";
-         });    
-
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Nº Edges");
-      
-
-
-
-
-
-  svg.selectAll(".bar")
-      .data(data_obj)
-    .enter().append("rect")
-      .attr("class", "es bar")
-      .attr("x", function(d) { return x(d.n_probe_group); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.n_edgs); })
-      .attr("height", function(d) { return height - y(d.n_edgs); })  
-          
-      .attr("fill", function(d) { return   graphColor(d.n_probe_group); })
-      
-      .attr("fill-opacity",.5)
-      .on("mousedown", function(g,i) { 
-	 	//when mousedown this selected the probe_group and create the string_html to show in html the seleced data 
-  		 	
-  		//d3.select("#chart").selectAll(".link").remove(); //remove the old association
-	    //reset_association();			 //create the new association 	
-  		//svg.selectAll(".link")  
-   	 
-   	 
-   	 if(plot_chosen==="p_mat_c"){
-   	 	
-   	 	data_obj_mc=[]
-   	 	d3.select("#minmap_matrixsc").selectAll('svg').remove();
-   	 	d3.select("#chart").selectAll('svg').remove();  				//remove old selection
-   	 	for (var e in data_obj_mc2){
-   	 		
-   	 		if ( data_obj_mc2[e].probe_group=== data_obj[i].n_probe_group){
-   	 			data_obj_mc.push( data_obj_mc2[e])
-   	 		}
-   	 		
-   	 	}
-   	
-   	
-   	  mix_1=0;
-      mix_2=d3.max(data_obj_mc, function(d) { return d.label_x; })+1;
-      miy_1=d3.min(data_obj_mc, function(d) { return d.label_y; })-1; 
-      miy_2=d3.max(data_obj_mc, function(d) { return d.label_y; })+1;  	
-   	 	
-   	 	
-      	
-	matrix_comm_plot(mix_1, mix_2, miy_1, miy_2) 
-   	matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0,0,0,0)
-   	
-   	
-   	 	
-   	 }else{
-   	 
-   	 
-   	 
-   	 
-   	  
-   	 d3.select("#hc").select("svg").remove();
-   	 d3.select("#hds_matrix").select("svg").remove();
-   	 sid= data_obj[i].n_probe_group;
-  		 	
- 			histogram_degree_SNPs(file_json,sid);	
- 			
- 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
-
-			json_nodes_selected(file_json,sid);	
-		
-			json_links_selected(file_json,sid);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 d3.select("#chart") 	
-		.selectAll("g circle")
-   		.transition()
-  	     .style("opacity", 1);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 d3.select("#chart") 
-   	 .selectAll("g circle")  //select the circles
-            .filter(function(d) {
-            	            	 
-		return d.probe_group != data_obj[i].n_probe_group;
-            })
-	    .transition()
-            .style("opacity", 0);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	  d3.select("#chart") 	
-		.selectAll(".link")	
-   		.transition()
-  	     .style("opacity", 0.3);
-
-	  d3.select("#chart") 	
-		.selectAll(".link")
-		//.data(links) //select the association regarding to the circle selected
-   		.filter(function(d) { return d.probe_group != data_obj[i].n_probe_group;      })
-   		//.remove();
-		//	document.write(data_obj[i].n_probe_group); 	
-         .transition()
-  	     .style("opacity", 0);		
-		
-		
-		
-		
-   d3.select("#snps").selectAll("p").remove(); //remove old text
-   d3.select("#pairs").selectAll("p").remove(); //remove old text
-  
-    // Write out the data selected in text 
- d3.select("#snps").selectAll("p")  
-	.data(allNodes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.probe_group === data_obj[i].n_probe_group;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;		
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
-    .style("color", "black")      
-	.text(function(d) { return showSnp(d); });
-   
-  
-  
-  
-  
-
- d3.select("#pairs").selectAll("p")
-	.data(links)
-	.enter().append("p")
-	.filter(function(d) {
-		return d.probe_group === data_obj[i].n_probe_group;
-            })
-	.text(function(d) { 
-		
-	
-		return showInteract(d); });
-		
-	}	
-			 			
-});
-      
-      
-      
-      
-
- svg.selectAll(".bar")  //show degree as tooltip - title
-       .data(data_obj)
-	  .append("title")
-      .text(function(d) { return d.n_edgs; });  
-      
- svg.selectAll(".text_b")
-			   .data(data_obj)
-			   .enter()
-			   .append("text") 
-			   .attr("class", "text_b")
-			   .text(function(d) { return d.n_edgs; })
-			  // .attr("text-anchor", "middle")
-			   .attr("x",function(d) { return x(d.n_probe_group); })
-			   .attr("y",function(d) { return y(d.n_edgs+0.5); })
-			   .attr("font-family", "sans-serif")
-			   .attr("font-size", "11px")
-			   .attr("fill", "black")
-			   .on("mousedown", function(g,i) { 
-	 	//when mousedown this selected the probe_group and create the string_html to show in html the seleced data 
-  		 	
-  		//d3.select("#chart").selectAll(".link").remove(); //remove the old association
-	    //reset_association();			 //create the new association 	
-  		//svg.selectAll(".link")  
-   	 
-   	 
-   	 
-   	    	 d3.select("#hc").select("svg").remove();
-   	 
-   	 		sid= data_obj[i].n_probe_group;
-  		 	
- 			//histogram_degree_SNPs(file_json,sid);	
- 			
- 			string_html="{\"directed\": false, \"graph\": [], \"nodes\": [";
-
-			json_nodes_selected(file_json,sid);	
-		
-			json_links_selected(file_json,sid);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 d3.select("#chart") 	
-		.selectAll("g circle")
-   		.transition()
-  	     .style("opacity", 1);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 d3.select("#chart") 
-   	 .selectAll("g circle")  //select the circles
-            .filter(function(d) {
-            	            	 
-		return d.probe_group != data_obj[i].n_probe_group;
-            })
-	    .transition()
-            .style("opacity", 0);
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	 
-   	  d3.select("#chart") 	
-		.selectAll(".link")	
-   		.transition()
-  	     .style("opacity", 0.3);
-
-	  d3.select("#chart") 	
-		.selectAll(".link")
-		//.data(links) //select the association regarding to the circle selected
-   		.filter(function(d) { return d.probe_group != data_obj[i].n_probe_group;      })
-   		//.remove();
-		//	document.write(data_obj[i].n_probe_group); 	
-         .transition()
-  	     .style("opacity", 0);		
-		
-		
-		
-		
-   d3.select("#snps").selectAll("p").remove(); //remove old text
-   d3.select("#pairs").selectAll("p").remove(); //remove old text
-  
-    // Write out the data selected in text 
- d3.select("#snps").selectAll("p")  
-	.data(allNodes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.probe_group === data_obj[i].n_probe_group;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;		
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
-    .style("color", "black")      
-	.text(function(d) { return showSnp(d); });
-   
-  
-  
-  
-  
-
- d3.select("#pairs").selectAll("p")
-	.data(links)
-	.enter().append("p")
-	.filter(function(d) {
-		return d.probe_group === data_obj[i].n_probe_group;
-            })
-	.text(function(d) { 
-		
-	
-		return showInteract(d); });
-		
-		
-		
-		
-					
-		});     
-
-
-
-});
-
-}
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ histogram edges X probe_group ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-
-
-
-// -------------------------------- histogram degree X SNPs ----------------------------------------
-
-function histogram_degree_SNPs_old(file_name,probe_group){
-	//it will create the histogram degree X SNPs in circle_plot
-var margin = {top: 20, right: 20, bottom: 120, left: 40},
-    width = 850 - margin.left - margin.right, //500
-    height = 400 - margin.top - margin.bottom;//200
-
-
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .5, 1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    ;
-
-var svg = d3.select("#hc").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-
-var data = new Array();
-var allNodes_hes = new Array();
-
-var links_hes = new Array();
-	
-d3.json(file_name, function(json) {
-   
- allNodes_hes = json.nodes;// var links = json.links;
-     
- json.links.forEach(	
-	function(d) { 
-		if(d.probe_group===probe_group){
- 				links_hes.push(d)  
- 	}});
- 	
- 	
- json.nodes.forEach( 
- function(d) { 
- 	if(d.probe_group===probe_group){
- 	data.push(d); 
- 	}});		
- 
-
-//d.label
-
-  //x.domain(data.map(function(d) { return "chr"+d.chrom+':'+d.bp_position; }));
-  
-  x.domain(
-  
-  data.sort("true"==="true"
-        ? function(a, b) { return b.degree - a.degree; }
-        : function(a, b) { return d3.ascending("chr"+a.chrom+':'+a.bp_position, "chr"+b.chrom+':'+b.bp_position); })
-        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; })
-  
-  );
-  
-  y.domain([0, d3.max(data, function(d) { return d.degree; })]);
-
-
-
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-      
- svg.append("text")
-     // .attr("transform", "rotate(-90)")
-      .attr("y", 365)
-      .attr("x", 400)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("SNPs");
-
-		// now rotate text on x axis
-        // first move the text left so no longer centered on the tick
-        // then rotate up to get 90 degrees.
-svg.selectAll(".x text")  // select all the text elements for the xaxis
-          .attr("transform", function(d) {
-             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*4 + ")rotate(-90)";
-         });
-
-
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Degree");
-
-  var bar_hDS=svg.selectAll(".bar")
-      .data(data)
-    .enter().append("rect")
-      .attr("class", "ds bar")
-      .attr("x", function(d) { return x("chr"+d.chrom+':'+d.bp_position); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.degree); })
-      .attr("height", function(d) { return height - y(d.degree); })      
-      //.on("mouseover", function(g,i){  //mousedown
-      	.on("mousedown", function(g,i){ 
-      	
-      	
-      	bar_hDS.style("fill", "steelblue")
-      	
-      	
-        l=[]
-        
-		for ( var e in links_hes){			
-	
-		if(x("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position)===x("chr"+data[i].chrom+':'+data[i].bp_position) 
- 		|| x("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position)===x("chr"+data[i].chrom+':'+data[i].bp_position)){
-		
-				l.push(x("chr"+allNodes_hes[links_hes[e].source].chrom+':'+allNodes_hes[links_hes[e].source].bp_position));
-		      	l.push(x("chr"+allNodes_hes[links_hes[e].target].chrom+':'+allNodes_hes[links_hes[e].target].bp_position));
-		      			 }		    			 
-		      		} 
-		      		
-         bar_hDS.filter(function(d) {
-      			if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return d;} 
-      			} )
-	    .transition()
-        .style("fill", "red");
-      
-
-       
-       
-       
-       
-       
-     /*  
-       
-        d3.select("#snps").selectAll("p")  .transition()
-	//.data(allNodes)
-	.filter(function(d) { 	//return d.probe_group === data_obj[i].n_probe_group;   })
-	if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return d;} 
-      			} )
-	
-     .style("color", "red");
-      */ 
-       
-      /* 
-     d3.select("#snps").selectAll("p").remove(); //remove old text
-   d3.select("#pairs").selectAll("p").remove(); //remove old text
-  
-    // Write out the data selected in text 
- d3.select("#snps").selectAll("p")  
-	.data(allNodes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.probe_group === allNodes[i].probe_group;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+
-	'chr'+d.chrom+':'+d.label.substring(6).replace("k","000-")+d.bp_position  ;				
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
-    .style("color", function(d) {  //highlights the SNP selected
-					if (d.id != allNodes[i].id) {	
-						return "black";
-					} else {
-						return graphColor(d.probe_group);
-					}
-				})      
-	.text(function(d) { return showSnp(d); });     
-       */
-       
-       
-       	
-		
-		
-   d3.select("#snps").selectAll("p").remove(); //remove old text
- 
-  
-    // Write out the data selected in text 
- d3.select("#snps").selectAll("p")  
-	.data(allNodes_hes)
-	.enter().append("p")
-	.filter(function(d) { 	return d.probe_group === data[i].probe_group;   })
-	.append("link").attr("href",function(d){	//link for UCSC genome browser for each snp (small circle) selected 			
-	return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+d.chrom+':'+ (d.bp_position-1000)+'-'+(d.bp_position+1000)  ;			
-			})
-	.attr("target","_blank")	
-	.style("text-decoration",'none')	
-        .style("color", function(d) {  //highlights the SNP selected
-					if(include_in_arr(l,x("chr"+d.chrom+':'+d.bp_position))){return "red";} 
-					else{
-      				return "black";			
-      				
-      			}
-					
-				})          
-	.text(function(d) { return showSnp(d); });
-   
-  
-  
-  
-  
-
-       
-       
-       
-       
-       
-       
-      
-      })
-     // .on("mouseout", function(){bar_hDS.style("fill", "steelblue")})
-      
-      ;
-      
-      
-      
-   svg.selectAll(".bar")  //show degree as tooltip - title
-       .data(data)
-	  .append("title")
-      .text(function(d) { return "chr"+d.chrom+':'+d.bp_position+" ; "+d.degree; });     
-      
-/*
-  d3.select("#cb").on("change", change);
-
-  var sortTimeout = setTimeout(function() {
-    d3.select("input").property("checked", true).each(change);
-  }, 2000);
-*/
-
-/*
-  function change() {
-  //  clearTimeout(sortTimeout);
-
-
-
-    // Copy-on-write since tweens are evaluated after a delay.
-    var x0 = x.domain(
-    	
-    	
-    	
-    	data.sort(this.checked 
-        ? function(a, b) { return b.degree - a.degree; }
-        : function(a, b) { return d3.ascending("chr"+a.chrom+':'+a.bp_position, "chr"+b.chrom+':'+b.bp_position); })
-        .map(function(d) { return "chr"+d.chrom+':'+d.bp_position; })
-        
-        ).copy();
-
-
-
-
-    var transition = svg.transition().duration(750),
-        delay = function(d, i) { return i * 50; };
-
-         transition.selectAll(".bar")
-        .delay(delay)
-        .attr("x", function(d) { return x0("chr"+d.chrom+':'+d.bp_position); })
-
-      ;
-        
-       
-
-    transition.select(".x.axis")
-        .call(xAxis)
-      .selectAll("g")
-        .delay(delay);
-  }
-  */
-  
-  
-});
-
-}
-
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ histogram degree X SNPs ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

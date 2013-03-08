@@ -1,12 +1,37 @@
+/**
+ * @fileoverview All functions and variables to create the communitties plot 
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
 
 
+
+
+/**
+ * Global variable only for matrix_snp_coomm_plot.js. 
+ * @type {array} data_obj_mc
+ */
 var data_obj_mc=[];
-var data_obj_mc2=[]; 
+/**
+ * Global variable only for matrix_snp_coomm_plot.js.
+ * @type {array} data_obj_mc2
+ */
+var data_obj_mc2=[];
+/**
+ * Global variable only for matrix_snp_coomm_plot.js. 
+ * @type {array} array_SNPs_mc
+ */ 
 var array_SNPs_mc=[];
 
 
+
+
+/**
+ * Read a .json to inicialaze the variables and call the function matrix_comm_plot() to craete the communitties plot 
+ * @param {string} file_name
+ */ 
 function  read_file_to_matrix_comm_plot(file_name) {
-	//this function read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
+
 	
     data_obj_mc2=[]; 
 	data_obj_mc=[];
@@ -83,10 +108,14 @@ matrix_comm_plot(mix_1, mix_2, miy_1, miy_2)
 
 
 
-
-function matrix_comm_plot( x1,x2,y1,y2){//,probe_group){
-// this function create the minimap from matrix that show all SNPs association
-
+/**
+ * creat the communitties plot and do the zoom from x1, x2, y1, y2 values. 
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ */
+function matrix_comm_plot( x1,x2,y1,y2){
 
 var margin = {top: 50, right: 50, bottom: 50, left: 50},
     width = 800 - margin.left - margin.right, //500
@@ -208,9 +237,21 @@ function brushend() {
 
 
 
+/**
+ * this function create the minimap from comm that show all SNPs association and do the zoom from x1, x2, y1, y2 values. 
+ * If mrect_x1, mrect_y1, mrect_x2, mrect_y2 are diferent from zero (0) this create a rectangle 
+ * to help a see the location of the zoom.
+ * @param {number} x1
+ * @param {number} x2
+ * @param {number} y1
+ * @param {number} y2
+ * @param {number} mrect_x1
+ * @param {number} mrect_x2
+ * @param {number} mrect_y1
+ * @param {number} mrect_y2 
+ */
+function matrix_comm_plot_minmap( x1,x2,y1,y2,mrect_x1, mrect_y1, mrect_x2, mrect_y2){
 
-function matrix_comm_plot_minmap( x1,x2,y1,y2,mrect_x1, mrect_y1, mrect_x2, mrect_y2){//,probe_group){
-// this function create the minimap from matrix that show all SNPs association
 
 
 var margin = {top: 50, right: 50, bottom: 50, left: 50},
