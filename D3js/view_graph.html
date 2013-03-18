@@ -1,116 +1,120 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<title>Interaction pathways</title>
-<script type="text/javascript" src="d3/d3.v2.js"></script>
-<script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="genome.js"></script>
-<link type="text/css" rel="stylesheet" href="genome.css"/>
-
-<script> 
-$(document).ready(function(){
-  $("#snps_text").click(function(){
-    $("#snps,#pairs").slideToggle("slow");
-  });
-});
-</script>
-
-</head>
-
-
-<body>
-<button type="button" name="butzoom" id="butz" >Zoom</button>
-<button type="button" name="butreset" id="butr" >Reset</button>
-<button type="button" name="but_put_label" id="butpl" >label</button>
-<button type="button" name="but_remove_label" id="butrl" >remove label</button> 
-
-<div id="container">
-	
-<div id="chart"></div>
-
-
-<div id="load_data"><h5>Load your data</h5></div>
-
-<div id="scale_bar"></div>
-<div id="min_num_scale_bar"></div>
-<div id="max_num_scale_bar"></div>
-<div id="degree_scale_bar">Degree</div>
-
-
-<div id="scale_bar_c"></div>
-<!--<div id="min_num_scale_bar_c"></div>
-<div id="max_num_scale_bar_c"></div>-->
-<div id="ec_scale_bar_c">nº edges per communitites</div>
-
-<div id="controls">
-
-  
-  <h5>Dataset 
-  	<input type="file" id="files" name="files[]" multiple >
-  <!--
-  	<input id="filUpload"  type="FILE" size="20" value="" style="display:none;color:black;" onchange="Javascript:upload_json(this.value);">  
-	<input type="button" onclick="filUpload.click();"  value="load">
-	-->
-	<input type="button" value="Show .json" onclick="selected_json()" >
- 
-  
-  </h5>
- <br>
-  <h5>Plot <select id="Plot_select">
- <option value="p_cir">Circular</option>
- <option value="p_man">Manhattan</option>
- <option value="p_mat">Matrix</option>
-  </select>
-  </h5>
-  
-<br>
-  <h5>Statistical Test <select id="st_select">
- <option value="fltGSS">fltGSS</option> 	
- <option value="fltGSS_prtv">fltGSS_prtv</option> 
- <option value="fltGSS_cntr">fltGSS_cntr</option>
- <option value="fltSS">fltSS</option>
- <option value="fltDSS">fltDSS</option>
- <option value="fltChi2">fltChi2</option>
-  </select>
-  </h5>
-
- 
- <div id="two_weight_value">
- 	Values: <span></span></div>	
-  
- <div id="brush_weight"></div>  
-  <br><br>
-   <div id="hesid"></div> 
- <br><br>
-
- 
-<div id="hc">
- 	<!-- <input id="cb" type="checkbox"> Sort values -->
- </div>  
-
- 
- <div id="snps_text">
- <h3>SNPs and their associations</h3>
- </div>
- <div id="snps">
- </div>
- <div id="pairs">
- </div>
-
-
-<div id="footer">
-  Copyright: Cheng Soon Ong, <br/>Cristóvão F. Iglesias Jr<br/> National ICT Australia, 2012, 2013
-</div>
- 
-<script type="text/javascript" src="view_graph.js"></script>
-<script type="text/javascript" src="circle_plot.js"></script>
-<script type="text/javascript" src="manhattan_plot.js"></script>
-<script type="text/javascript" src="matrix_plot.js"></script>
-	
-</div>
-  </div> 
+    <head>    
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Interaction pathways</title>
+        <script type="text/javascript" src="d3/d3.v2.js"></script>
+        <script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="genome.js"></script>
+        <link type="text/css" rel="stylesheet" href="genome.css"/>
+        <script> 
+            $(document).ready(function(){
+              $("#snps_text1").click(function(){
+                $("#hds_matrix").slideToggle("slow");
+                  });
+            });
+            $(document).ready(function(){
+              $("#snps_text2").click(function(){
+                $("#pairs").slideToggle("slow");
+                  });
+            });
+            $(document).ready(function(){
+              $("#TRCT").click(function(){
+                $("#table_snps,#rp,#contp").slideToggle("slow");
+                  });
+            });
+        </script>
+    </head>
+    <body>
+        <button type="button" name="butzoom" id="butz" >Zoom</button>
+        <button type="button" name="butreset" id="butr" >Reset</button>
+        <button type="button" name="but_put_label" id="butpl" >label</button>
+        <button type="button" name="but_remove_label" id="butrl" >remove label</button>
+        <div id="container">	
+            <div id="chart"></div>
+            <h5 id="up">Upper Right</h5><div id="scalecolor1_dropbox"></div>
+            <h5 id="ll">Lower Left</h5><div id="scalecolor2_dropbox"></div>
+            <div id="scalecolor_matrix1"></div>
+            <div id="scalecolor_matrix2"></div>
+            <div id="load_data"><h5>Load your data</h5></div>
+            <div id="scale_bar"></div>
+            <div id="min_num_scale_bar"></div>
+            <div id="max_num_scale_bar"></div>
+            <div id="degree_scale_bar">Degree</div>
+            <div id="scale_bar_c"></div>
+            <div id="ec_scale_bar_c">nº edges per communitites</div>
+            <div id="controls">  
+                <h5>Dataset 
+  	                <input type="file" id="files" name="files[]" multiple >
+                    <input type="button" value="Show .json" onclick="selected_json()" >
+                </h5>
+                <br>
+                <h5>Plots <select id="Plot_select">
+                    <option value="p_cir">Circular</option>
+                    <option value="p_man">Manhattan</option>
+                    <option value="p_mat">Matrix</option>
+                    <option value="p_mat_c">Communitties</option>
+                    </select>
+                </h5>  
+                <br>
+                <h5><div id="st_select2">Statistical Test  </div></h5>
+                <br><br> 
+                <div id="minmap_mp"></div> 
+                <div id="minmap_matrixp"></div>
+                <div id="minmap_matrixsc"></div> 
+                <br><br> 
+                <div id="scale_bar_mat"></div>
+                <div id="two_weight_value"> Values: <span></span></div>	
+      
+                <div id="brush_weight"></div>  
+                <br><br>
+                <div id="hesid"></div> 
+                <br><br> 
+                <div id="hc"></div>  
+                <h5 id="TRCT"> ROC plot and Contigency table  </h5> 
+                <p>
+                    <input id="search_snps" type="text" value=""> 
+                    <input type="button" onclick="Javascript:show_roc_ct();"  value="search">
+                </p> 	
+                <br><br>
+                <div id="table_snps"></div>  
+                <br><br>
+                <div id="rp"></div>
+                <br><br>
+                <div id="contp"></div> 
+                <br><br>
+                
+                <div id="snps_text1">
+                        <h3>SNPs</h3>
+                </div>
+                
+                 <div id="hds_matrix"></div>
+                 
+                <div id="snps_text2">
+                        <h3>SNPs Pairs</h3>
+                </div>
+                <div id="pairs"></div>
+                <div id="footer">
+                    Copyright: 
+                    <br/>Cheng Soon Ong, 
+                    <br/>Cristóvão F. Iglesias Jr 
+                    <br/>National ICT Australia, 2012, 2013
+                    <br/>Version 0.1.1  
+                </div>    
+                <script type="text/javascript" src="view_graph.js"></script>
+                <script type="text/javascript" src="circle_plot.js"></script>
+                <script type="text/javascript" src="manhattan_plot.js"></script>
+                <script type="text/javascript" src="matrix_plot.js"></script>
+                <script type="text/javascript" src="matrix_snp_comm_plot.js"></script>
+                <script type="text/javascript" src="ROC_plot.js"></script>
+                <script type="text/javascript" src="cont_plot.js"></script>
+                <script type="text/javascript" src="table_snp_pairs.js"></script>
+                <script type="text/javascript" src="hist_degree_snps_plot.js"></script>
+                <script type="text/javascript" src="hist_edges_subgraphID_plot.js"></script>		
+            </div>
+        </div> 
 </body>
 </html>
+
 
 

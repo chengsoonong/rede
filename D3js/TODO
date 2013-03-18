@@ -1,25 +1,38 @@
 TO DO
 
-- show contingency tables or statistics such as odds ratio in separate <div>
+
+
+- Cleanup code to follow google javascript style
+- put the instructions for users in readme
+- create public data
+
+- show a specfic chromosome when clicking on it in circular plot. 
+  Zoom such that it fills whole circle.
+- sort SNP list options: chromosome, probe_graph, degree
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
-- show each SNPs and their associations in a specific chrom when selected (examples in d3js.org) 
-- put histogram edges x subgraph_id in matrix plot to show the subgraph selected in the matrix
-- put the matrix SNPs X comunities in circle plot
-- put zoom in big matrix SNPs associations (matrix plot)
-- the json file will not have "label". Replace "label" with "chrom" and "bp_position"
-- create a little bix to help localization on the a big plot such as manhattan plot and matrix plot 
 
 LATER
+
+- idea -> http://bl.ocks.org/4063582
 - select subset for exporting to UCSC BED file
 - http://jbrowse.org/ on separate <div>
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
 - idea ->  http://www.jasondavies.com/coffee-wheel/
 - idea ->  http://indiemaps.com/blog/2011/10/hexbins/
-- idea -> http://bl.ocks.org/4063582
-
 
 DONE
 
+- (4/3/2013) create the plot  matrix SNPs X comunities
+- (3/3/2013) It should be able to visualise files with no subgraphs or communities.
+- (1/3/2013) replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
+- (27/2/2013) hide and show ROC plot and Contegency table when click in title "ROC plot and Contegency table"
+- (27/2/2013) conection betwen roc and ct's button with circle plot to show the pair in circle
+- (25/2/2013) put zoom in big matrix SNPs associations (matrix plot) - mini map
+- (21/2/2013) create a little box to help localization on the a big plot such as manhattan plot and matrix plot 
+- (21/2/2013) It should be able to take in all type of statistics, given in the file, e.g. DSS, GSS. 
+- (15/2/2013) plot ROC curve based on contingency table 
+- (10/2/2013) show contingency tables or statistics such as odds ratio in separate <div> 
+- (4/2/2013) the json file will not have "label". Replace "label" with "chrom" and "bp_position"
 - (31/1/2013) put numbers in scale color bar in circle plot
 - (31/1/2013) clear the matrix , removing numbers of the other plot
 - (31/1/2013) hide the buttons in matrix view

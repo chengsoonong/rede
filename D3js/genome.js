@@ -1,6 +1,15 @@
+/**
+ * @fileoverview information about each chromosomes
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ */
 
-// Genome object for drawing
 
+
+
+/**
+ * Genome object for drawing 
+ */
 function Genome() {
 	// return the genome object with the information for drawing the chromosomes circles 
 	
