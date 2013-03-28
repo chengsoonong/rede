@@ -2,13 +2,16 @@ TO DO
 
 
 
-- Cleanup code to follow google javascript style
-- put the instructions for users in readme
 - create public data
-
+- put the instructions for users in readme
+- Plot spring graph. Colour links by community colour, and on click colour nodes by chromosome colour.
 - show a specfic chromosome when clicking on it in circular plot. 
   Zoom such that it fills whole circle.
+- On Manhattan plot, on click, select all pairs corresponding to the SNP
+- Show grid on matrix plot
+- Sort list of pairs based on value of statistical test
 - sort SNP list options: chromosome, probe_graph, degree
+- http://www.biotec.tu-dresden.de/research/schroeder/powergraphs/
 - graph with sensitivity on x axis, odds ratio on y axis and frequency of occurance as heatmap
 
 LATER
@@ -22,6 +25,7 @@ LATER
 
 DONE
 
+- (10/3/2013) Cleanup code to follow google javascript style
 - (4/3/2013) create the plot  matrix SNPs X comunities
 - (3/3/2013) It should be able to visualise files with no subgraphs or communities.
 - (1/3/2013) replace in json file and here  subgraph_id for probe_group and comm_id for assoc_group
