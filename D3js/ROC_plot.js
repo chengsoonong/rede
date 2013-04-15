@@ -1,7 +1,7 @@
 /**
  * @fileoverview  function  to create the ROC plot.
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
- * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Soon Ong)
  */
 
 
@@ -13,18 +13,15 @@
  */ 
 function ROC_plot (idx,filename){
 
-
-
-
-			//Width and height
-			var w = 500;
-			var h = 300;
-			var padding = 30;
-			
-			var margin = {top: 75, right: 75, bottom: 75, left: 75};
-
-			var width = 700 - margin.left - margin.right,
-    			height = 700 - margin.top - margin.bottom;
+    //Width and height
+    //var w = 500;
+    //var h = 300;
+    var padding = 30;
+    
+    var margin = {top: 35, right: 35, bottom: 65, left: 65};
+    
+    var width = 500 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
 			
 
@@ -422,7 +419,7 @@ svg.selectAll("path3l")
 				.append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-      .attr("x", -250)
+      .attr("x", -100)
       .attr("y", -30)
       //.attr("dy", ".71em")
       .style("text-anchor", "end")

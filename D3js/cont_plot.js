@@ -1,7 +1,7 @@
 /**
  * @fileoverview  function  to create the contigency table
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
- * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Soon Ong)
  */
 
 
