@@ -249,7 +249,7 @@ function upload_json ( file_name ){
 	
     hide_selection();    					 	//hide the buttons and other things 
     show_selection();							//show the buttons and other things
-    Create_chr_circle();
+    Create_chr_circle(0,0,0);
     Create_SNP_association(file_json);			//Create_SNP_association("bdWTC_GSS.json");	
     brush_weight(file_json);					//brush_weight("bdWTC_GSS.json");
     histogram_edges_subgraphId(file_json);
@@ -297,7 +297,7 @@ d3.select("#Plot_select").on("change", function change() {
                 d3.select("body").select("#footer").transition().style("opacity", 1);
                 d3.select("#hds_matrix").selectAll('svg').remove();
                 
-                Create_chr_circle();							//create new again
+       Create_chr_circle(0,0,0);							//create new again
                 Create_SNP_association(file_json);  			//create new again
                 brush_weight(file_json);						//create new again
                 histogram_edges_subgraphId(file_json);
@@ -707,7 +707,7 @@ function reset() {
              d3.select("#hesid").selectAll('svg').remove();
              d3.select("#table_snps").selectAll('table').remove(); 
                 				
-            Create_chr_circle();												//create new again
+    Create_chr_circle(0,0,0);												//create new again
             Create_SNP_association(file_json);        
             brush_weight(file_json);
             histogram_edges_subgraphId(file_json);
@@ -826,8 +826,6 @@ function hide_selection(){
         
     }else if(plot_chosen==="p_cir"){
 
-	
-        d3.select("body").select("#butz").transition().style("opacity", 0);
         d3.select("body").select("#butpl").transition().style("opacity", 0);
         d3.select("body").select("#butrl").transition().style("opacity", 0);
             
@@ -913,6 +911,7 @@ function show_selection(){
 	
     if(plot_chosen==="p_cir"){
 
+        d3.select("body").select("#butz").transition().style("opacity", 1);
         d3.select("#ec_scale_bar_c").transition().style("opacity", 1);  // title of  color scale bar
         d3.select("#scale_bar_c").transition().style("opacity", 1);
         d3.select("body").select("#butr").transition().style("opacity", 1);
@@ -1002,14 +1001,30 @@ d3.select("body").select("#butz").on("click", function change() {      //button 
             //d3.select("#minmap_matrixp").selectAll('svg').remove();
             //matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)
     
-    
-    
-    
-    
+    } else if (plot_chosen = "p_cir") {
+
+        // remove old things
+        d3.select("#hesid").selectAll('svg').remove();
+        d3.select("#scale_bar").selectAll('svg').remove();
+        d3.select("#chart").selectAll('svg').remove();
+        d3.select("#pairs").selectAll("p").remove();
+        d3.select("body").selectAll('svg').remove();
+        d3.select("#two_weight_value").selectAll("h").remove();
+        d3.select("#hds_matrix").selectAll('svg').remove();	
+
+	// read the zoom parameters
+        view_chr = document.getElementById("view_chr").value;	
+        view_start = document.getElementById("texzs").value;	
+        view_end = document.getElementById("texze").value;	
+
+        // draw zoomed circle
+        Create_chr_circle(view_chr, view_start, view_end);
+        Create_SNP_association(file_json);
+        brush_weight(file_json);
+        histogram_edges_subgraphId(file_json);
+        histogram_degree_SNPs(file_json,0);	
     	
-    	
-    }
-    else {		
+    } else {		
 			
         d3.select("#chart").selectAll('svg').remove();
         d3.select("#minmap_matrixp").selectAll('svg').remove();

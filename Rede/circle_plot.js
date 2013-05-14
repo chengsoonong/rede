@@ -75,7 +75,7 @@ var communities;
 /**
  * Create the SVG element to Plot the chromosomes in a circle and the ticks on chromosome   
  */
-function Create_chr_circle(){  
+function Create_chr_circle(view_chr, view_start, view_end){  
 	   		
     svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
@@ -87,7 +87,7 @@ function Create_chr_circle(){
 
 // // Genome object for drawing Plot the chromosomes in a circle
 all_chrom = Genome();
-
+all_chrom.set_zoom(view_chr, view_start, view_end);
 
 allNodes = new Array(); //create array that will receive objects with information about SNP from .json 
 
@@ -586,12 +586,11 @@ function groupTicks(d) {
 
 // Link object for displaying interactions
 function link() {
-    var genome = Genome(),
-    radius = chromRingInnerRadius-22;
+    var radius = chromRingInnerRadius-22;
 
     function link(d) {
-    var startAngle = genome.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
-    endAngle = genome.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
+    var startAngle = all_chrom.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
+    endAngle = all_chrom.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
     offset = radius*(0.1*Math.min(allNodes[d.source].probe_group,9)-0.1);
     
     var startX = Math.sin(startAngle)*radius,
