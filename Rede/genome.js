@@ -50,7 +50,9 @@ function Genome() {
 		index: i,
 		startAngle: a0,
 		endAngle: a1,
-		factor_k: k,
+                startBase: 0,
+                endBase: chromLength[i],
+		radPerBase: k,
 		//angleTicks:d3.range(a0,a1,(a1-a0)/5),  //angles for ticks
 		value: chromLength[i] * k
 		
@@ -60,17 +62,55 @@ function Genome() {
 	    x += padding;
 	}
     };
+
+    function layout_zoom() {
+        var k,
+        x,
+        i;
+
+        var view_chr = 8,
+        view_start = 71000000,
+        view_end =   71500000;
+
+        k = (2 * Math.PI - padding) / (view_end - view_start)
+        chromosomes = [];
+        i = -1;
+        while (++i < n) {
+            if (i == view_chr-1) {
+                chromosomes[i] = {
+                    index: view_chr-1,
+                    startAngle: padding,
+                    endAngle: 2*Math.PI-padding,
+                    startBase: view_start,
+                    endBase: view_end,
+                    radPerBase: k,
+                    value: 2*Math.PI - padding
+                };
+            } else {
+                chromosomes[i] = {
+                    index: view_chr-1,
+                    startAngle: 0,
+                    endAngle: 0,
+                    startBase: 0,
+                    endBase: 1,
+                    radPerBase: 0,
+                    value: 0
+                };
+            };
+        };
+    };
+        
     
     genome.chromosomes = function() {
-	if (!chromosomes) relayout();  //ensures that array chromosomes will not be returned empty
+	if (!chromosomes) layout_zoom();  //ensures that array chromosomes will not be returned empty
 	return chromosomes;
     };
 
     genome.getAngle = function(chrom, bpPosition)
     {
-	if (!chromosomes) relayout();  //ensures that array chromosomes will not be returned empty
+	if (!chromosomes) layout_zoom();  //ensures that array chromosomes will not be returned empty
 	circ_loc = chromosomes[chrom-1].startAngle
-	    + (bpPosition/chromLength[chrom-1])
+	    + (bpPosition/(chromosomes[chrom-1].endBase-chromosomes[chrom-1].startBase))
 	    *(chromosomes[chrom-1].endAngle - chromosomes[chrom-1].startAngle);
 	return circ_loc;
     };

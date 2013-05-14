@@ -561,17 +561,26 @@ function degrees(radians) {
     return radians / Math.PI * 180 - 90;
 };
 
- 
+function tickValues(d, v) {
+    //number of bases
+    if (d.endBase - d.startBase < 50000) {
+        return Math.round(d.startBase+(v/d.radPerBase))        
+    } else if (d.endBase - d.startBase < 50000000) {
+        return Math.round((d.startBase+(v/d.radPerBase)) / 1000) + "Kb"
+    } else {
+        return Math.round((d.startBase+(v/d.radPerBase)) / 1000000) + "Mb"
+    }
+}
+
 function groupTicks(d) {
-	// Returns an array with objects of tick angles and labels 
-	
-  var k = (d.endAngle - d.startAngle) / d.value;    // number of bases scaled to factor for K
-  return d3.range(0, d.value, 0.041 ).map(function(v, i) {  //modification 0.05
-    return {
-      angle: v * k + d.startAngle,
-      label: i % 2 ? null : Math.round((v/d.factor_k) / 1000000) + "Mb"  //number of bases 
-    };
-  });
+    // Returns an array with objects of tick angles and labels 
+    var k = (d.endAngle - d.startAngle) / d.value;    // number of bases scaled to factor for K
+    return d3.range(0, d.value, 0.041 ).map(function(v, i) {
+        return {
+            angle: v*k + d.startAngle,
+            label: i % 2 ? null : tickValues(d, v)
+        };
+    });
 };
 
 
