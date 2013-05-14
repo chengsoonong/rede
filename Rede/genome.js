@@ -59,8 +59,7 @@ function Genome() {
                 startBase: 0,
                 endBase: chromLength[i],
 		radPerBase: k,
-		//angleTicks:d3.range(a0,a1,(a1-a0)/5),  //angles for ticks
-		value: chromLength[i] * k
+		totAngle: chromLength[i] * k
 		
 		
 		
@@ -74,29 +73,29 @@ function Genome() {
         x,
         i;
 
-        k = (2 * Math.PI - padding) / (view_end - view_start)
+        k = (2 * Math.PI - 2*padding) / (view_end - view_start)
         chromosomes = [];
         i = -1;
         while (++i < n) {
             if (i == view_chr-1) {
                 chromosomes[i] = {
                     index: view_chr-1,
-                    startAngle: padding,
+                    startAngle: 0.1+padding,
                     endAngle: 2*Math.PI-padding,
                     startBase: view_start,
                     endBase: view_end,
                     radPerBase: k,
-                    value: 2*Math.PI - padding
+                    totAngle: 2*Math.PI-2*padding
                 };
             } else {
                 chromosomes[i] = {
                     index: view_chr-1,
                     startAngle: 0,
-                    endAngle: 0,
+                    endAngle: 0.1,
                     startBase: 0,
-                    endBase: 1,
-                    radPerBase: 0,
-                    value: 0
+                    endBase: chromLength[i],
+                    radPerBase: 0.1/chromLength[i],
+                    totAngle: 0.1
                 };
             };
         };
@@ -137,8 +136,7 @@ function Genome() {
             };
         };
 	circ_loc = chromosomes[chrom-1].startAngle
-	    + (bpPosition/(chromosomes[chrom-1].endBase-chromosomes[chrom-1].startBase))
-	    *(chromosomes[chrom-1].endAngle - chromosomes[chrom-1].startAngle);
+	    + ((bpPosition-chromosomes[chrom-1].startBase)*chromosomes[chrom-1].radPerBase);
 	return circ_loc;
     };
     

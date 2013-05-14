@@ -26,7 +26,7 @@ var width =800,//800,  ->  300
  * @const
  * @type {array}
  */
-var color = new Array
+var chromColor = new Array
                (d3.rgb(153,102,0), d3.rgb(102,102,0), d3.rgb(153,153,30), d3.rgb(204,0,0), 
                 d3.rgb(255,0,0), d3.rgb(255,0,204), d3.rgb(255,204,204), d3.rgb(255,153,0),
                 d3.rgb(255,204,0),d3.rgb(255,255,0),d3.rgb(204,255,0),d3.rgb(0,255,0),
@@ -99,9 +99,14 @@ svg.selectAll("path") //create the vizualization of the chromosomes in circles.
     .enter()                       //in each object has information such as angle 
     .append("path")
     .attr("class", "ring")
-    .style("fill", function(d) { return color[d.index]; })
-    .style("stroke", function(d) { return color[d.index]; })
-    .attr("d", d3.svg.arc().innerRadius(chromRingInnerRadius).outerRadius(chromRingOuterRadius)); //read angles of each object in chromosomes[]
+    .style("fill", function(d) { return chromColor[d.index]; })
+    .style("stroke", function(d) { return chromColor[d.index]; })
+    .attr("d", d3.svg.arc()
+          .innerRadius(chromRingInnerRadius)
+          .outerRadius(chromRingOuterRadius)
+          .startAngle(function(d) { return d.startAngle; })
+          .endAngle(function(d) { return d.endAngle; })
+         ); //read angles of each object in chromosomes[]
 
 
 svg.selectAll("text")      // write the numbers in chromosomes 
@@ -180,8 +185,8 @@ svg.selectAll("path.vertex")
     .data(allNodes)
     .enter().append("path")
     .attr("class", "vertex") //"vertex"
-    .style("fill", function(d) { return color[d.chrom-1]; })
-    .style("stroke", function(d) { return color[d.chrom-1]; })
+    .style("fill", function(d) { return chromColor[d.chrom-1]; })
+    .style("stroke", function(d) { return chromColor[d.chrom-1]; })
     .attr("d", d3.svg.arc()
           .innerRadius(chromRingInnerRadius-10)
           .outerRadius(chromRingInnerRadius-3)          // getAngle() is a function of Genome   
@@ -563,9 +568,9 @@ function degrees(radians) {
 
 function tickValues(d, v) {
     //number of bases
-    if (d.endBase - d.startBase < 50000) {
-        return Math.round(d.startBase+(v/d.radPerBase))        
-    } else if (d.endBase - d.startBase < 50000000) {
+    if ((d.endBase - d.startBase) < 50000) {
+        return Math.round(d.startBase+(v/d.radPerBase))
+    } else if ((d.endBase - d.startBase) < 50000000) {
         return Math.round((d.startBase+(v/d.radPerBase)) / 1000) + "Kb"
     } else {
         return Math.round((d.startBase+(v/d.radPerBase)) / 1000000) + "Mb"
@@ -574,10 +579,9 @@ function tickValues(d, v) {
 
 function groupTicks(d) {
     // Returns an array with objects of tick angles and labels 
-    var k = (d.endAngle - d.startAngle) / d.value;    // number of bases scaled to factor for K
-    return d3.range(0, d.value, 0.041 ).map(function(v, i) {
+    return d3.range(0, d.totAngle, 0.041 ).map(function(v, i) {
         return {
-            angle: v*k + d.startAngle,
+            angle: v + d.startAngle,
             label: i % 2 ? null : tickValues(d, v)
         };
     });

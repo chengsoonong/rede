@@ -1017,8 +1017,8 @@ d3.select("body").select("#butz").on("click", function change() {      //button 
         view_start = document.getElementById("texzs").value;	
         view_end = document.getElementById("texze").value;	
 
-        // draw zoomed circle
-        Create_chr_circle(view_chr, view_start, view_end);
+        // draw zoomed circle "+" converts string to int
+        Create_chr_circle(+view_chr, +view_start, +view_end);
         Create_SNP_association(file_json);
         brush_weight(file_json);
         histogram_edges_subgraphId(file_json);
