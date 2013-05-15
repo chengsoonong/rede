@@ -26,7 +26,7 @@ var width =800,//800,  ->  300
  * @const
  * @type {array}
  */
-var color = new Array
+var chromColor = new Array
                (d3.rgb(153,102,0), d3.rgb(102,102,0), d3.rgb(153,153,30), d3.rgb(204,0,0), 
                 d3.rgb(255,0,0), d3.rgb(255,0,204), d3.rgb(255,204,204), d3.rgb(255,153,0),
                 d3.rgb(255,204,0),d3.rgb(255,255,0),d3.rgb(204,255,0),d3.rgb(0,255,0),
@@ -75,7 +75,7 @@ var communities;
 /**
  * Create the SVG element to Plot the chromosomes in a circle and the ticks on chromosome   
  */
-function Create_chr_circle(){  
+function Create_chr_circle(view_chr, view_start, view_end){  
 	   		
     svg = d3.select("#chart")  // Selects  the element with id="chart"
     .append("svg")
@@ -87,7 +87,7 @@ function Create_chr_circle(){
 
 // // Genome object for drawing Plot the chromosomes in a circle
 all_chrom = Genome();
-
+all_chrom.set_zoom(view_chr, view_start, view_end);
 
 allNodes = new Array(); //create array that will receive objects with information about SNP from .json 
 
@@ -99,9 +99,14 @@ svg.selectAll("path") //create the vizualization of the chromosomes in circles.
     .enter()                       //in each object has information such as angle 
     .append("path")
     .attr("class", "ring")
-    .style("fill", function(d) { return color[d.index]; })
-    .style("stroke", function(d) { return color[d.index]; })
-    .attr("d", d3.svg.arc().innerRadius(chromRingInnerRadius).outerRadius(chromRingOuterRadius)); //read angles of each object in chromosomes[]
+    .style("fill", function(d) { return chromColor[d.index]; })
+    .style("stroke", function(d) { return chromColor[d.index]; })
+    .attr("d", d3.svg.arc()
+          .innerRadius(chromRingInnerRadius)
+          .outerRadius(chromRingOuterRadius)
+          .startAngle(function(d) { return d.startAngle; })
+          .endAngle(function(d) { return d.endAngle; })
+         ); //read angles of each object in chromosomes[]
 
 
 svg.selectAll("text")      // write the numbers in chromosomes 
@@ -180,8 +185,8 @@ svg.selectAll("path.vertex")
     .data(allNodes)
     .enter().append("path")
     .attr("class", "vertex") //"vertex"
-    .style("fill", function(d) { return color[d.chrom-1]; })
-    .style("stroke", function(d) { return color[d.chrom-1]; })
+    .style("fill", function(d) { return chromColor[d.chrom-1]; })
+    .style("stroke", function(d) { return chromColor[d.chrom-1]; })
     .attr("d", d3.svg.arc()
           .innerRadius(chromRingInnerRadius-10)
           .outerRadius(chromRingInnerRadius-3)          // getAngle() is a function of Genome   
@@ -561,28 +566,35 @@ function degrees(radians) {
     return radians / Math.PI * 180 - 90;
 };
 
- 
+function tickValues(d, v) {
+    //number of bases
+    if ((d.endBase - d.startBase) < 50000) {
+        return Math.round(d.startBase+(v/d.radPerBase))
+    } else if ((d.endBase - d.startBase) < 50000000) {
+        return Math.round((d.startBase+(v/d.radPerBase)) / 1000) + "Kb"
+    } else {
+        return Math.round((d.startBase+(v/d.radPerBase)) / 1000000) + "Mb"
+    }
+}
+
 function groupTicks(d) {
-	// Returns an array with objects of tick angles and labels 
-	
-  var k = (d.endAngle - d.startAngle) / d.value;    // number of bases scaled to factor for K
-  return d3.range(0, d.value, 0.041 ).map(function(v, i) {  //modification 0.05
-    return {
-      angle: v * k + d.startAngle,
-      label: i % 2 ? null : Math.round((v/d.factor_k) / 1000000) + "Mb"  //number of bases 
-    };
-  });
+    // Returns an array with objects of tick angles and labels 
+    return d3.range(0, d.totAngle, 0.041 ).map(function(v, i) {
+        return {
+            angle: v + d.startAngle,
+            label: i % 2 ? null : tickValues(d, v)
+        };
+    });
 };
 
 
 // Link object for displaying interactions
 function link() {
-    var genome = Genome(),
-    radius = chromRingInnerRadius-22;
+    var radius = chromRingInnerRadius-22;
 
     function link(d) {
-    var startAngle = genome.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
-    endAngle = genome.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
+    var startAngle = all_chrom.getAngle(allNodes[d.source].chrom, allNodes[d.source].bp_position),
+    endAngle = all_chrom.getAngle(allNodes[d.target].chrom, allNodes[d.target].bp_position),
     offset = radius*(0.1*Math.min(allNodes[d.source].probe_group,9)-0.1);
     
     var startX = Math.sin(startAngle)*radius,

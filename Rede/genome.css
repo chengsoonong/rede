@@ -174,11 +174,12 @@ circle {
 }
 
 
-#butz{
+#butr{
 	position:fixed;
 	top:3px;
 }
-#butr{
+
+#butz{
 	position:fixed;
 	left:60px;
 	top:3px;
@@ -194,6 +195,11 @@ circle {
 	top:3px;
 } 
 
+#textzoom{
+	position:fixed;
+	left:250px;
+	top:3px;
+}
 
 #scale_bar {
 	
