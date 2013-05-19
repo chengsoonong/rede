@@ -16,7 +16,8 @@ function Genome() {
     var genome = {},              //genome = this  !!!
     chromosomes,
     n = 24,
-    padding = 0.05;
+    padding = 0.05,
+    small = 0.1;
 
     var zoom = 0;
     var view_chr=0,
@@ -69,33 +70,50 @@ function Genome() {
     };
 
     function layout_zoom() {
-        var k,
-        x,
-        i;
+        var x,i;
 
-        k = (2 * Math.PI - 2*padding) / (view_end - view_start)
         chromosomes = [];
         i = -1;
         while (++i < n) {
             if (i == view_chr-1) {
                 chromosomes[i] = {
                     index: view_chr-1,
-                    startAngle: 0.1+padding,
-                    endAngle: 2*Math.PI-padding,
+                    startAngle: 1.5*small+2*padding,
+                    endAngle: 2*Math.PI-1.5*small-2*padding,
                     startBase: view_start,
                     endBase: view_end,
-                    radPerBase: k,
-                    totAngle: 2*Math.PI-2*padding
+                    radPerBase: (2*Math.PI-4*padding-3*small)/(view_end-view_start),
+                    totAngle: 2*Math.PI-4*padding-3*small
+                };
+                // upstream of zoom area
+                chromosomes[n] = {
+                    index: view_chr-1,
+                    startAngle: 0.5*small+padding,
+                    endAngle: 1.5*small+padding,
+                    startBase: 0,
+                    endBase: view_start,
+                    radPerBase: small/view_start,
+                    totAngle: small
+                };
+                // downstream of zoom area
+                chromosomes[n+1] = {
+                    index: view_chr-1,
+                    startAngle: 2*Math.PI-1.5*small-padding,
+                    endAngle: 2*Math.PI-0.5*small-padding,
+                    startBase: view_end,
+                    endBase: chromLength[i],
+                    radPerBase: small/(chromLength[i]-view_end),
+                    totAngle: small
                 };
             } else {
                 chromosomes[i] = {
-                    index: view_chr-1,
-                    startAngle: 0,
-                    endAngle: 0.1,
+                    index: n,
+                    startAngle: -0.5*small,
+                    endAngle: 0.5*small,
                     startBase: 0,
                     endBase: chromLength[i],
-                    radPerBase: 0.1/chromLength[i],
-                    totAngle: 0.1
+                    radPerBase: small/chromLength[i],
+                    totAngle: small
                 };
             };
         };
@@ -116,11 +134,11 @@ function Genome() {
     };
 
     genome.chromosomes = function() {
-	if (!chromosomes) {
+	if (!chromosomes) {  //ensures that array chromosomes will not be returned empty
             if (zoom == 0) {
                 layout();
             } else {
-                layout_zoom();  //ensures that array chromosomes will not be returned empty
+                layout_zoom();
             };
         };
 	return chromosomes;
@@ -128,15 +146,28 @@ function Genome() {
 
     genome.getAngle = function(chrom, bpPosition)
     {
-	if (!chromosomes) {
+	if (!chromosomes) {//ensures that array chromosomes will not be returned empty
             if (zoom == 0) {
                 layout();
             } else {
-                layout_zoom();  //ensures that array chromosomes will not be returned empty
+                layout_zoom();  
             };
         };
-	circ_loc = chromosomes[chrom-1].startAngle
-	    + ((bpPosition-chromosomes[chrom-1].startBase)*chromosomes[chrom-1].radPerBase);
+        if (chrom != view_chr) {
+	    circ_loc = chromosomes[chrom-1].startAngle
+	        + ((bpPosition-chromosomes[chrom-1].startBase)*chromosomes[chrom-1].radPerBase);
+        } else {
+            if (bpPosition < view_start) {
+                circ_loc = chromosomes[n].startAngle
+                    + ((bpPosition-chromosomes[n].startBase)*chromosomes[n].radPerBase);
+            } else if (bpPosition > view_end) {
+                circ_loc = chromosomes[n+1].startAngle
+                    + ((bpPosition-chromosomes[n+1].startBase)*chromosomes[n+1].radPerBase);
+            } else {
+	        circ_loc = chromosomes[chrom-1].startAngle
+	            + ((bpPosition-chromosomes[chrom-1].startBase)*chromosomes[chrom-1].radPerBase);
+            };
+        };
 	return circ_loc;
     };
     
