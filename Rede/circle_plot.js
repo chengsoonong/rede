@@ -14,11 +14,11 @@
  * @const
  * @type {number}
  */
-var width =800,//800,  ->  300
-    height =800 ,//800,  -> 300
-    width2 =800 ,//800,  -> 1500				//for transition
-    height2 =800 ,//800,   -> 400 				//for transition
-    chromRingOuterRadius = Math.min(width, height) * .45,   
+var width = 800,//800,  ->  300
+    height = 800 ,//800,  -> 300
+    width2 = 800 ,//800,  -> 1500				//for transition
+    height2 = 800 ,//800,   -> 400 				//for transition
+    chromRingOuterRadius = Math.min(width, height) * .42,   
     chromRingInnerRadius = chromRingOuterRadius * 0.95;
 /**
  * Constant only for circle_plot.js to create the color of the chrommossomos
@@ -428,7 +428,7 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
             
         })
     .style("stroke-width", 1)
-    .style("opacity", 0.3)
+    .style("opacity", 0.7)
     .style("fill", "none")
     .attr("d", link());
 

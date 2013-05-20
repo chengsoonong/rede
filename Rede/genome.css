@@ -21,18 +21,16 @@ circle {
 }
 	
 .axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
- }
-			.axis path,
-			.axis line {
-				fill: none;
-				stroke: black;
-				shape-rendering: crispEdges;
-			}
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
 
-
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
 
 
 .axis text {
@@ -45,57 +43,47 @@ circle {
 }
 
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
 .ds.bar {
- fill: steelblue;
+    fill: steelblue;
 }
 
 .search_snps value{
-	 color: blue;
-  fill-opacity: .5;
-	
+    color: blue;
+    fill-opacity: .5;
 }
 
 
 .bar_matrix{
-  fill: blue;
-  fill-opacity: 1;
+    fill: blue;
+    fill-opacity: 1;
 }
 
 
 .x.axis path {
-  display: none;
+    display: none;
 }
-
-
-
 
 .xt.axis path {
-  display: none;
+    display: none;
 }
-
 
 .xt text{
-  
-  
-  fill-opacity: 0.2;
+    fill-opacity: 0.2;
 }
+
 .xt line{
-  
-  
- display: none;
+    display: none;
 }
 
 .xt_min text{
-  
-  font-size: 0.55em;
-  fill-opacity: 1;
+    font-size: 0.55em;
+    fill-opacity: 1;
 }
 
 #container {
@@ -106,16 +94,14 @@ circle {
 #chart {
 	position:fixed;
 	
-	
 	top:40px;
 	left:30px;		
-    /*float:left;
-    width:800px;*/
+/*float:left;
+  width:800px;*/
 }
 
 #scalecolor_matrix1 {
 	position:fixed;
-	
 	
 	top:985px;
 	left:300px;		
