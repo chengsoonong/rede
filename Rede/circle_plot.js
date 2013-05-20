@@ -14,11 +14,11 @@
  * @const
  * @type {number}
  */
-var width =800,//800,  ->  300
-    height =800 ,//800,  -> 300
-    width2 =800 ,//800,  -> 1500				//for transition
-    height2 =800 ,//800,   -> 400 				//for transition
-    chromRingOuterRadius = Math.min(width, height) * .45,   
+var width = 800,//800,  ->  300
+    height = 800 ,//800,  -> 300
+    width2 = 800 ,//800,  -> 1500				//for transition
+    height2 = 800 ,//800,   -> 400 				//for transition
+    chromRingOuterRadius = Math.min(width, height) * .42,   
     chromRingInnerRadius = chromRingOuterRadius * 0.95;
 /**
  * Constant only for circle_plot.js to create the color of the chrommossomos
@@ -32,7 +32,8 @@ var chromColor = new Array
                 d3.rgb(255,204,0),d3.rgb(255,255,0),d3.rgb(204,255,0),d3.rgb(0,255,0),
                 d3.rgb(53,128,0),d3.rgb(0,0,204),d3.rgb(102,153,255),d3.rgb(153,204,255),
                 d3.rgb(0,255,255),d3.rgb(204,255,255),d3.rgb(153,0,204),d3.rgb(204,51,255),
-                d3.rgb(204,153,255),d3.rgb(102,102,102),d3.rgb(153,153,153),d3.rgb(204,204,204));
+                d3.rgb(204,153,255),d3.rgb(102,102,102),d3.rgb(153,153,153),d3.rgb(204,204,204),
+                d3.rgb(1,1,1));
 /**
  * Constant only for circle_plot.js to create the color of the nodes 
  * @const
@@ -427,7 +428,7 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
             
         })
     .style("stroke-width", 1)
-    .style("opacity", 0.3)
+    .style("opacity", 0.7)
     .style("fill", "none")
     .attr("d", link());
 
