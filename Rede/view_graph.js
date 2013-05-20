@@ -261,93 +261,88 @@ function upload_json ( file_name ){
 	
 }
 
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ load - first vizualization ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ load - first vizualization ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 
 
-//------------------------------------------  chose the plot  - drop box ---------------------------------------------- 
+// ----------------------------  chose the plot  - drop box ---------------------------------------------- 
  
- /**
+/**
  * Allows us choose one plot to vizualization
  */
 d3.select("#Plot_select").on("change", function change() {
- 	
-   plot_chosen=this.value; 	
-   
-   d3.select("#chart").selectAll('svg').remove();  				//remove old selection
-   d3.select("#scale_bar").selectAll('svg').remove();			//remove old selection
-   
-   d3.select("#pairs").selectAll("p").remove();    				//remove old selection
-   d3.select("body").selectAll('svg').remove(); 				//remove old selection
-   d3.select("#two_weight_value").selectAll("h").remove(); 		//remove old selection 
-   d3.select("#hesid").selectAll('svg').remove();				//remove old selection
-   d3.select("#table_snps").selectAll('table').remove();
-   
+    plot_chosen=this.value; 	
+    
+    //remove old selection
+    d3.select("#chart").selectAll('svg').remove();
+    d3.select("#scale_bar").selectAll('svg').remove();
+    d3.select("#pairs").selectAll("p").remove();
+    d3.select("body").selectAll('svg').remove();
+    d3.select("#two_weight_value").selectAll("h").remove();
+    d3.select("#hesid").selectAll('svg').remove();
+    d3.select("#table_snps").selectAll('table').remove();   
   
-   hide_selection();
-   show_selection();		//hds_matrix
+    // redraw everything
+    hide_selection();
+    show_selection();
 
-   if(this.value==="p_cir"){
-				
-                d3.select("body").select("#two_weight_value").transition().style("opacity", 1);
-                d3.select("body").select("#cb").transition().style("opacity", 1);
-                d3.select("body").select("#hc").transition().style("opacity", 1);
-                d3.select("body").select("#snps_text").transition().style("opacity", 1);
-                d3.select("body").select("#footer").transition().style("opacity", 1);
-                d3.select("#hds_matrix").selectAll('svg').remove();
+    if (this.value==="p_cir") {
+        // Circular plot
+        d3.select("body").select("#two_weight_value").transition().style("opacity", 1);
+        d3.select("body").select("#cb").transition().style("opacity", 1);
+        d3.select("body").select("#hc").transition().style("opacity", 1);
+        d3.select("body").select("#snps_text").transition().style("opacity", 1);
+        d3.select("body").select("#footer").transition().style("opacity", 1);
+        d3.select("#hds_matrix").selectAll('svg').remove();
+
+        //create genome object again
+        Create_chr_circle(0,0,0);
+        Create_SNP_association(file_json);
+        brush_weight(file_json);
+        histogram_edges_subgraphId(file_json);
+        histogram_degree_SNPs(file_json,0);	
                 
-       Create_chr_circle(0,0,0);							//create new again
-                Create_SNP_association(file_json);  			//create new again
-                brush_weight(file_json);						//create new again
-                histogram_edges_subgraphId(file_json);
-                histogram_degree_SNPs(file_json,0);	
-    
-                
-    }else if( this.value==="p_man"){
-				//show_selection();
-				d3.select("#hds_matrix").selectAll('svg').remove();				
-                d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
-                d3.select("body").select("#cb").transition().style("opacity", 0);
-                d3.select("body").select("#hc").transition().style("opacity", 0);
-                d3.select("body").select("#snps_text").transition().style("opacity", 0);
-                d3.select("body").select("#footer").transition().style("opacity", 0);
-                d3.select("#table_snps").selectAll('table').remove();	
-                read_file_to_manhattan_plot(file_json);
-               histogram_degree_SNPs(file_json,0);	
-   				 
-              
+    } else if (this.value==="p_man") {
+	// Manhattan plot
+	d3.select("#hds_matrix").selectAll('svg').remove();				
+        d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
+        d3.select("body").select("#cb").transition().style("opacity", 0);
+        d3.select("body").select("#hc").transition().style("opacity", 0);
+        d3.select("body").select("#snps_text").transition().style("opacity", 0);
+        d3.select("body").select("#footer").transition().style("opacity", 0);
+        d3.select("#table_snps").selectAll('table').remove();	
+        read_file_to_manhattan_plot(file_json);
+        histogram_degree_SNPs(file_json,0);	
 				
-	}else if (this.value==="p_mat"){
-				d3.select("#hds_matrix").selectAll('svg').remove();
-                d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
-                d3.select("body").select("#cb").transition().style("opacity", 0);
-                d3.select("body").select("#hc").transition().style("opacity", 0);
-                d3.select("body").select("#snps_text").transition().style("opacity", 0);
-                d3.select("body").select("#footer").transition().style("opacity", 0);
-                d3.select("#table_snps").selectAll('table').remove();
-                //matrix_plot( file_json);  // plot matrix of the snps association 
-                read_file_to_matrix_plot(file_json);
-                 histogram_degree_SNPs(file_json,0);	
+    } else if (this.value==="p_mat") {
+        // Heat map of association matrix
+	d3.select("#hds_matrix").selectAll('svg').remove();
+        d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
+        d3.select("body").select("#cb").transition().style("opacity", 0);
+        d3.select("body").select("#hc").transition().style("opacity", 0);
+        d3.select("body").select("#snps_text").transition().style("opacity", 0);
+        d3.select("body").select("#footer").transition().style("opacity", 0);
+        d3.select("#table_snps").selectAll('table').remove();
+        //matrix_plot( file_json);  // plot matrix of the snps association 
+        read_file_to_matrix_plot(file_json);
+        histogram_degree_SNPs(file_json,0);	
    
-     }else{
-     			d3.select("#hds_matrix").selectAll('svg').remove();
-     			d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
-                d3.select("body").select("#cb").transition().style("opacity", 0);
-                d3.select("body").select("#hc").transition().style("opacity", 0);
-                d3.select("body").select("#snps_text").transition().style("opacity", 0);
-                d3.select("body").select("#footer").transition().style("opacity", 0);
-                d3.select("#table_snps").selectAll('table').remove();	
-                histogram_edges_subgraphId(file_json);
-				read_file_to_matrix_comm_plot(file_json);
-     	 		histogram_degree_SNPs(file_json,0);	
-    
-     	
-     	
-     }
-			
-    });
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chose the plot - drop box ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+    } else if (this.value==="p_mat_c") {
+        // the number of edges per community
+     	d3.select("#hds_matrix").selectAll('svg').remove();
+     	d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
+        d3.select("body").select("#cb").transition().style("opacity", 0);
+        d3.select("body").select("#hc").transition().style("opacity", 0);
+        d3.select("body").select("#snps_text").transition().style("opacity", 0);
+        d3.select("body").select("#footer").transition().style("opacity", 0);
+        d3.select("#table_snps").selectAll('table').remove();	
+        histogram_edges_subgraphId(file_json);
+	read_file_to_matrix_comm_plot(file_json);
+     	histogram_degree_SNPs(file_json,0);	
+    }
+});
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chose the plot - drop box ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 
@@ -862,6 +857,22 @@ function hide_selection(){
         d3.select("#scalecolor_matrix2").transition().style("opacity", 0); 				
         		
         		
+    } else if (plot_chosen==="p_mat") {
+        
+        d3.select("#min_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar 
+        d3.select("#max_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar
+        d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar  
+        
+        d3.select("#load_data").remove();	
+        
+        d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
+        d3.select("#max_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar
+        d3.select("#ec_scale_bar_c").transition().style("opacity", 0);  // title of  color scale bar
+        d3.select("#scale_bar_c").transition().style("opacity", 0);
+        d3.select("#st_select2").transition().style("opacity", 0);
+        	
+        d3.select("#load_data").remove();
+        
     } else if( plot_chosen==="p_mat_c"){ 
     	
      d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
@@ -881,26 +892,6 @@ function hide_selection(){
     
     
     
-     }else{
-        //d3.select("body").select("#butz").transition().style("opacity", 0);
-        d3.select("body").select("#butpl").transition().style("opacity", 0);
-        d3.select("body").select("#butrl").transition().style("opacity", 0);
-        //d3.select("body").select("#butr").transition().style("opacity", 0);
-        
-        d3.select("#min_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar 
-        d3.select("#max_num_scale_bar").selectAll("h1").remove();         // numbers of  color scale bar
-        d3.select("#degree_scale_bar").transition().style("opacity", 0);  // title of  color scale bar  
-        
-        d3.select("#load_data").remove();	
-        
-        d3.select("#min_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar 
-        d3.select("#max_num_scale_bar_c").selectAll("h1").remove();         // numbers of  color scale bar
-        d3.select("#ec_scale_bar_c").transition().style("opacity", 0);  // title of  color scale bar
-        d3.select("#scale_bar_c").transition().style("opacity", 0);
-        d3.select("#st_select2").transition().style("opacity", 0);
-        	
-        d3.select("#load_data").remove();
-        
         }
 }
 
@@ -909,15 +900,15 @@ function hide_selection(){
  */
 function show_selection(){ 
 	
-    if(plot_chosen==="p_cir"){
-
+    if (plot_chosen==="p_cir") {
+        
         d3.select("body").select("#butz").transition().style("opacity", 1);
         d3.select("#ec_scale_bar_c").transition().style("opacity", 1);  // title of  color scale bar
         d3.select("#scale_bar_c").transition().style("opacity", 1);
         d3.select("body").select("#butr").transition().style("opacity", 1);
         d3.select("#st_select2").transition().style("opacity", 1);
-  	 	 		
-    }else if( plot_chosen==="p_man"){			
+  	
+    } else if( plot_chosen==="p_man") {			
 	
         d3.select("body").select("#butz").transition().style("opacity", 1);
         d3.select("body").select("#butr").transition().style("opacity", 1);
@@ -925,17 +916,9 @@ function show_selection(){
         d3.select("body").select("#butrl").transition().style("opacity", 1);
         d3.select("#degree_scale_bar").transition().style("opacity", 1);    // title of  color scale bar  
         d3.select("#st_select2").transition().style("opacity", 1);
-        		
-     } else if( plot_chosen==="p_mat_c"){ 
-    	
-   		d3.select("body").select("#butz").transition().style("opacity", 1);
-        d3.select("body").select("#butr").transition().style("opacity", 1);
         
-        
-    
-    
-     }else{
-				
+    } else if( plot_chosen==="p_mat") { 
+	
         d3.select("body").select("#butz").transition().style("opacity", 1);
         d3.select("body").select("#butr").transition().style("opacity", 1);
         d3.select("#up").transition().style("opacity", 1);
@@ -946,63 +929,18 @@ function show_selection(){
         d3.select("#scalecolor_matrix1").transition().style("opacity", 1); 
         d3.select("#scalecolor_matrix2").transition().style("opacity", 1); 				
         
-        }  	   
+    } else if( plot_chosen==="p_mat_c"){ 
+   	d3.select("body").select("#butz").transition().style("opacity", 1);
+        d3.select("body").select("#butr").transition().style("opacity", 1);
+    };  	   
 }
 
 /**
  * Do zoom when the button ZOOM is clicked
  */
-d3.select("body").select("#butz").on("click", function change() {      //button ZOOM
-
-    if( plot_chosen==="p_man"){		
-		
-        if(data_from_HDS==="no"){
-            
-            d3.select("#chart").selectAll('svg').remove();
-            d3.select("#scale_bar").selectAll('svg').remove();
-            
-            if(x_1){// if x_1 is not null make ..
-                 manhattan_plot(x_1,x_2,y_1,y_2,data);  		   		 
-                d3.select("#minmap_mp").selectAll('svg').remove();   		
-                manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,   x_1,  y_2,  x_2-x_1, y_1,data)
-            }else      
-                manhattan_plot(ix_1,ix_2,iy_1,iy_2,data);
-                
-        }else{
-            
-            d3.select("#chart").selectAll('svg').remove();
-            d3.select("#scale_bar").selectAll('svg').remove();
-            
-            if(x_1){// if x_1 is not null make ..
-                 manhattan_plot(x_1,x_2,y_1,y_2,data_select_from_HDS);  		   		 
-                d3.select("#minmap_mp").selectAll('svg').remove();   		
-                manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,   x_1,  y_2,  x_2-x_1, y_1,data_select_from_HDS)
-            }else      
-                manhattan_plot(ix_1,ix_2,iy_1,iy_2,data_select_from_HDS);
-   		 }
-    		
-    }else if(plot_chosen==="p_mat_c"){
-    	
-    
-    	d3.select("#chart").selectAll('svg').remove();
-        d3.select("#minmap_matrixsc").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix1").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix2").selectAll('svg').remove();
-        
-        if(mx_1){// if x_1 is not null make .. 
-	   	
-	   
-            
-            matrix_comm_plot(mx_1,mx_2,my_1,my_2);
-  			matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, mx_1, my_1, mx_2-mx_1, my_2)
-  			
-        } else
-            matrix_comm_plot(mix_1, mix_2, miy_1, miy_2)
-            //d3.select("#minmap_matrixp").selectAll('svg').remove();
-            //matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)
-    
-    } else if (plot_chosen = "p_cir") {
-
+d3.select("body").select("#butz").on("click", function change() {
+    if (plot_chosen==="p_cir") {
+        // Circular plot
         // remove old things
         d3.select("#hesid").selectAll('svg').remove();
         d3.select("#scale_bar").selectAll('svg').remove();
@@ -1024,22 +962,61 @@ d3.select("body").select("#butz").on("click", function change() {      //button 
         histogram_edges_subgraphId(file_json);
         histogram_degree_SNPs(file_json,0);	
     	
-    } else {		
-			
+    } else if ( plot_chosen==="p_man") {
+        // Manhattan plot
+	if(data_from_HDS==="no"){
+            d3.select("#chart").selectAll('svg').remove();
+            d3.select("#scale_bar").selectAll('svg').remove();
+            
+            if (x_1) {// if x_1 is not null make ..
+                manhattan_plot(x_1,x_2,y_1,y_2,data);  		   		 
+                d3.select("#minmap_mp").selectAll('svg').remove();   		
+                manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,   x_1,  y_2,  x_2-x_1, y_1,data)
+            } else {     
+                manhattan_plot(ix_1,ix_2,iy_1,iy_2,data);
+            };
+        } else {
+            d3.select("#chart").selectAll('svg').remove();
+            d3.select("#scale_bar").selectAll('svg').remove();
+            
+            if(x_1){// if x_1 is not null make ..
+                manhattan_plot(x_1,x_2,y_1,y_2,data_select_from_HDS);  		   		 
+                d3.select("#minmap_mp").selectAll('svg').remove();   		
+                manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,   x_1,  y_2,  x_2-x_1, y_1,data_select_from_HDS)
+            } else {     
+                manhattan_plot(ix_1,ix_2,iy_1,iy_2,data_select_from_HDS);
+            };
+   	};
+    } else if (plot_chosen==="p_mat") {		
+	// Heat map of association matrix
         d3.select("#chart").selectAll('svg').remove();
         d3.select("#minmap_matrixp").selectAll('svg').remove();
         d3.select("#scalecolor_matrix1").selectAll('svg').remove();
         d3.select("#scalecolor_matrix2").selectAll('svg').remove();
         
         if(mx_1){// if x_1 is not null make ..
-	   	
             matrix_plot(mx_1,mx_2,my_1,my_2);
             matrix_plot_minmap(mix_1, mix_2, miy_1, miy_2, mx_1, my_1, mx_2-mx_1, my_2);
-  		
-        } else
+        } else {
             matrix_plot(mix_1,mix_2,miy_1,miy_2);
             //d3.select("#minmap_matrixp").selectAll('svg').remove();
             //matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)
+        };
+    } else if(plot_chosen==="p_mat_c") {
+        // the number of edges per community
+    	d3.select("#chart").selectAll('svg').remove();
+        d3.select("#minmap_matrixsc").selectAll('svg').remove();
+        d3.select("#scalecolor_matrix1").selectAll('svg').remove();
+        d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+        
+        if(mx_1){// if x_1 is not null make .. 
+            matrix_comm_plot(mx_1,mx_2,my_1,my_2);
+  	    matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, mx_1, my_1, mx_2-mx_1, my_2);
+        } else {
+            matrix_comm_plot(mix_1, mix_2, miy_1, miy_2);
+            //d3.select("#minmap_matrixp").selectAll('svg').remove();
+            //matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)
+        };
     }  	
 });						
 
@@ -1049,15 +1026,13 @@ d3.select("body").select("#butz").on("click", function change() {      //button 
  */
 d3.select("body").select("#butr").on("click", function change() { 		//button RESET
 				
-    if( plot_chosen=== "p_cir" ){		
-    			
+    if (plot_chosen=== "p_cir" ) {		
+    	// Circular plot
         reset();
         d3.select("#hds_matrix").selectAll('svg').remove();
         histogram_degree_SNPs(file_json,0);	
-    
-    	
-    }else  if( plot_chosen==="p_man"){			
-        		
+    } else if ( plot_chosen==="p_man") {			
+        // Manhattan plot
         d3.select("#chart").selectAll('svg').remove();
         d3.select("#minmap_matrixp").selectAll('svg').remove();
         d3.select("#scalecolor_matrix1").selectAll('svg').remove();
@@ -1069,62 +1044,46 @@ d3.select("body").select("#butr").on("click", function change() { 		//button RES
         x_2=ix_2;
         y_1=iy_1;
         y_2=iy_2;
-        	
         
-        if(data_from_HDS==="no"){
-        	
-        manhattan_plot(ix_1,ix_2,iy_1,iy_2,data);
-        manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,  0,0,0,0,data)
-        
-        }else{
-        
-        manhattan_plot(ix_1,ix_2,iy_1,iy_2,data_select_from_HDS);
-        manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,  0,0,0,0,data_select_from_HDS)
-        	
-        
-        }
-      
-
-   } else   if(plot_chosen==="p_mat_c"){
-    	
-    
-    	d3.select("#chart").selectAll('svg').remove();
-    	 	d3.select("#minmap_matrixsc").selectAll('svg').remove();
-        d3.select("#minmap_matrixp").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix1").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix2").selectAll('svg').remove();
-        
-        
-         mx_1=mix_1;
-        mx_2=mix_2;
-        my_1=miy_1;
-        my_2=miy_2;
-        
-       	matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0,0,0,0)
-   	
-         matrix_comm_plot(mx_1,mx_2,my_1,my_2);
-        
-        
-    	
-    } else{
-   	
-        d3.select("#chart").selectAll('svg').remove();
-        d3.select("#minmap_matrixp").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix1").selectAll('svg').remove();
-        d3.select("#scalecolor_matrix2").selectAll('svg').remove();
-        d3.select("#minmap_mp").selectAll('svg').remove();
-        d3.select("#scale_bar").selectAll('svg').remove();
-        
-        mx_1=mix_1;
-        mx_2=mix_2;
-        my_1=miy_1;
-        my_2=miy_2;
-        
-        matrix_plot(mx_1,mx_2,my_1,my_2); 
-        matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)		 
-  	
-   }
-   	
+        if (data_from_HDS==="no") {
+            manhattan_plot(ix_1,ix_2,iy_1,iy_2,data);
+            manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,  0,0,0,0,data)
+        } else {
+            manhattan_plot(ix_1,ix_2,iy_1,iy_2,data_select_from_HDS);
+            manhattan_plot_minmap(ix_1,ix_2,iy_1,iy_2,  0,0,0,0,data_select_from_HDS)
+        };
+   } else if (plot_chosen==="p_mat") {
+       // Heatmap of association matrix
+       d3.select("#chart").selectAll('svg').remove();
+       d3.select("#minmap_matrixp").selectAll('svg').remove();
+       d3.select("#scalecolor_matrix1").selectAll('svg').remove();
+       d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+       d3.select("#minmap_mp").selectAll('svg').remove();
+       d3.select("#scale_bar").selectAll('svg').remove();
+       
+       mx_1=mix_1;
+       mx_2=mix_2;
+       my_1=miy_1;
+       my_2=miy_2;
+       
+       matrix_plot(mx_1,mx_2,my_1,my_2); 
+       matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)		 
+   } else if (plot_chosen==="p_mat_c") {
+    	// Matrix of communities versus the number of pairs
+       d3.select("#chart").selectAll('svg').remove();
+       d3.select("#minmap_matrixsc").selectAll('svg').remove();
+       d3.select("#minmap_matrixp").selectAll('svg').remove();
+       d3.select("#scalecolor_matrix1").selectAll('svg').remove();
+       d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+       
+       mx_1=mix_1;
+       mx_2=mix_2;
+       my_1=miy_1;
+       my_2=miy_2;
+       
+       matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0,0,0,0)
+       matrix_comm_plot(mx_1,mx_2,my_1,my_2);
+   };
 });		
 
 
