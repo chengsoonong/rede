@@ -145,7 +145,14 @@ var use_communities="no"
  * create the dropbox.
  * @type {string} st_1     
  */
-var st_1=[] 
+var st_1=[]
+/**
+ * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
+ * @type {number} ix_1, ix_2, iy_1, iy_2
+ */
+var brush_value1, brush_value2;
+			
+ 
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
@@ -202,7 +209,7 @@ function upload_json ( file_name ){
     //assoc_group , source ,  target ,subgraph_id ,fltGSS_prtv, fltChi2, fltGSS, fltGSS_cntr, fltSS, fltDSS, ct_id,
     statOptions={}
     list_keys_json=[]
-    
+    d3.select("#ec_scale_bar_c").transition().style("opacity", 0);
     
     for (var i in json.links[0] ){
         if (i!="assoc_group" &&  i!="source"  &&  i!="target" &&  i!="probe_group" && i!="ct_id"){
@@ -215,7 +222,7 @@ function upload_json ( file_name ){
     	}
 	if(include_in_arr(list_keys_json,"communities")){ //check if there is communities in the json file
 		use_communities="yes"  //check if there is communities in the json file
-		
+		d3.select("#ec_scale_bar_c").transition().style("opacity", 1);
 	}	
 			
     st_chosen=st_1[0] //the first element to be visualited
@@ -621,6 +628,8 @@ function show_roc_ct(){
 /**
  * This function create a new tab, when we click in button "show .json", with a .json with datas selected
  */
+
+/*
 function selected_json(){
                	
         //myWindow=window.open('','','width=200,height=100')	
@@ -631,6 +640,250 @@ function selected_json(){
         
         string_html="";
 }
+*/
+
+function selected_json(){
+	
+
+      	
+        d3.json(file_json, function(json) {
+ 	   
+        var string_html_export="";     
+        var link_html="\"links\": [";
+        var nodes_html="\"nodes\": [";
+        var subgraphs_html="\"subgraphs\": [";
+        var ct_html="\"cont_table\": [";
+        
+        number_count_probe_group=1      
+        number_count_map_id=0
+        number_count_ct_id=0
+        number_count_degree=0
+        
+        //like dictioniry
+        map_degree=d3.map();
+        map_probe_group=d3.map();
+        map_id=d3.map();
+        map_nodes=d3.map();
+        map_subgraph_nedges=d3.map();
+        map_ct_id=d3.map();
+        
+        function update_map_id(key){        	
+        	if(map_id.has(key)!=true){
+				map_id.set(key,number_count_map_id)
+				number_count_map_id=number_count_map_id+1        		         		
+        	}
+        }        
+        
+		function update_map_probe_group(key){        	
+        	if(map_probe_group.has(key)!=true){
+				map_probe_group.set(key,number_count_probe_group)
+				number_count_probe_group=number_count_probe_group+1        		         		
+        	}
+        }      
+
+        function update_map_degree(key){        		
+        		if(map_degree.has(key)!=true){
+        			map_degree.set(key,1)					        		         		
+        		}else{        			
+        			v=map_degree.get(key)+1
+					map_degree.set(key,v )
+        		}	        	        		         		
+        }       
+             
+        function update_map_subgraph_nedges(key){        		
+        		if(map_subgraph_nedges.has(key)!=true){
+        			map_subgraph_nedges.set(key,1)					        		         		
+        		}else{        			
+        			v=map_subgraph_nedges.get(key)+1
+					map_subgraph_nedges.set(key,v )
+        		}	        	        		         		
+        }        
+        
+        function update_map_ct_id(key){
+        	if(map_ct_id.has(key)!=true){
+				map_ct_id.set(key,number_count_ct_id)
+				number_count_ct_id=number_count_ct_id+1        		         		
+        	}
+        }
+        
+         	
+        json.links.forEach( function(d) {
+        	//create the links to be exporte in json file. It were selected in reange of p-value 
+            //"links": [{"source": 0, "target": 1,"probe_group": 1, "P": 8.145e-05, "STAT": 15.52, "OR_INT": 37.94, "ct_id":0}],
+            /*
+        		if(kindofvalues=="withlog" ){        			
+						if(  -1*Math.log(d[st_chosen])  >=  brush_value1	&&  -1*Math.log(d[st_chosen]) <=brush_value2){
+								update_map_degree(d.source)
+								update_map_degree(d.target)
+								update_map_id(d.source)
+								update_map_id(d.target)								
+								update_map_ct_id(d.ct_id)
+								update_map_probe_group(d.probe_group)
+								update_map_subgraph_nedges(map_probe_group.get(d.probe_group))
+								
+								
+								
+								if( map_id.get(d.source) < map_id.get(d.target)){								
+									string_link= "{\"source\": "+map_id.get(d.source)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.target)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
+									
+								}else{
+									string_link= "{\"source\": "+map_id.get(d.target)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.source)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
+																		
+								}	            
+								                
+								for (i in st_1){
+									string_link+=", \""+st_1[i]+"\": "+d[st_1[i]]	
+								}	
+								string_link+="},"	
+								link_html+=string_link;
+								//document.write(link_html);
+						}  
+					}else{*/
+						if (d[st_chosen]  >=  brush_value1	&& d[st_chosen] <=brush_value2){
+									
+								update_map_degree(d.source)
+								update_map_degree(d.target)
+								update_map_id(d.source)
+								update_map_id(d.target)								
+								update_map_ct_id(d.ct_id)
+								update_map_probe_group(d.probe_group)
+								update_map_subgraph_nedges(map_probe_group.get(d.probe_group))
+								
+								if( map_id.get(d.source) > map_id.get(d.target)){								
+									string_link= "{\"source\": "+map_id.get(d.source)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.target)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
+								}else{
+									string_link= "{\"source\": "+map_id.get(d.target)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.source)+", \"ct_id\": "+map_ct_id.get(d.ct_id)									
+								}
+																	                
+								for (i in st_1){
+									string_link+=", \""+st_1[i]+"\": "+d[st_1[i]]	
+								}	
+								string_link+="},"	
+								link_html+=string_link;
+								//document.write(link_html);
+						//}	 			
+					}
+        				 	 
+        });
+        link_html=link_html.substring(0,link_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP	
+        link_html=link_html+']'
+        
+
+        json.nodes.forEach( function(d){
+        	//create the nodes to be exporte in json file. It were selected in reange of p-value 
+        	//"nodes": [{"prbCode": "rs10205611", "degree": 1.0, "prb": 0, "rs": "rs10205611","probe_group": 1, "bp_position": 148853010, "chrom": 2, "id": 0}
+        	
+        	//if(map_id.has(d.id)!=null && map_id.has(d.id)!=undefined){
+        	if(map_id.has(d.id)){	        		
+					    string_node="{\"prbCode\": \""+d.prbCode +"\", \"degree\": "+map_degree.get(d.id)+", \"rs\": \""+d.rs+"\", \"bp_position\": "+d.bp_position+
+			     			", \"chrom\": "+d.chrom+", \"id\": "+map_id.get(d.id)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"prb\": "+d.prb+"}"; 
+			     		//document.write(map_id.get(d.id),string_node)	
+		        		map_nodes.set(map_id.get(d.id),string_node);
+        	}
+        });        
+        sort_keys=map_nodes.keys();
+        sort_keys.sort(function(a,b){return a-b});
+        for (i in sort_keys ){	
+			nodes_html+=map_nodes.get(sort_keys[i])+","
+		}
+        nodes_html=nodes_html.substring(0,nodes_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP	
+        nodes_html=nodes_html+']'
+        
+        //create the cont_table to be exporte in json file. It were selected in reange of p-value         
+        //"cont_table":[{"unv1": [{"controls":35.0 ,"cases":18.0 }, {"controls":12.0 ,"cases":3.0 }, {"controls":8.0 ,"cases":4.0 }], 
+        //"unv2": [{"controls":40.0 ,"cases":21.0 }, {"controls":14.0 ,"cases":4.0 }, {"controls":1.0 ,"cases":0.0 }], 
+        //"biv": [[{"controls":25.0 ,"cases":15.0}, {"controls":9.0 ,"cases":3.0}, {"controls":1.0 ,"cases":0.0}],[{"controls":8.0 ,"cases":2.0}, {"controls":4.0 ,"cases":1.0}, {"controls":0.0 ,"cases":0.0}],[{"controls":7.0 ,"cases":4.0}, {"controls":1.0 ,"cases":0.0}, {"controls":0.0 ,"cases":0.0}]], 
+        //"total": {"controls":55.0 ,"cases":25.0 }}]                
+        Array_map_ct_id=[]
+        json.cont_table.forEach( function(d,i){
+        	if (i in map_ct_id.keys()){ 
+        	Array_map_ct_id.push(d)
+        	}
+        }); 
+               
+        for (i in Array_map_ct_id ){	
+        	
+        	ct_html+="{\"unv1\": [{\"controls\": "+Array_map_ct_id[i]["unv1"][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv1"][0]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["unv1"][1]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv1"][1]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["unv1"][2]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv1"][2]["cases"]+"}], "
+        	
+        	ct_html+="\"unv2\": [{\"controls\": "+Array_map_ct_id[i]["unv2"][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv2"][0]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["unv2"][1]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv2"][1]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["unv2"][2]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv2"][2]["cases"]+"}], "
+        	
+        	ct_html+="\"biv\": [[{\"controls\": "+Array_map_ct_id[i]["biv"][0][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][0][0]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][0][1]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][0][1]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][0][2]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][0][2]["cases"]+"}], "        	
+        	ct_html+="[{\"controls\": "+Array_map_ct_id[i]["biv"][1][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][1][0]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][1][1]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][1][1]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][1][2]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][1][2]["cases"]+"}], "        	
+        	ct_html+="[{\"controls\": "+Array_map_ct_id[i]["biv"][2][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][2][0]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][2][1]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][2][1]["cases"]+"} "
+        	ct_html+=",{\"controls\": "+Array_map_ct_id[i]["biv"][2][2]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["biv"][2][2]["cases"]+"}]], "
+        	
+        	ct_html+="\"total\": {\"controls\": "+Array_map_ct_id[i]["unv2"][0]["controls"]+",\"cases\": "+ Array_map_ct_id[i]["unv2"][0]["cases"]+"}} ,"
+        	}
+        	
+       	ct_html=ct_html.substring(0,ct_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP	
+        ct_html=ct_html+']'
+        
+        //create the subgraphs to be exporte in json file. It were selected in reange of p-value
+        
+        
+        map_subgraph_nedges.forEach(function(k,v){
+        	subgraphs_html+= "{\"probe_group\": "+ k +", \"edge_count\": "+v+"},"
+        	
+        })
+        
+		/*        
+        for (i in map_subgraph_nedges){ 
+       		 subgraphs_html+= "{\"probe_group\": "+ i +", \"edge_count\": "+map_subgraph_nedges[i]+"},"
+        }
+        */
+        
+        
+        subgraphs_html=subgraphs_html.substring(0,subgraphs_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP	
+        subgraphs_html=subgraphs_html+']'
+        
+		
+		//string that will be exported
+		string_html_export= "{\"name\": \"export_name\", "+nodes_html+", " +link_html+", "  +subgraphs_html+", "  +ct_html+"} "
+  	
+		 
+  
+  var textFileAsBlob = new Blob([string_html_export], {type:'text/plain'});
+	var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value;
+
+	var downloadLink = document.getElementById("downloadfile");
+	downloadLink.download = fileNameToSaveAs;
+	downloadLink.innerHTML = "Download "+fileNameToSaveAs;
+	if (window.webkitURL != null)
+	{
+		// Chrome allows the link to be clicked programmatically.
+		downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+		downloadLink.click();
+	}
+	else
+	{
+		// Firefox requires the user to actually click the link.
+		downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+		//downloadLink.onclick = destroyClickedElement;
+		//document.body.appendChild(downloadLink);
+	}
+  
+  
+  
+  
+  
+        
+});	
+			
+		//myWindow=window.open('','j'); 
+		//myWindow.document.write( "string_html_export") 
+
+}
+
+
        
 /**
  * This function selected the elementes inside nodes with a subgraph_id chosen and put in the string string_html

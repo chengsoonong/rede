@@ -341,14 +341,14 @@ function manhattan_plot(x1, x2, y1, y2, data){
 			
 			//Create X axis
 			svg.append("g")
-				.attr("class", "axis")
+				.attr("class", "manaxis").attr("font-size", "10px") 
 				.attr("transform", "translate(0," + (h ) + ")")
 				.call(xAxis)//;
 				.append("text")
-      			.attr("class", "label")
+      			.attr("class", "manlabel")
       			.attr("x", w)
       			.attr("y", -6)
-      			.style("text-anchor", "end")
+      			.style("text-anchor", "end").attr("font-size", "17px") 
       			.text("Chromosome Lengths (nº bases)");
       			
       			
@@ -365,19 +365,19 @@ function manhattan_plot(x1, x2, y1, y2, data){
       						
 			//Create Y axis
 			svg.append("g")
-				.attr("class", "axis")
+				.attr("class", "manaxis")
 				//.attr("transform", "translate(" + padding + ",0)")
 				.call(yAxis)
 				.append("text")
-      			.attr("class", "label")
+      			.attr("class", "manlabel")
       			.attr("transform", "rotate(-90)")
       			//.attr("y", h/2)
       			//.attr("x", w)
-      			.attr("x", -260)
-      			.attr("y", -30)
+      			.attr("x", -10)
+      			.attr("y", -50)
       			.attr("dy", ".71em")
-      			.style("text-anchor", "end")
-      			.text("Statistical Test");
+      			.style("text-anchor", "end").attr("font-size", "17px") 
+      			.text("-log(p-value)");
 				
 			svg.append("g")
     			.attr("class", "brush")
