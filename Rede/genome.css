@@ -20,17 +20,27 @@ circle {
   shape-rendering: crispEdges;
 }
 	
+.manaxis path, .manaxis line,
+.manlabel path, .manlabel line,
+.xmattext path, .xmattext line,
+.xmataxis path, .xmataxis line, 
+.ymataxis path, .ymataxis line, 
 .axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
+	fill: none;	
+	stroke: black;
+	/*stroke-width: 2px;*/
+	shape-rendering: crispEdges;
+	}
 
-.axis path, .axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
-}
+.xmataxis2 path, .xmataxis2 line,
+.xmataxis path, .xmataxis line, 
+.ymataxis path, .ymataxis line{
+	fill: none;	
+	stroke: black;
+	stroke-width: 2px;
+	shape-rendering: crispEdges;
+	}
+
 
 
 .axis text {
@@ -43,11 +53,7 @@ circle {
 }
 
 
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
+
 
 .ds.bar {
     fill: steelblue;
@@ -356,6 +362,13 @@ h4 {
 }
 
 h5 {
+    margin: 1em 0;
+    font-size: 1.1em;
+    /*color:#333;*/
+     color:#826aa5;
+}
+
+a {
     margin: 1em 0;
     font-size: 1.1em;
     /*color:#333;*/

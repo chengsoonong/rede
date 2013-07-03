@@ -6,6 +6,7 @@
         <script type="text/javascript" src="d3/d3.v2.js"></script>
         <script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="genome.js"></script>
+       <script  type="text/javascript" src="d3/lib/Blob.js"></script>
         <link type="text/css" rel="stylesheet" href="genome.css"/>
         <script> 
             $(document).ready(function(){
@@ -76,9 +77,12 @@
             <div id="scale_bar_c"></div>
             <div id="ec_scale_bar_c">no. edges per community</div>
             <div id="controls">  
-                <h5>Dataset 
-  	                <input type="file" id="files" name="files[]" multiple >
-                    <input type="button" value="Show .json" onclick="selected_json()" >
+                <h5>Dataset <br>
+  	                <input type="file" id="files" name="files[]" multiple ><br>
+                    <!--<input type="button" value="Show .json" onclick="selected_json()" > -->                    
+						<input id="inputFileNameToSaveAs"  placeholder="filename.json"></input>
+						<button onclick="selected_json()">Save json</button><br>
+						<a id="downloadfile"></a>
                 </h5>
                 <br>
                 <h5>Plots <select id="Plot_select">

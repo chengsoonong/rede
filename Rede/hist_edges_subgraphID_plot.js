@@ -16,31 +16,6 @@ function histogram_edges_subgraphId(file_name){
 	
 	
 	
-var margin = {top: 30, right: 20, bottom: 90, left: 40},
-    width = 850 - margin.left - margin.right, //500
-    height = 400 - margin.top - margin.bottom;//200
-
-
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .5, 1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left") ;
-
-var svg = d3.select("#hesid").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
 var data_probe_group1 = new Array();  
 //this array will receive the probe_group of the json file, exemplo -> [1,3,2,4,1,1,3,4,4,4,2] .
@@ -104,59 +79,95 @@ for (var i=0;i<data_probe_group2.length;i++ ){
   
 
 
-  x.domain(data_obj.map(function(d) { return d.n_probe_group; }));
-  y.domain([0, d3.max(data_obj, function(d) { return d.n_edgs; })]);
+
+
+var margin = {top: 50, right: 20, bottom: 50, left: 150},
+    width = 700 - margin.left - margin.right; //500
+    //height = 400 - margin.top - margin.bottom;//200
+    
+    if (d3.max(data_obj, function(d) { return d.n_probe_group; })>10){
+	    var   height = 34.1796875*d3.max(data_obj, function(d) { return d.n_probe_group; }) - margin.top - margin.bottom;//200
+	}else{
+	  	var   height = 34.1796875*10 - margin.top - margin.bottom;
+	    }
+
+
+var y = d3.scale.ordinal()
+    .rangeRoundBands([0 , height], .5);
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var xAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var yAxis = d3.svg.axis()
+    .scale(x)
+    .orient("top")
+    ;
+
+var svg = d3.select("#hesid").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+
+  y.domain(data_obj.map(function(d) { return "probe_group "+d.n_probe_group; }));
+  x.domain([0, d3.max(data_obj, function(d) { return d.n_edgs; })]);
 
 
   svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+ //     .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
-      
+/*      
       svg.append("text")
-     // .attr("transform", "rotate(-90)")
+      //.attr("transform", "rotate(-90)")
       .attr("y", 330)
       .attr("x", 400)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("probe_group");
-
+*/
   		// now rotate text on x axis
         // first move the text left so no longer centered on the tick
         // then rotate up to get 90 degrees.
-svg.selectAll(".x text")  // select all the text elements for the xaxis
-          .attr("transform", function(d) {
-             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*1 + ")rotate(-90)";
-         });    
+svg.selectAll(".x text").style("font-size", "14px");  // select all the text elements for the xaxis
+//          .attr("transform", function(d) {
+//             return "translate(" + this.getBBox().height*-1 + "," + this.getBBox().height*1 + ")rotate(-90)";
+//         });    
 
 
-  svg.append("g")
+   svg.append("g")
       .attr("class", "y axis")
+      .attr("transform", "translate(0," + 0 + ")")
       .call(yAxis)
     .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
+      .attr("transform", "rotate(0)")
+      .attr("x", width/2)
+      .attr("y", -25).style("font-size", "14px")
+      //.attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Nº Edges");
-      
+      .text("Nº Edges");    
 
 
 
 
 
-  svg.selectAll(".bar")
+   svg.selectAll(".bar")
       .data(data_obj)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("class", "es bar")
-      .attr("x", function(d) { return x(d.n_probe_group); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.n_edgs); })
-      .attr("height", function(d) { return height - y(d.n_edgs); })  
-          
-      .attr("fill", function(d) { return   graphColor(d.n_probe_group); })
-      
-      .attr("fill-opacity",.5)
+      .attr("x", 0)
+      .attr("width", function(d) { return x(d.n_edgs); })
+      .attr("y", function(d) { return y(d.n_probe_group); })
+      .attr("height", y.rangeBand())          
+      .attr("fill", function(d) { return   graphColor(d.n_probe_group); })      
+      .attr("fill-opacity",.5).style("font-size", "14px")
       .on("mousedown", function(g,i) { 
 	 	//when mousedown this selected the probe_group and create the string_html to show in html the seleced data 
   		 	
@@ -310,8 +321,8 @@ svg.selectAll(".x text")  // select all the text elements for the xaxis
 			   .attr("class", "text_b")
 			   .text(function(d) { return d.n_edgs; })
 			  // .attr("text-anchor", "middle")
-			   .attr("x",function(d) { return x(d.n_probe_group); })
-			   .attr("y",function(d) { return y(d.n_edgs+0.5); })
+			   .attr("x",function(d) { return x(d.n_edgs); })
+			   .attr("y",function(d) { return y(d.n_probe_group)+10; })
 			   .attr("font-family", "sans-serif")
 			   .attr("font-size", "11px")
 			   .attr("fill", "black")
