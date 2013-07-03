@@ -795,6 +795,9 @@ function brushmove() {
 	.enter().append("h")
 	.text(two_dec(s[0])+" - "+two_dec(s[1]));
 	
+	brush_value1=s[0]
+	brush_value2=s[1]
+	
 	
 	d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);	
 	//svg.selectAll(".link").remove(); //remove the old association
