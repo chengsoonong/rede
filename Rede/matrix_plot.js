@@ -20,7 +20,6 @@ var array_SNPs=[];
 
 
 
-
 /**
  * Read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
  * @param {string} file_name
@@ -57,10 +56,10 @@ function  read_file_to_matrix_plot(file_name) {
 				obj["label_y"]  = dic_chr["chr"+allNodes[d.target].chrom+':'+allNodes[d.target].bp_position];
 
 				for (var i in d ){		
-					if (i!="assoc_group" &&  i!="ct_id" &&  i!= "source"  &&  i!= "target"){
+					if (i!="assoc_group" &&  i!="ct_id" &&  i!= "source"  &&  i!= "target" &&  i!="probe_group"){
 						//statOptions[i]=i
 						//st_1.push(i) //get the first element to be visualited
-						obj[i]=d[i]			
+    						obj[i]=d[i]			
 				}}
 
 			data_obj_m.push(obj);
@@ -107,26 +106,91 @@ function matrix_plot( x1,x2,y1,y2){
 
 
 //--------------------------- create color scale  --------------------------------------------------
-			var margin_s = {top: 5, right: 30, bottom: 35, left: 10};
+			var margin_s = {top: 5, right: 40, bottom: 35, left: 10};
 			//Then define width and height as the inner dimensions of the chart area.
 			var w_scale_bar = 500 - margin_s.left - margin_s.right;
 			var h_scale_bar = 65  - margin_s.top  - margin_s.bottom;
 			var barPadding  = 0;
 			
-			var dataset_mat1 = d3.range(d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1]; }));
-			var dataset_mat2 = d3.range(d3.min(data_obj_m,function(d) {return d[st_chosen2]; }), d3.max(data_obj_m,function(d) {return d[st_chosen2]; }));
+			
+			function range_to_bar_min2max(min,max){
+				var array=[];
+				for (var i=min;i<=max;i=i+(max/(max*100))){
+					array.push(i);
+					//document.write(i+"<br>");		
+				}
+			return array;
+			}
+			
+			
+			function range_to_bar(st){
+				var array=[];
+				for ( i in data_obj_m){
+					array.push(data_obj_m[i][st]);
+				}
+				return array;
+			}
+			
+			//st_1
+			
+			function minmaxst(st){
+				//get the min and max p-value between all statistical test
+				var array=[];
+				var array_ret=[];
+				
+				for (i in st){	
+					array.push(d3.min(data_obj_m, function(d) {return d[st[i]]; }));
+				}
+				array_ret.push(d3.min(array))
+				array=[];
+				for (i in st){	
+					array.push(d3.max(data_obj_m, function(d) {return d[st[i]]; }));
+				}
+				array_ret.push(d3.max(array))
+				array=[];
+				
+				return array_ret;
+			}
+			
+			/*
+			minmaxstatisctestpv=minmaxst(st_1)
+			var dataset_mat1 = range_to_bar_min2max(d3.round(minmaxstatisctestpv[0]), 
+													d3.round(minmaxstatisctestpv[1]));			
+			var dataset_mat2 = range_to_bar_min2max(d3.round(minmaxstatisctestpv[0]), 
+													d3.round(minmaxstatisctestpv[1]));
+			*/
+			
+			var dataset_mat1 = range_to_bar_min2max(d3.round(d3.min(data_obj_m,function(d) {return d[st_chosen1]; })), 
+													d3.round(d3.max(data_obj_m,function(d) {return d[st_chosen1];})));			
+			var dataset_mat2 = range_to_bar_min2max(d3.round(d3.min(data_obj_m,function(d) {return d[st_chosen2]; })), 
+													d3.round(d3.max(data_obj_m,function(d) {return d[st_chosen2];})));
+			
+			
+			//var dataset_mat1 = range_to_bar(st_chosen1);
+			//dataset_mat1.sort(function(a,b){return a-b});
+			//var dataset_mat2 = range_to_bar(st_chosen2);
+			//dataset_mat2.sort(function(a,b){return a-b});
+			
+			
+			//var dataset_mat1 = range_to_bar(d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1];}));
+			//var dataset_mat2 = range_to_bar(d3.min(data_obj_m,function(d) {return d[st_chosen2]; }), d3.max(data_obj_m,function(d) {return d[st_chosen2];}));
+			
+			//var dataset_mat1 = d3.range(d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1];}));
+			//var dataset_mat2 = d3.range(d3.min(data_obj_m,function(d) {return d[st_chosen2]; }), d3.max(data_obj_m,function(d) {return d[st_chosen2];}));
 			//alert([d3.min(data_obj_m,function(d) {return d[st_chosen]; }), d3.max(data_obj_m,function(d) {return d[st_chosen]; })])
+			
+			//document.write(dataset_mat1+"<br>"+d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1];}))
 			
 			var colorScale1 = d3.scale.linear() //yellow - red
     			.domain([d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1]; })])
     			.interpolate(d3.interpolateHsl)
     			.range(["#E4DB00", "#F31300"]); //http://tributary.io/tributary/3650755/
    				  
-   			var colorScale2 = d3.scale.linear() //lightblue - blue
+   			var  colorScale2 = d3.scale.linear() //lightblue - blue
     			.domain([d3.min(data_obj_m,function(d) {return d[st_chosen2]; }), d3.max(data_obj_m,function(d) {return d[st_chosen2]; })])
     			.interpolate(d3.interpolateHsl)
     			//.range(["#00E4DB", "#6717F5"]); //http://tributary.io/tributary/3650755/
-    			.range(["#00E4DB", "#2E00E7"]);
+    			.range(["#00E4DB", "#2E00E7"]);  
 		
 			//Create SVG element to receive the scale color bar
 			var svg_scb1 = d3.select("#scalecolor_matrix1")
@@ -159,15 +223,23 @@ function matrix_plot( x1,x2,y1,y2){
 			   		.append("text") 
 			   		.attr("class", "text_smp")
 			   		.text(function(d,i) {
-			   	 		number_tick=6;			   	 
-			   				if(i%   d3.round(dataset_mat1.length /number_tick) ==0 ){return parseInt(d);}
+			   	 		number_tick=6;
+			   	 		ld=dataset_mat1.length			   	 
+			   				//if(i%   d3.round(dataset_mat1.length /number_tick) ==0 ){return parseInt(d);}
+			   				//if(i%   d3.round(dataset_mat1.length /number_tick) ==0 ){return two_dec(d);}
+			   				ad=[0,ld/4,ld/2,ld/2+ld/4,ld-1]
+			   				
+			   				for (v in ad){
+			   					if(i == d3.round(ad[v])  ){return two_dec(d);}	
+			   				}
+			   							   				
 			   			})
 			   		.attr("x", function(d, i) {
 				   		return (i+0) * (w_scale_bar / dataset_mat1.length);
 					   })
-				    .attr("y", 40)
+				    .attr("y",  40)
 			   		.attr("font-family", "sans-serif")
-			   		.attr("font-size", "11px")
+			   		.attr("font-size", "15px")
 			   		.attr("fill",function(d) {			return colorScale1(d);	});
     						
     		var svg_scb2 = d3.select("#scalecolor_matrix2")
@@ -198,14 +270,22 @@ function matrix_plot( x1,x2,y1,y2){
 			   			.attr("class", "text_smp")
 			   			.text(function(d,i) {
 			   	 			number_tick=6;
-			   					if(i%   d3.round(dataset_mat2.length /number_tick) ==0 ){return parseInt(d);}
+			   	 			ld=dataset_mat2.length
+			   					//if(i%   d3.round(dataset_mat2.length /number_tick) ==0 ){return parseInt(d);}
+			   					//if(i%   d3.round(dataset_mat1.length /number_tick) ==0 ){return two_dec(d);}
+			   					ad=[0,ld/4,ld/2,ld/2+ld/4,ld-1]
+			   				
+			   				for (v in ad){
+			   					if(i == d3.round(ad[v])  ){return two_dec(d);}	
+			   				}
+			   					
 			   			})
 			   			.attr("x", function(d, i) {
 			   				return (i+0) * (w_scale_bar / dataset_mat2.length);
 			   			})
 			   			.attr("y", 40)
 			   			.attr("font-family", "sans-serif")
-			   			.attr("font-size", "11px")
+			   			.attr("font-size", "15px")
 			   			.attr("fill", function(d) { return colorScale2(d);  });				
 			
 
@@ -244,6 +324,18 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
+    
+var xAxis2 = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis2 = d3.svg.axis()
+    .scale(y)
+    .orient("right");
+    
+    
+    
+    
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -306,29 +398,60 @@ svg.selectAll("path2")
  
 
 svg.append("g")
-      .attr("class", "xmat axis")
-      .attr("transform", "translate(0," + 0 + ")")
-      .call(xAxis);
-     
-svg.selectAll(".xmat text")  // select all the text elements for the xaxis
+      .attr("class", "xmataxis")
+      //.attr("transform", "translate(0," + 0 + ")")0,(height)
+      //.attr("transform", "translate(" + height+",0)")
+      .call(xAxis)
+      .append("text")
+      			.attr("class", "label")      			
+      			//.attr("y", h/2)
+      			//.attr("x", w)
+      			.attr("x", 500)
+      			.attr("y", -30)
+      			//.attr("dy", ".71em")
+      			.attr("font-size", "17px")
+      			.style("text-anchor", "end")
+      			.text("SNP id");
+ /*    
+svg.selectAll(".xmataxis text")  // select all the text elements for the xaxis
           .attr("transform", function(d) {
-             return "translate(" + this.getBBox().height*1 + "," + this.getBBox().height*-2.5 + ")rotate(-90)";
+             return "translate(" + this.getBBox().height*0.75 + "," + this.getBBox().height*-0.9 + ")rotate(-90)";
          });     
-     
+ */    
 
   svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis).append("text")
+      .attr("class", "ymataxis")
+      .call(yAxis)      
+      			.append("text")
       			.attr("class", "label")
       			.attr("transform", "rotate(-90)")
       			//.attr("y", h/2)
       			//.attr("x", w)
-      			.attr("x", -300)
-      			.attr("y", -30)
+      			.attr("x", -400)
+      			.attr("y", -45)
       			.attr("dy", ".71em")
+      			.attr("font-size", "17px")
       			.style("text-anchor", "end")
       			.text("SNP id");
-
+			
+			
+	  
+      svg.append("g")
+				.attr("class", "xmataxis")
+				.attr("transform", "translate(0,"+height + ")")
+				.call(xAxis2)
+      		
+			
+	svg.append("g")
+				.attr("class", "ymataxis")
+				.attr("transform", "translate(" + width + ",0)")
+				.call(yAxis2)
+      	
+			
+			
+			
+			
+			
 			
 			
 			svg.append("g")
@@ -399,9 +522,9 @@ function matrix_plot_minmap( x1,x2,y1,y2, mrect_x1, mrect_y1, mrect_x2, mrect_y2
 // this function create the minimap from matrix that show all SNPs association
 
 
-var margin = {top: 30, right: 30, bottom: 30, left: 30},
-    width = 250 - margin.left - margin.right, //500
-    height = 250 - margin.top - margin.bottom;//200
+var margin = {top: 100, right: 100, bottom: 100, left: 100},
+    width = 450 - margin.left - margin.right, //500
+    height = 450 - margin.top - margin.bottom;//200
 
 
 var x = d3.scale.linear().domain([x1,x2])//[0,array_SNPs.length])
@@ -428,6 +551,16 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
+
+var xAxis2 = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis2 = d3.svg.axis()
+    .scale(y)
+    .orient("right");
+
+
 var svg = d3.select("#minmap_matrixp").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -451,7 +584,17 @@ var svg = d3.select("#minmap_matrixp").append("svg")
  	
  }  
   */ 
-    
+  			
+var colorScale1 = d3.scale.linear() //yellow - red
+    			.domain([d3.min(data_obj_m,function(d) {return d[st_chosen1]; }), d3.max(data_obj_m,function(d) {return d[st_chosen1]; })])
+    			.interpolate(d3.interpolateHsl)
+    			.range(["#E4DB00", "#F31300"]); //http://tributary.io/tributary/3650755/
+   				  
+var  colorScale2 = d3.scale.linear() //lightblue - blue
+    			.domain([d3.min(data_obj_m,function(d) {return d[st_chosen2]; }), d3.max(data_obj_m,function(d) {return d[st_chosen2]; })])
+    			.interpolate(d3.interpolateHsl)
+    			//.range(["#00E4DB", "#6717F5"]); //http://tributary.io/tributary/3650755/
+    			.range(["#00E4DB", "#2E00E7"]);  
     
     
     
@@ -464,7 +607,8 @@ svg.selectAll("path1")
 		
             })
             */
-   .style("fill", '#0d1dee') //blue
+   .style("fill", function(d) { return colorScale2(d[st_chosen2]); })        
+   //.style("fill", '#2E00E7') //blue E4DB00 00E4DB     F31300 2E00E7
     .attr("transform", function(d) { return "translate(" + x(d.label_x) + "," + y(d.label_y) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("5"));
     
@@ -478,7 +622,8 @@ svg.selectAll("path2")
 		
             })
             */
-  .style("fill", '#0d1dee') //blue
+   .style("fill", function(d) { return colorScale1(d[st_chosen1]); })              
+  //.style("fill", '#F31300') //blue
     .attr("transform", function(d) { return "translate(" + x(d.label_y) + "," + y(d.label_x) + ")"; })
     .attr("d", d3.svg.symbol().type("square").size("5"));    
     
@@ -504,22 +649,62 @@ svg.selectAll("path2")
  
 
 svg.append("g")
-      .attr("class", "xmat axis")
+      .attr("class", "xmataxis")
       .attr("transform", "translate(0," + 0 + ")")
       .call(xAxis);
      
-svg.selectAll(".xmat text")  // select all the text elements for the xaxis
+svg.selectAll(".xmataxis text")  // select all the text elements for the xaxis
           .attr("transform", function(d) {
              return "translate(" + this.getBBox().height*1 + "," + this.getBBox().height*-1.5 + ")rotate(-90)";
          });     
      
 
   svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
+      .attr("class", "ymataxis")
+      .call(yAxis)
+            	.append("text")
+      			.attr("class", "label")
+      			.attr("transform", "rotate(-90)")
+      			//.attr("y", h/2)
+      			//.attr("x", w)
+      			.attr("x", -75)
+      			.attr("y", -55)
+      			.attr("dy", ".71em")
+      			.attr("font-size", "17px")
+      			.style("text-anchor", "end")
+      			.text("SNP id");
 
 			
-		
+	  
+      svg.append("g")
+				.attr("class", "xmataxis2")
+				.attr("transform", "translate(0,"+height + ")")
+				.call(xAxis2);
+				
+	     
+svg.selectAll(".xmataxis2 text")  // select all the text elements for the xaxis
+          .attr("transform", function(d) {
+             return "translate(" + this.getBBox().height*1 + "," + this.getBBox().height*1.5 + ")rotate(90)";
+         });     
+     			
+				/*
+				      .append("text")
+      			.attr("class", "label")      			
+      			//.attr("y", h/2)
+      			//.attr("x", w)
+      			.attr("x", 155)
+      			.attr("y", 45)
+      			//.attr("dy", ".71em")
+      			.attr("font-size", "17px")
+      			.style("text-anchor", "end")
+      			.text("SNP id");
+      		*/
+			
+	svg.append("g")
+				.attr("class", "ymataxis")
+				.attr("transform", "translate(" + width + ",0)")
+				.call(yAxis2)
+      			
 
 
 //});
