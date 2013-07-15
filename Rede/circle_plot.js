@@ -116,15 +116,18 @@ svg.selectAll("text")      // write the numbers in chromosomes
     .append("text")
     .attr("class", "ring")
     .attr("transform", function(d) {
-    var angle = (d.startAngle+d.endAngle)/2;
-    if (angle < Math.PI) {
-        return "rotate("+ degrees(angle) + ")"
-        + "translate(" + (chromRingInnerRadius+3) + ")";}
-    else {
-        return "rotate("+ degrees(angle) + ")"
-        + "translate(" + (chromRingInnerRadius+3) + ")"
-        + "rotate(180)translate(-16)";}
+    	var angle = (d.startAngle+d.endAngle)/2;
+    	if (angle < Math.PI) {
+        	return "rotate("+ degrees(angle) + ")"
+        	+ "translate(" + (chromRingInnerRadius+3) + ")";}
+    	else {
+	        return "rotate("+ degrees(angle) + ")"
+    	    + "translate(" + (chromRingInnerRadius+3) + ")"
+        	+ "rotate(180)translate(-16)";}
     })
+    .style("opacity", function(d) { 
+    	if (d.index+1 !=view_chr && view_chr!=0){	return 0;} 
+    	})
     .text(function(d) { return d.index+1 });
 
 
@@ -132,21 +135,25 @@ svg.selectAll("text")      // write the numbers in chromosomes
 
 var ticks = svg.append("g")
     .selectAll("g")
-     .data(all_chrom.chromosomes())
+     .data(all_chrom.chromosomes())        
     .enter().append("g")
     .selectAll("g")
     .data(groupTicks)
     .enter().append("g")
+    
      .attr("transform", function(d) {
         return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
             + "translate(" + chromRingOuterRadius + ",0)";
-    });
+    })  	;
 
 ticks.append("line")
     .attr("x1", 1)
     .attr("y1", 0)
     .attr("x2", 5)
     .attr("y2", 0)
+    .style("opacity", function(d) { 
+    	if (d.index+1 !=view_chr && view_chr!=0){	return 0;} 
+    	})
     .style("stroke", "#000");
     
 
@@ -159,7 +166,10 @@ ticks.append("text")
     })
     .attr("transform", function(d) {
       return d.angle > Math.PI ? "rotate(180)translate(-16)" : null;
-    })
+    })    
+    .style("opacity", function(d) { 
+    	if (d.index+1 !=view_chr && view_chr!=0){	return 0;} 
+    	})
     .text(function(d) { return d.label; });    
 
 };
@@ -583,7 +593,8 @@ function groupTicks(d) {
     return d3.range(0, d.totAngle, 0.041 ).map(function(v, i) {
         return {
             angle: v + d.startAngle,
-            label: i % 2 ? null : tickValues(d, v)
+            label: i % 2 ? null : tickValues(d, v),
+            index: d.index
         };
     });
 };
