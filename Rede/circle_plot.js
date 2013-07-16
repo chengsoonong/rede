@@ -123,7 +123,7 @@ svg.selectAll("text")      // write the numbers in chromosomes
     	else {
 	        return "rotate("+ degrees(angle) + ")"
     	    + "translate(" + (chromRingInnerRadius+3) + ")"
-        	+ "rotate(180)translate(-16)";}
+        	+ "rotate(180)translate(-13)";}
     })
     .style("opacity", function(d) { 
     	if (d.index+1 !=view_chr && view_chr!=0){	return 0;} 
@@ -214,9 +214,19 @@ svg.selectAll("circle.vertex")
     .style("stroke", function(d) { return graphColor(d.probe_group) })
     .attr("cx", chromRingInnerRadius-20)
     .attr("r", 3)
+    
+    /*
+    .on("mouseover", function(d) { 
+      svg.selectAll("g circle")  //show degree as tooltip - title
+             .filter(function(d) {
+        return d.probe_group === allNodes[i].probe_group;
+             })
+      .append("title")
+       .text(function(d) { return "degree: "  });
+       })  
+    */
 	//.on("mouseover", fade(0))  //click mouseover mouseout
-	//.on("mouseout", reset(1))  //see creat chart
-	
+	/*//.on("mouseout", reset(1))  //see creat chart	
     .on("mousedown", function(g, i) { 
 	 	//when mousedown this selected the probe_group and create the string_html to show in html the seleced data 
             
@@ -230,13 +240,60 @@ svg.selectAll("circle.vertex")
             
             json_links_selected(file_json,sid);
              			
-            }
-    ).attr("transform", function(d) { 
+            })
+     */
+    		.on("click", function(d,i){
+				
+			var person=prompt("Please enter a number!\n1) UCSC\n2) openSNP\n3) dbSNP\n4) PheGenI\n5) ensembl\n6) SNPedia\n7) OMIM\n8) ClinVar");
+
+			if (person!=null){
+    			if("1"== person ){
+    				html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+allNodes[i].chrom+':'+ (allNodes[i].bp_position-1000)+'-'+(allNodes[i].bp_position+1000)
+    	        }else if("2"== person ) {
+    		    	html='http://opensnp.org/snps/'+allNodes[i].rs
+    		}else if("3"== person ) {
+    				
+    				html='http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs='+allNodes[i].rs.substring(2)
+    		}else if("4"== person ) {
+    				
+    				html='http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs='+allNodes[i].rs.substring(2)
+    		}else if("5"== person ) {    		
+    				html='http://www.ensembl.org/Homo_sapiens/Variation/Summary?r='+allNodes[i].chrom+':'+(allNodes[i].bp_position-1000)+'-'+(allNodes[i].bp_position+1000) +';source=dbSNP;v=rs'+allNodes[i].rs.substring(2)+';vdb=variation'       
+					 
+    		}else if("6"== person ) {    		
+    				html='http://www.snpedia.com/index.php/Rs'+allNodes[i].rs.substring(2)       
+					 
+    		}
+    		else if("7"== person ) {    		
+    				html='http://omim.org/search?index=entry&search=rs'+allNodes[i].rs.substring(2)       
+					 
+    		}
+    		else if("8"== person ) {    		
+    				html='http://www.ncbi.nlm.nih.gov/clinvar?term=rs'+allNodes[i].rs.substring(2)       
+					 
+    		}
+      		window.open(html)
+ 			}	
+		})
+    
+           
+    .attr("transform", function(d) { 
         return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")" });
 
 
-
-
+//{"prbCode": "rs10205611", "degree": 1, 
+//"rs": "rs10205611", "bp_position": 148853010, 
+//"chrom": 2, "id": 0, "probe_group": 1, "prb": 0}
+          
+ svg.selectAll("g circle")  //show degree as tooltip - title
+        //.filter(function(d) {
+        //return d.probe_group === allNodes[i].probe_group;
+        //     })
+      .append("title")
+      .text(function(d) { return "degree: " + two_dec(d.degree)+"\nSNP: "+d.rs 
+      							+"\nprobe_group: "+ d.probe_group+"\nposition: " +d.bp_position});
+         
+         
 
 
 
