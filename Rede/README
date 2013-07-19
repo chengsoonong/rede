@@ -8,7 +8,7 @@ Instructions for users:
 python -m SimpleHTTPServer 8888
 http://localhost:8888/view_graph.html
 
-use this to create web server
+use this to create web server to use the python cgi programming
 python -m CGIHTTPServer 8000 
 
 

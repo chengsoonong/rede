@@ -119,10 +119,46 @@ svg.selectAll(".x text")
              return "translate(" + this.getBBox().height*-0.5 + "," + this.getBBox().height*0 + ")rotate(0)";
          })
 		.on("click", function(d,i){
+				
+			var person=prompt("Please enter a number!\n1) UCSC\n2) openSNP\n3) dbSNP\n4) PheGenI\n5) ensembl\n6) SNPedia\n7) OMIM\n8) ClinVar");
+
+			if (person!=null){
+    			if("1"== person ){
+    				html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+data[i].chrom+':'+ (data[i].bp_position-1000)+'-'+(data[i].bp_position+1000)
+    	        }else if("2"== person ) {
+    		    	html='http://opensnp.org/snps/'+data[i].rs
+    		}else if("3"== person ) {
+    				
+    				html='http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs='+data[i].rs.substring(2)
+    		}else if("4"== person ) {
+    				
+    				html='http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs='+data[i].rs.substring(2)
+    		}else if("5"== person ) {    		
+    				html='http://www.ensembl.org/Homo_sapiens/Variation/Summary?r='+data[i].chrom+':'+(data[i].bp_position-1000)+'-'+(data[i].bp_position+1000) +';source=dbSNP;v=rs'+data[i].rs.substring(2)+';vdb=variation'       
+					 
+    		}else if("6"== person ) {    		
+    				html='http://www.snpedia.com/index.php/Rs'+data[i].rs.substring(2)       
+					 
+    		}
+    		else if("7"== person ) {    		
+    				html='http://omim.org/search?index=entry&search=rs'+data[i].rs.substring(2)       
+					 
+    		}
+    		else if("8"== person ) {    		
+    				html='http://www.ncbi.nlm.nih.gov/clinvar?term=rs'+data[i].rs.substring(2)       
+					 
+    		}
+    		
+    		
+    		
+    		
+    		
+      		window.open(html)
+ 			}	
 						
-			html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+data[i].chrom+':'+ (data[i].bp_position-1000)+'-'+(data[i].bp_position+1000)
+			//html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+data[i].chrom+':'+ (data[i].bp_position-1000)+'-'+(data[i].bp_position+1000)
 			//html="http://www.w3schools.com"
-			window.open(html)//,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400");
+			//window.open(html)//,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=400, height=400");
 			
 			
 		});
@@ -248,26 +284,31 @@ json.nodes.forEach( 	function(d) { allNodes.push(d) }    );
 
 for (var i in list_idx_in_links2){ //this will fill with data the array 
 	
-	
+		var valuetoplot = 0
+		if(kindofvalues=="withlog" ){		
+			valuetoplot=-1*Math.log(list_idx_in_links2[i][st_chosen])  
+		}else{
+			valuetoplot=list_idx_in_links2[i][st_chosen] 			
+		}
 		
-		data_weight_pvalue.push(list_idx_in_links2[i][st_chosen]); 
+		data_weight_pvalue.push(valuetoplot); 
 		
 	
 		if (allNodes[list_idx_in_links2[i].source].chrom===1){         //"chr"+d.chrom+':'+d.bp_position
 
-			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].source].degree ,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);	
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position,valuetoplot,allNodes[list_idx_in_links2[i].source].degree ,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);	
 		
 		}else{
 			
-			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].source].chrom-2] ,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].source].degree,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].source].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].source].chrom-2] ,valuetoplot,allNodes[list_idx_in_links2[i].source].degree,"chr"+allNodes[list_idx_in_links2[i].source].chrom+':'+allNodes[list_idx_in_links2[i].source].bp_position ]);
 		}
 		
 		if (allNodes[list_idx_in_links2[i].target].chrom===1){
 			
-			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position ]);	
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position,valuetoplot,allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position ]);	
 		
 		}else{
-			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].target].chrom-2] ,list_idx_in_links2[i][st_chosen],allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position]);
+			data_select_from_HDS.push([allNodes[list_idx_in_links2[i].target].bp_position +chrom_acum_length[allNodes[list_idx_in_links2[i].target].chrom-2] ,valuetoplot,allNodes[list_idx_in_links2[i].target].degree,"chr"+allNodes[list_idx_in_links2[i].target].chrom+':'+allNodes[list_idx_in_links2[i].target].bp_position]);
 		}
 		
 		}
