@@ -10,18 +10,23 @@
         <link type="text/css" rel="stylesheet" href="genome.css"/>
         <script> 
             $(document).ready(function(){
+              $("#hesid_text").click(function(){
+                $("#hesid").slideToggle("fast");
+                  });
+            });        
+            $(document).ready(function(){
               $("#snps_text1").click(function(){
-                $("#hds_matrix").slideToggle("slow");
+                $("#hds_matrix").slideToggle("fast");
                   });
             });
             $(document).ready(function(){
               $("#snps_text2").click(function(){
-                $("#pairs").slideToggle("slow");
+                $("#pairs").slideToggle("fast");
                   });
             });
             $(document).ready(function(){
               $("#TRCT").click(function(){
-                $("#table_snps,#rp,#contp").slideToggle("slow");
+                $("#table_snps,#rp,#contp").slideToggle("fast");
                   });
             });
         </script>
@@ -104,7 +109,8 @@
       
                 <div id="brush_weight"></div>  
                 <br><br>
-                <div id="hesid"></div> 
+                <div id="hesid_text"><h3>Probe group</h3> </div>
+                <div id="hesid"></div>
                 <br><br> 
                 <div id="hc"></div>  
                 <h5 id="TRCT"> ROC plot and Contigency table  </h5> 
@@ -118,17 +124,10 @@
                 <div id="rp"></div>
                 <br><br>
                 <div id="contp"></div> 
-                <br><br>
-                
-                <div id="snps_text1">
-                        <h3>SNPs</h3>
-                </div>
-                
-                 <div id="hds_matrix"></div>
-                 
-                <div id="snps_text2">
-                        <h3>SNPs Pairs</h3>
-                </div>
+                <br><br>                
+                <div id="snps_text1"><h3>SNPs</h3></div>                
+                <div id="hds_matrix"></div>                 
+                <div id="snps_text2"><h3>SNPs Pairs</h3></div>
                 <div id="pairs"></div>
                 <div id="footer">
                     Copyright: 
