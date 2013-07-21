@@ -300,8 +300,8 @@ function matrix_plot( x1,x2,y1,y2){
 
 
 var margin = {top: 50, right: 50, bottom: 50, left: 50},
-    width = 900 - margin.left - margin.right, //500
-    height = 900 - margin.top - margin.bottom;//200
+    width = 700 - margin.left - margin.right, //900
+    height = 700 - margin.top - margin.bottom;//900
 
 
 var x = d3.scale.linear().domain([x1,x2])//[0,array_SNPs.length])
