@@ -107,61 +107,51 @@ circle {
 }
 
 #scalecolor_matrix1 {
-	position:fixed;
-	
-	top:985px;
+	position:fixed;	
+	top:725px;
 	left:300px;		
     /*float:left;
     width:800px;*/
 }
 
 #scalecolor_matrix2 {
-	position:fixed;
-	
-	
-	top:1060px;
+	position:fixed;	
+	top:780px;
 	left:300px;		
     /*float:left;
     width:800px;*/
 }
 
 #scalecolor1_dropbox {
-	position:fixed;
+	position:fixed;	
+	top:730px;
 	
-	
-	top:985.5px;
 	left:160px;		
-    /*float:left;
+    /*float:left;top:985.5px;
     width:800px;*/
 }
 
 #scalecolor2_dropbox {
-	position:fixed;
-	
-	
-	top:1062.5px;
+	position:fixed;	
+	top:785px;
 	left:160px;		
-    /*float:left;
+    /*float:left;top:1062.5px;
     width:800px;*/
 }
 
 #up {
-	position:fixed;
-	
-	
-	top:980px;
+	position:fixed;	
+	top:715px;
 	left:50px;		
-    /*float:left;
+    /*float:left;top:980px;
     width:800px;*/
 }
 
 #ll {
-	position:fixed;
-	
-	
-	top:1050px;
+	position:fixed;	
+	top:770px;
 	left:50px;		
-    /*float:left;
+    /*float:left;top:1050px;
     width:800px;*/
 }
 
