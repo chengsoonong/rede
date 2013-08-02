@@ -708,37 +708,7 @@ function selected_json(){
         
          	
         json.links.forEach( function(d) {
-        	//create the links to be exporte in json file. It were selected in reange of p-value 
-            //"links": [{"source": 0, "target": 1,"probe_group": 1, "P": 8.145e-05, "STAT": 15.52, "OR_INT": 37.94, "ct_id":0}],
-            /*
-        		if(kindofvalues=="withlog" ){        			
-						if(  -1*Math.log(d[st_chosen])  >=  brush_value1	&&  -1*Math.log(d[st_chosen]) <=brush_value2){
-								update_map_degree(d.source)
-								update_map_degree(d.target)
-								update_map_id(d.source)
-								update_map_id(d.target)								
-								update_map_ct_id(d.ct_id)
-								update_map_probe_group(d.probe_group)
-								update_map_subgraph_nedges(map_probe_group.get(d.probe_group))
-								
-								
-								
-								if( map_id.get(d.source) < map_id.get(d.target)){								
-									string_link= "{\"source\": "+map_id.get(d.source)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.target)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
-									
-								}else{
-									string_link= "{\"source\": "+map_id.get(d.target)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.source)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
-																		
-								}	            
-								                
-								for (i in st_1){
-									string_link+=", \""+st_1[i]+"\": "+d[st_1[i]]	
-								}	
-								string_link+="},"	
-								link_html+=string_link;
-								//document.write(link_html);
-						}  
-					}else{*/
+ 
 						if (d[st_chosen]  >=  brush_value1	&& d[st_chosen] <=brush_value2){
 									
 								update_map_degree(d.source)
