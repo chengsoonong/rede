@@ -139,7 +139,12 @@ var list_keys_json=[]
  * create the dropbox.
  * @type {string} use_communities     
  */
-var use_communities="no"  
+var use_communities="no"
+/**
+ * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is cont. table in the json file.
+ * @type {string} use_cont_table   
+ */
+var use_cont_table="no"  
 /**
  * Global variable that is used in view_graph.js. It is save the first statistical test to be visualited
  * create the dropbox.
@@ -219,6 +224,11 @@ function upload_json ( file_name ){
             
     for (var i in json ){
     		list_keys_json.push(i)
+    		
+    		if (i=="cont_table"){    			
+    			use_cont_table="yes"
+    		}
+    		
     	}
 	if(include_in_arr(list_keys_json,"communities")){ //check if there is communities in the json file
 		use_communities="yes"  //check if there is communities in the json file
@@ -706,26 +716,45 @@ function selected_json(){
         	}
         }
         
+        
+        for (var i in json ){
+    		list_keys_json.push(i)
+    	}
+        
+        
          	
         json.links.forEach( function(d) {
  
 						if (d[st_chosen]  >=  brush_value1	&& d[st_chosen] <=brush_value2){
+							
+
 									
 								update_map_degree(d.source)
 								update_map_degree(d.target)
 								update_map_id(d.source)
 								update_map_id(d.target)								
-								update_map_ct_id(d.ct_id)
+								
 								update_map_probe_group(d.probe_group)
 								update_map_subgraph_nedges(map_probe_group.get(d.probe_group))
 								
+							if( use_cont_table=="yes" ){ 
+								
+								update_map_ct_id(d.ct_id)
 								if( map_id.get(d.source) > map_id.get(d.target)){								
 									string_link= "{\"source\": "+map_id.get(d.source)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.target)+", \"ct_id\": "+map_ct_id.get(d.ct_id)
 								}else{
 									string_link= "{\"source\": "+map_id.get(d.target)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.source)+", \"ct_id\": "+map_ct_id.get(d.ct_id)									
 								}
-																	                
-								for (i in st_1){
+								
+							}else{
+								if( map_id.get(d.source) > map_id.get(d.target)){								
+									string_link= "{\"source\": "+map_id.get(d.source)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.target)
+								}else{
+									string_link= "{\"source\": "+map_id.get(d.target)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"target\": "+map_id.get(d.source)									
+								}
+							}										                
+							
+							for (i in st_1){
 									string_link+=", \""+st_1[i]+"\": "+d[st_1[i]]	
 								}	
 								string_link+="},"	
@@ -745,8 +774,17 @@ function selected_json(){
         	
         	//if(map_id.has(d.id)!=null && map_id.has(d.id)!=undefined){
         	if(map_id.has(d.id)){	        		
-					    string_node="{\"prbCode\": \""+d.prbCode +"\", \"degree\": "+map_degree.get(d.id)+", \"rs\": \""+d.rs+"\", \"bp_position\": "+d.bp_position+
-			     			", \"chrom\": "+d.chrom+", \"id\": "+map_id.get(d.id)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"prb\": "+d.prb+"}"; 
+//					    string_node="{\"prbCode\": \""+d.prbCode +"\", \"degree\": "+map_degree.get(d.id)+", \"rs\": \""+d.rs+"\", \"bp_position\": "+d.bp_position+
+//			     			", \"chrom\": "+d.chrom+", \"id\": "+map_id.get(d.id)+", \"probe_group\": "+map_probe_group.get(d.probe_group)+", \"prb\": "+d.prb+"}"; 
+					    string_node="{\"degree\": "+map_degree.get(d.id)+", \"id\": "+map_id.get(d.id)+", \"probe_group\": "+map_probe_group.get(d.probe_group) 
+			     	
+			     	for (var i in d){ 
+			     		if(i!= "id" && i!="probe_group" && i!= "degree"){
+			     		string_node=string_node+" ,\""+  i+"\": \""+d[i] +"\""
+			     		}}
+			     	
+			     	string_node=string_node+"}";
+			     	
 			     		//document.write(map_id.get(d.id),string_node)	
 		        		map_nodes.set(map_id.get(d.id),string_node);
         	}
@@ -763,7 +801,8 @@ function selected_json(){
         //"cont_table":[{"unv1": [{"controls":35.0 ,"cases":18.0 }, {"controls":12.0 ,"cases":3.0 }, {"controls":8.0 ,"cases":4.0 }], 
         //"unv2": [{"controls":40.0 ,"cases":21.0 }, {"controls":14.0 ,"cases":4.0 }, {"controls":1.0 ,"cases":0.0 }], 
         //"biv": [[{"controls":25.0 ,"cases":15.0}, {"controls":9.0 ,"cases":3.0}, {"controls":1.0 ,"cases":0.0}],[{"controls":8.0 ,"cases":2.0}, {"controls":4.0 ,"cases":1.0}, {"controls":0.0 ,"cases":0.0}],[{"controls":7.0 ,"cases":4.0}, {"controls":1.0 ,"cases":0.0}, {"controls":0.0 ,"cases":0.0}]], 
-        //"total": {"controls":55.0 ,"cases":25.0 }}]                
+        //"total": {"controls":55.0 ,"cases":25.0 }}]     
+       if( use_cont_table=="yes" ){            
         Array_map_ct_id=[]
         json.cont_table.forEach( function(d,i){
         	if (i in map_ct_id.keys()){ 
@@ -797,6 +836,8 @@ function selected_json(){
        	ct_html=ct_html.substring(0,ct_html.lastIndexOf(","));// IMP -> 		remover a ultima virgula 	   <- IMP	
         ct_html=ct_html+']'
         
+        
+       }
         //create the subgraphs to be exporte in json file. It were selected in reange of p-value
         
         
@@ -816,9 +857,13 @@ function selected_json(){
         subgraphs_html=subgraphs_html+']'
         
 		
-		//string that will be exported
+		//string that will be exported								
+			if( use_cont_table=="yes" ){ 
 		string_html_export= "{\"name\": \"export_name\", "+nodes_html+", " +link_html+", "  +subgraphs_html+", "  +ct_html+"} "
-  	
+  	}else{
+  		string_html_export= "{\"name\": \"export_name\", "+nodes_html+", " +link_html+", "  +subgraphs_html+"} "
+  		
+  	}
 		 
   
   var textFileAsBlob = new Blob([string_html_export], {type:'text/plain'});
