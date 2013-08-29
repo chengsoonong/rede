@@ -244,12 +244,12 @@ svg.selectAll("circle.vertex")
      */
     		.on("click", function(d,i){
 				
-			var person=prompt("Please enter a number!\n1) UCSC\n2) openSNP\n3) dbSNP\n4) PheGenI\n5) ensembl\n6) SNPedia\n7) OMIM\n8) ClinVar");
+			var person=prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n6) openSNP\n7) SNPedia\n8) UCSC");
 
 			if (person!=null){
-    			if("1"== person ){
+    			if("8"== person ){
     				html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+allNodes[i].chrom+':'+ (allNodes[i].bp_position-1000)+'-'+(allNodes[i].bp_position+1000)
-    	        }else if("2"== person ) {
+    	        }else if("6"== person ) {
     		    	html='http://opensnp.org/snps/'+allNodes[i].rs
     		}else if("3"== person ) {
     				
@@ -257,18 +257,18 @@ svg.selectAll("circle.vertex")
     		}else if("4"== person ) {
     				
     				html='http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs='+allNodes[i].rs.substring(2)
-    		}else if("5"== person ) {    		
+    		}else if("3"== person ) {    		
     				html='http://www.ensembl.org/Homo_sapiens/Variation/Summary?r='+allNodes[i].chrom+':'+(allNodes[i].bp_position-1000)+'-'+(allNodes[i].bp_position+1000) +';source=dbSNP;v=rs'+allNodes[i].rs.substring(2)+';vdb=variation'       
 					 
-    		}else if("6"== person ) {    		
+    		}else if("7"== person ) {    		
     				html='http://www.snpedia.com/index.php/Rs'+allNodes[i].rs.substring(2)       
 					 
     		}
-    		else if("7"== person ) {    		
+    		else if("5"== person ) {    		
     				html='http://omim.org/search?index=entry&search=rs'+allNodes[i].rs.substring(2)       
 					 
     		}
-    		else if("8"== person ) {    		
+    		else if("1"== person ) {    		
     				html='http://www.ncbi.nlm.nih.gov/clinvar?term=rs'+allNodes[i].rs.substring(2)       
 					 
     		}
