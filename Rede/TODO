@@ -1,7 +1,5 @@
 TO DO
 
-
-
 - create public data
 - put the instructions for users in readme
 - Plot spring graph. Colour links by community colour, and on click colour nodes by chromosome colour.
@@ -22,6 +20,7 @@ LATER
 - genes and SNPs collapsible layout http://mbostock.github.com/d3/talk/20111116/force-collapsible.html
 - idea ->  http://www.jasondavies.com/coffee-wheel/
 - idea ->  http://indiemaps.com/blog/2011/10/hexbins/
+- idea: Use web.py for client server model: http://stackoverflow.com/questions/13094426/bidirectional-flow-between-d3-js-frontend-and-python-backend-interactive-grap
 
 DONE
 
