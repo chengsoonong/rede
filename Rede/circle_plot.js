@@ -251,7 +251,7 @@ svg.selectAll("circle.vertex")
     				html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+allNodes[i].chrom+':'+ (allNodes[i].bp_position-1000)+'-'+(allNodes[i].bp_position+1000)
     	        }else if("6"== person ) {
     		    	html='http://opensnp.org/snps/'+allNodes[i].rs
-    		}else if("3"== person ) {
+    		}else if("2"== person ) {
     				
     				html='http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs='+allNodes[i].rs.substring(2)
     		}else if("4"== person ) {
