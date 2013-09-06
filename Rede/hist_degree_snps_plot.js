@@ -119,35 +119,36 @@ svg.selectAll(".x text")
              return "translate(" + this.getBBox().height*-0.5 + "," + this.getBBox().height*0 + ")rotate(0)";
          })
 		.on("click", function(d,i){
+		
+
 				
-			var person=prompt("Please enter a number!\n1) UCSC\n2) openSNP\n3) dbSNP\n4) PheGenI\n5) ensembl\n6) SNPedia\n7) OMIM\n8) ClinVar");
+			var person=prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n6) openSNP\n7) SNPedia\n8) UCSC");
 
 			if (person!=null){
-    			if("1"== person ){
+    			if("8"== person ){
     				html='http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position='+'chr'+data[i].chrom+':'+ (data[i].bp_position-1000)+'-'+(data[i].bp_position+1000)
-    	        }else if("2"== person ) {
+    				
+    	        }else if("6"== person ) {
     		    	html='http://opensnp.org/snps/'+data[i].rs
-    		}else if("3"== person ) {
-    				
+    		    	
+    			}else if("2"== person ) {    				
     				html='http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs='+data[i].rs.substring(2)
-    		}else if("4"== person ) {
     				
+    			}else if("4"== person ) {    				
     				html='http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs='+data[i].rs.substring(2)
-    		}else if("5"== person ) {    		
+    				
+    			}else if("3"== person ) {    		
     				html='http://www.ensembl.org/Homo_sapiens/Variation/Summary?r='+data[i].chrom+':'+(data[i].bp_position-1000)+'-'+(data[i].bp_position+1000) +';source=dbSNP;v=rs'+data[i].rs.substring(2)+';vdb=variation'       
 					 
-    		}else if("6"== person ) {    		
+    			}else if("7"== person ) {    		
     				html='http://www.snpedia.com/index.php/Rs'+data[i].rs.substring(2)       
 					 
-    		}
-    		else if("7"== person ) {    		
+    			}else if("5"== person ) {    		
     				html='http://omim.org/search?index=entry&search=rs'+data[i].rs.substring(2)       
 					 
-    		}
-    		else if("8"== person ) {    		
+    			}else if("1"== person ) {    		
     				html='http://www.ncbi.nlm.nih.gov/clinvar?term=rs'+data[i].rs.substring(2)       
-					 
-    		}
+				}
     		
     		
     		
