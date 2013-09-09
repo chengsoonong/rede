@@ -978,24 +978,11 @@ function reset() {
 };
 
 /**
- * return a string from um number with 2 decimal after "." (it is used in contegency table) 
- * @param {number} value 
- * @return {string} 
- */
-function round_ct( value){              	
-    var v=value.toString();
-    var point=".";
-    var index_point=v.indexOf(point);
-    
-    return v.substring(0,index_point);
-}
-
-/**
  * return a string from um number with 2 decimal after "."  
  * @param {number} value 
  * @return {string} 
  */
-function two_dec( value){          	
+function two_dec(value){
     var v=value.toString();
     var point=".";
     var index_point=v.indexOf(point);
