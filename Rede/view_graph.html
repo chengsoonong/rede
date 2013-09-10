@@ -8,12 +8,68 @@
         <script type="text/javascript" src="genome.js"></script>
        <script  type="text/javascript" src="d3/lib/Blob.js"></script>
         <link type="text/css" rel="stylesheet" href="genome.css"/>
+        
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css" />
+
+        		<style type="text/css">
+			
+			h3{background-color:#826aa5;color:#fff;padding:3px;}
+			h3 span{float:right;font-size:28px;font-weight:normal;padding:1px;}
+			h3 span a{color:#fff;text-decoration:none;}
+
+		</style>
         <script> 
+        /* drag
+        $(function() {
+   		 $( "#hesid_text" ).draggable();
+ 		 });
+ 
+          */
             $(document).ready(function(){
-              $("#hesid_text").click(function(){
-                $("#hesid").slideToggle("fast");
+              $("#min1").click(function(){
+               // $("#hesid").slideToggle("fast");
+                
+                if( $("#hesid").is(':visible') ) {
+					$("#hesid").slideUp();
+					$(this).html('+');
+				} else {
+					$("#hesid").slideDown();
+					$(this).html('-');
+				}
+                
                   });
-            });        
+            });  
+              
+               
+             $(document).ready(function(){
+              $("#min2").click(function(){
+                 if( $("#hds_matrix").is(':visible') ) {
+					$("#hds_matrix").slideUp();
+					$(this).html('+');
+				} else {
+					$("#hds_matrix").slideDown();
+					$(this).html('-');
+				}
+                  });
+            });              
+               
+            $(document).ready(function(){
+              $("#min3").click(function(){
+                if( $("#pairs").is(':visible') ) {
+					$("#pairs").slideUp();
+					$(this).html('+');
+				} else {
+					$("#pairs").slideDown();
+					$(this).html('-');
+				}
+                  });
+            });               
+               
+			/*
+              
             $(document).ready(function(){
               $("#snps_text1").click(function(){
                 $("#hds_matrix").slideToggle("fast");
@@ -23,12 +79,16 @@
               $("#snps_text2").click(function(){
                 $("#pairs").slideToggle("fast");
                   });
-            });
+            });  */
+           
+           
             $(document).ready(function(){
               $("#TRCT").click(function(){
                 $("#table_snps,#rp,#contp").slideToggle("fast");
                   });
             });
+            
+          
         </script>
     </head>
     <body>
@@ -109,8 +169,26 @@
       
                 <div id="brush_weight"></div>  
                 <br><br>
-                <div id="hesid_text"><h3>Probe group</h3> </div>
+                
+
+                <div id="hesid_text">
+                	<h3>
+                		<span>
+               			  <a href="#" id="min1" class="lnk-minimizar"> - </a> 
+                		 <!-- <a href="#" class="lnk-maximizar">[ [] ]</a>
+                		  <a href="#" class="lnk-remover">[ x ]</a>
+                		 -->
+              			</span>
+                	Probe group
+                	</h3>  
+     	 		</div>
+                
+                
                 <div id="hesid"></div>
+              
+              
+                
+                
                 <br><br> 
                 <div id="hc"></div>  
                 <h5 id="TRCT"> ROC plot and Contigency table  </h5> 
@@ -125,10 +203,17 @@
                 <br><br>
                 <div id="contp"></div> 
                 <br><br>                
-                <div id="snps_text1"><h3>SNPs</h3></div>                
-                <div id="hds_matrix"></div>                 
-                <div id="snps_text2"><h3>SNPs Pairs</h3></div>
+                <div id="snps_text1"><h3>
+                	<span><a href="#" id="min2" class="lnk-minimizar"> - </a></span>
+                	SNPs</h3></div> 
+                <div id="hds_matrix"></div>  
+                               
+                <div id="snps_text2"><h3>
+                	<span><a href="#" id="min3" class="lnk-minimizar"> - </a></span>
+                	SNPs Pairs</h3></div>
                 <div id="pairs"></div>
+                
+                
                 <div id="footer">
                     Copyright: 
                     <br/>Cheng Soon Ong, 
