@@ -62,10 +62,10 @@ var margin = {top: 50, right: 20, bottom: 50, left: 400},
 
    	}else{ 
    	    if (data.length>10){
-   	    	document.write(2);
+
 	        var   height = 34.1796875*data.length - margin.top - margin.bottom;//200
 	    }else{
-	    	document.write(3);
+
 	    	var   height = 34.1796875*10 - margin.top - margin.bottom;
 	    }
 	 
