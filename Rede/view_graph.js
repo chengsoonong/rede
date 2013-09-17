@@ -84,6 +84,12 @@ var st_chosen1;
  */
 var st_chosen2; 
 /**
+ * Global variable that is used in view_graph.js and matrix_plot.js  
+ * It have information about wich statistical test was selected to be used in matrix plot.
+ * @type {string} st_chosen3   
+ */
+var st_chosen3; 
+/**
  * Global variable that is used in view_graph.js and circle_plot.js  
  * It have information each nodes.
  * @type {array} allNodes   
@@ -106,7 +112,12 @@ var links;
  * Global variable that have information about of the file path choosen.
  * @type {srtring} file_json   
  */						
-var file_json;  						
+var file_json;  		
+/**
+ * Global variable that will be used to get the information about of the statistical test choosen.
+ * @type {d3} select_dropbox_sort   
+ */	
+var select_dropbox_sort;					
 /**
  * Global variable that will be used to get the information about of the statistical test choosen.
  * @type {d3} select_dropbox   
@@ -238,12 +249,19 @@ function upload_json ( file_name ){
     st_chosen=st_1[0] //the first element to be visualited
     st_chosen1=st_1[0] //the first element to be visualited
     st_chosen2=st_1[0] //the first element to be visualited
-
+    st_chosen3=st_1[0] //the first element to be visualited
+    
+    //alert(st_chosen)
+    
+    show_snp_pairs_list(file_name,st_chosen)
+    
     creat_drop_box1("st_select2")
+    creat_drop_box_sort("st_select_snp_pairs")
     creat_drop_box2("scalecolor1_dropbox")
     creat_drop_box3("scalecolor2_dropbox")
 				
     change_drop_box1() 
+    change_drop_box_sort_by()
     change_drop_box2()
     change_drop_box3()
 	
@@ -273,6 +291,8 @@ function upload_json ( file_name ){
     
     histogram_degree_SNPs(file_json,0);	
     
+   // alert(st_chosen2)
+   // show_snp_pairs_list(file_json,st_chosen3)
     
    
 	
@@ -383,6 +403,24 @@ function creat_drop_box1(classinput){
         return d;
         });
 }
+/**
+ * Create the dropbox with statistical tests (lower left) to matrix plot 
+ * @param {string} classinput is a name to create um class
+ */
+function creat_drop_box_sort(classinput){
+    d3.select("#"+classinput).selectAll('select').remove();
+    // create the select element
+    select_dropbox_sort = d3.select("#"+classinput).append("select");
+    // create the options
+    select_dropbox_sort.selectAll("option").data(d3.keys(statOptions)).enter().append("option").text(function(d) {
+    	return d;
+    });
+    // add values to the options
+    select_dropbox_sort.selectAll("option").data(d3.values(statOptions)).attr("value", function(d) {
+    	return d;
+    });
+}
+
 
 /**
  * Create the dropbox with statistical tests (Upper Right) to matrix plot 
@@ -420,10 +458,43 @@ function creat_drop_box3(classinput){
     });
 }
 
+
+
 /**
- * Made atualizations when the dropbox with statistical tests is changed. 
+ * Made update in SNPs pairs list when the dropbox with statistical tests is changed. 
+ */
+function change_drop_box_sort_by(){
+	
+  
+ 
+    select_dropbox_sort.on("change", function change() {
+       
+  
+       
+    stat_test_choosed=this.value;	
+ 	d3.select("#pairs").selectAll("p").remove(); 
+   	
+    show_snp_pairs_list(file_json, stat_test_choosed)
+    
+    /*
+  	d3.select("#pairs").selectAll("p") 
+    .data(links.sort(function (a, b) {	return b.stat_test_choosed - a.stat_test_choosed; }))
+    .enter().append("p")
+    .text(function(d) { return showInteract(d); })
+     */  
+    
+    });
+    
+    
+}
+
+
+
+/**
+ * Made update when the dropbox with statistical tests is changed. 
  */
 function change_drop_box1(){
+
 
     select_dropbox.on("change", function change() {
     st_chosen=this.value;
@@ -970,7 +1041,7 @@ function reset() {
              d3.select("#hesid").selectAll('svg').remove();
              d3.select("#table_snps").selectAll('table').remove(); 
                 				
-    Create_chr_circle(0,0,0);												//create new again
+   			Create_chr_circle(0,0,0);												//create new again
             Create_SNP_association(file_json);        
             brush_weight(file_json);
             histogram_edges_subgraphId(file_json);

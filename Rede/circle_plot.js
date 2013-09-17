@@ -531,10 +531,17 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
             .style("color", '#000')
     .text(function(d) { return showSnp(d); });
     
-    
+/*
     
  d3.select("#pairs").selectAll("p")
-    .data(links)
+ 
+    .data(links.sort(function (a, b) {
+    	return b.STAT - a.STAT;
+
+}
+    	
+    	
+    ))
     .enter().append("p")
     //.append("link").attr("href","view_graph.html")
     .attr("target","_blank")
@@ -554,13 +561,11 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
         ROC_plot (links[i].ct_id,file_json)
         
         d3.select("#contp").selectAll('svg').remove();
-        cont_plot (links[i].ct_id,file_json)
+        cont_plot (links[i].ct_id,file_json)        
         
-        
-        })
-     ;
+        });
 	 
-	 
+*/	 
 
 });
 
