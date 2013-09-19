@@ -48,18 +48,30 @@ var margin = {top: 50, right: 20, bottom: 50, left: 400},
     width = 700 - margin.left - margin.right; //500
     //height = 1750*3500/200 - margin.top - margin.bottom;//200
     
-    if (probe_group==0)    
-     var   height = 34.1796875*allNodes_hes.length - margin.top - margin.bottom;//200
-   else{ 
+    if (probe_group==0){    
+ //    var   height = 34.1796875*allNodes_hes.length - margin.top - margin.bottom;//200
+
    	    if (data.length>10){
+   
+	        var   height = 34.1796875*allNodes_hes.length - margin.top - margin.bottom;//200
+	    }else{
+
+	    	var   height = 34.1796875*10 - margin.top - margin.bottom;
+	    }
+
+
+   	}else{ 
+   	    if (data.length>10){
+
 	        var   height = 34.1796875*data.length - margin.top - margin.bottom;//200
 	    }else{
+
 	    	var   height = 34.1796875*10 - margin.top - margin.bottom;
 	    }
 	 
 	 }
 	 
-	 
+	// var   height=34.1796875*10 - margin.top - margin.bottom;
 
 var y = d3.scale.ordinal()
     .rangeRoundBands([0 , height], .5);
