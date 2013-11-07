@@ -255,7 +255,7 @@ svg.selectAll(".x text").style("font-size", "14px");  // select all the text ele
    	  d3.select("#chart") 	
 		.selectAll(".link")	
    		.transition()
-  	     .style("opacity", 0.3);
+  	     .style("opacity", 1);
 
 	  d3.select("#chart") 	
 		.selectAll(".link")
@@ -381,7 +381,7 @@ svg.selectAll(".x text").style("font-size", "14px");  // select all the text ele
    	  d3.select("#chart") 	
 		.selectAll(".link")	
    		.transition()
-  	     .style("opacity", 0.3);
+  	     .style("opacity", 1);
 
 	  d3.select("#chart") 	
 		.selectAll(".link")

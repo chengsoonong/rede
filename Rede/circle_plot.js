@@ -495,7 +495,7 @@ var dataset = d3.range(d3.min(links,function(d) {return n_edgs_in_comm(d.assoc_g
             
         })
     .style("stroke-width", 1)
-    .style("opacity", 0.7)
+    .style("opacity", 1)
     .style("fill", "none")
     .attr("d", link());
 
@@ -872,7 +872,7 @@ function brushmove() {
 	brush_value2=s[1]
 	
 	
-	d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);	
+	d3.select("#chart").selectAll(".link").transition().style("opacity", 1);	
 	//svg.selectAll(".link").remove(); //remove the old association
 	//reset_association();			 //create the new association
 	   

@@ -675,7 +675,7 @@ function show_roc_ct(){
             .filter(function(d,i) {
                 return i == idx_in_links;
             }).transition()
-                style("opacity", 0.3);	
+                style("opacity", 1);	
   
         }else if(plot_chosen==="p_man"){
         	

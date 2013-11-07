@@ -277,7 +277,7 @@ chart.selectAll("rect")
       			 
       			} )
       			.transition()
-  				.style("opacity", 0.3);	
+  				.style("opacity", 1);	
   				
   				
   				
