@@ -86,39 +86,33 @@ function read_file_to_manhattan_plot(file_name) {
                     data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2], d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
                 }
 
-            });
-
-// var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
+		});
+		
+		//var for maximum and minimum value of p-values from the dataset 
+		
+		var min_pvalue = d3.min(data_weight_pvalue, function(d) {
+            return d;
+        });
+        
+        var max_pvalue = d3.max(data_weight_pvalue, function(d) {
+            return d;
+        });
+		
+		// var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
             
-            var extend_scale = (d3.max(data_weight_pvalue, function(d) {
-            return d;
-        }) - d3.min(data_weight_pvalue, function(d) {
-            return d;
-        })) *0.05;
+        var extend_scale = (max_pvalue - min_pvalue) *0.05;
 
         ix_1 = 0;
         ix_2 = chrom_lenght;
-        iy_1 = d3.min(data_weight_pvalue, function(d) {
-            return d;
-        }) - 1;
-        iy_2 = d3.max(data_weight_pvalue, function(d) {
-            return d;
-        }) + 1;
+        iy_1 = min_pvalue - 1;
+        iy_2 = max_pvalue + 1;
 
         data_from_HDS = "no"
 
-        manhattan_plot_minmap(0, chrom_lenght, d3.min(data_weight_pvalue, function(d) {
-            return d;
-        }) - extend_scale, d3.max(data_weight_pvalue, function(d) {
-            return d;
-        }) + extend_scale, 0, 0, 0, 0, data);
+        manhattan_plot_minmap(0, chrom_lenght, min_pvalue - extend_scale, max_pvalue + extend_scale, 0, 0, 0, 0, data);
 
 
-        manhattan_plot(0, chrom_lenght, d3.min(data_weight_pvalue, function(d) {
-            return d;
-        }) - extend_scale, d3.max(data_weight_pvalue, function(d) {
-            return d;
-        }) + extend_scale, data);
+        manhattan_plot(0, chrom_lenght, min_pvalue - extend_scale, max_pvalue + extend_scale, data);
 
 
 
