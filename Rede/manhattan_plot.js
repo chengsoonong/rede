@@ -88,6 +88,14 @@ function read_file_to_manhattan_plot(file_name) {
 
             });
 
+// var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
+            
+            var extend_scale = (d3.max(data_weight_pvalue, function(d) {
+            return d;
+        }) - d3.min(data_weight_pvalue, function(d) {
+            return d;
+        })) *0.05;
+
         ix_1 = 0;
         ix_2 = chrom_lenght;
         iy_1 = d3.min(data_weight_pvalue, function(d) {
@@ -101,16 +109,16 @@ function read_file_to_manhattan_plot(file_name) {
 
         manhattan_plot_minmap(0, chrom_lenght, d3.min(data_weight_pvalue, function(d) {
             return d;
-        }) - 1, d3.max(data_weight_pvalue, function(d) {
+        }) - extend_scale, d3.max(data_weight_pvalue, function(d) {
             return d;
-        }) + 1, 0, 0, 0, 0, data);
+        }) + extend_scale, 0, 0, 0, 0, data);
 
 
         manhattan_plot(0, chrom_lenght, d3.min(data_weight_pvalue, function(d) {
             return d;
-        }) - 1, d3.max(data_weight_pvalue, function(d) {
+        }) - extend_scale, d3.max(data_weight_pvalue, function(d) {
             return d;
-        }) + 1, data);
+        }) + extend_scale, data);
 
 
 
