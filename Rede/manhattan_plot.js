@@ -135,7 +135,7 @@ function read_file_to_manhattan_plot(file_name) {
  * @param {array} data
  */
 function manhattan_plot(x1, x2, y1, y2, data) {
-    //creat the manhataan plot              
+    //creat the manhattan plot              
 
     //--------------------------- create color scale  --------------------------------------------------
     var margin_s = {
@@ -144,6 +144,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         bottom: 35,
         left: 10
     };
+
     //Then define width and height as the inner dimensions of the chart area.
     var w_scale_bar = 500 - margin_s.left - margin_s.right;
     var h_scale_bar = 65 - margin_s.top - margin_s.bottom;
@@ -155,7 +156,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         return d[2];
     }) + 1);
 
-    //alert(dataset)
 
 
     var colorScale = d3.scale.log()
@@ -165,24 +165,20 @@ function manhattan_plot(x1, x2, y1, y2, data) {
             return d[2];
         })])
         .interpolate(d3.interpolateHsl)
-    //.range(["#08F5EC", "#F50808"]);//39b9b8 00b300 00a166
-    .range(["#00b300", "#F50808"]);
+        .range(["#00b300", "#F50808"]);
 
     //Create SVG element to receive the scale color bar
     var svg3 = d3.select("#scale_bar")
         .append("svg")
-    //.attr("width", w_scale_bar)
-    //.attr("height", h_scale_bar);
-
-    .attr("width", w_scale_bar + margin_s.left + margin_s.right)
+        .attr("width", w_scale_bar + margin_s.left + margin_s.right)
         .attr("height", h_scale_bar + margin_s.top + margin_s.bottom)
         .append("g")
         .attr("transform", "translate(" + margin_s.left + "," + margin_s.top + ")");
 
 
 
-
-    svg3.selectAll("rect") //create color scale bar
+    //create color scale bar
+    svg3.selectAll("rect") 
     .data(dataset)
         .enter()
         .append("rect")
@@ -217,13 +213,9 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("y", 40)
         .attr("font-family", "sans-serif")
         .attr("font-size", "11px")
-        .attr("fill",
-
-            function(d) {
-
-                return colorScale(d);
-
-            });
+        .attr("fill",function(d) {
+            return colorScale(d);
+        });
 
 
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
@@ -241,26 +233,15 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     var w = 800 - margin.left - margin.right; //900;
     var h = 600 - margin.top - margin.bottom; //600;
-    //var padding = 30;
+    
 
 
     //Create scale functions
-    /*
-            var xScale = d3.scale.linear()
-                                 .domain([x1,x2])
-                                 .range([padding, w - padding * 2]);//.range([padding, w - padding * 2]); //old 810
-
-            
-                                 
-
-            var yScale = d3.scale.linear()
-                                 .domain([y1,y2])
-                                 .range([h - padding, padding]);    
-                */
+    
 
     var xScale = d3.scale.linear()
         .domain([x1, x2])
-        .range([0, w]); //.range([padding, w - padding * 2]); //old 810
+        .range([0, w]); 
 
 
 
@@ -270,12 +251,10 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .range([h, 0]);
 
     var array_test1 = [""];
-    //var array_test2=[padding];
     var array_test2 = [0];
+
     for (var i = 0; i < chrom_acum_length.length; i++) {
         var num = i + 1;
-
-
         array_test1.push("chr" + num);
         array_test2.push(xScale(chrom_acum_length[i]));
     }
@@ -289,9 +268,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     //Define X axis top
     var xAxis_top = d3.svg.axis()
         .scale(xScale_top)
-        .orient("top")
-    //.ticks(5)
-    ;
+        .orient("top");
 
 
 
@@ -310,11 +287,8 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     //Create SVG element
     var svg = d3.select("#chart")
-    // svg = d3.select("#chart")
-    .append("svg")
-    //.attr("width", w)
-    //.attr("height", h)
-    .attr("width", w + margin.left + margin.right)
+        .append("svg")
+        .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -328,17 +302,15 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("x1", function(d) {
             return xScale(d);
         })
-    //.attr("y1", 32)
-    .attr("y1", 0)
+        .attr("y1", 0)
         .attr("x2", function(d) {
             return xScale(d);
         })
-    //.attr("y2", h - padding)
-    .attr("y2", h)
+        .attr("y2", h)
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", 5)
         .style("stroke", "black") //stroke-dasharray="5"
-    .style("opacity", 0.2);
+        .style("opacity", 0.2);
 
 
     //Create circles
@@ -353,19 +325,16 @@ function manhattan_plot(x1, x2, y1, y2, data) {
             return yScale(d[1]);
         })
         .attr("r", 3.5)
-    //.style("fill", function(d) { return graphColor(d[2]) })
-    .style("fill", function(d) {
-        return colorScale(d[2])
-    })
-    //.on("mouseover", fade(0))
-    ;
+        .style("fill", function(d) {
+            return colorScale(d[2]);
+        });
 
     label_text = svg.selectAll("text")
         .data(data)
         .enter()
         .append("text")
         .text(function(d) {
-            return d[3] + " ; " + d[1] + " ; " + d[2]; //two_dec(d[2]);
+            return d[3] + " ; " + d[1] + " ; " + d[2]; 
         })
         .attr("x", function(d) {
             return xScale(d[0]);
@@ -375,13 +344,11 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         })
         .attr("font-family", "sans-serif")
         .attr("font-size", "11px")
-    //.attr("fill", "red")
-    .style("fill", function(d) {
-        return colorScale(d[2])
-    });
+        .style("fill", function(d) {
+            return colorScale(d[2]);
+        });
 
     label_text.transition().duration(1000).style("opacity", 0); //it will fade the label in circles
-    //label_text.transition().style("opacity", 0); //it will fade the label in circles
 
 
 
@@ -390,7 +357,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("class", "manaxis").attr("font-size", "10px")
         .attr("transform", "translate(0," + (h) + ")")
         .call(xAxis) //;
-    .append("text")
+        .append("text")
         .attr("class", "manlabel")
         .attr("x", w)
         .attr("y", -6)
@@ -400,28 +367,22 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     svg.append("g").attr("transform", "translate(0," + 0 + ")")
         .attr("class", "xt axis")
-    //.attr("transform", "translate(" + padding + ",0)")
-    .call(xAxis_top); //;       
+        .call(xAxis_top);     
 
     svg.selectAll(".xt text") // select all the text elements for the xaxis
-    .attr("transform", function(d) {
-        return "translate(" + this.getBBox().height + "," + this.getBBox().height * -0.5 + ")rotate(-45)";
-    })
-    //.attr("transform", "rotate(-45)")
-    ;
+        .attr("transform", function(d) {
+            return "translate(" + this.getBBox().height + "," + this.getBBox().height * -0.5 + ")rotate(-45)";
+        });
 
 
     //Create Y axis
     svg.append("g")
         .attr("class", "manaxis")
-    //.attr("transform", "translate(" + padding + ",0)")
-    .call(yAxis)
+        .call(yAxis)
         .append("text")
         .attr("class", "manlabel")
         .attr("transform", "rotate(-90)")
-    //.attr("y", h/2)
-    //.attr("x", w)
-    .attr("x", -10)
+        .attr("x", -10)
         .attr("y", -50)
         .attr("dy", ".71em")
         .style("text-anchor", "end").attr("font-size", "17px")
@@ -451,8 +412,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         y_1 = e[0][1];
         y_2 = e[1][1];
 
-
-        //manhattan_plot_minmap(x1,x2,y1,y2,  xScale_top("chr5"),30, 10, 10)
 
 
     }
@@ -485,7 +444,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
  * @param {array} data
  */
 function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y2, data) {
-    //creat the manhataan plot
+    //creat the manhattan plot
 
     var margin_s = {
         top: 5,
@@ -507,7 +466,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         return d[2];
     }) + 1);
 
-    //alert(dataset)
 
 
     var colorScale = d3.scale.log()
@@ -517,8 +475,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             return d[2];
         })])
         .interpolate(d3.interpolateHsl)
-    //.range(["#08F5EC", "#F50808"]);//39b9b8 00b300 00a166
-    .range(["#00b300", "#F50808"]);
+        .range(["#00b300", "#F50808"]);
 
 
 
@@ -533,26 +490,20 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
 
     var w = 400 - margin.left - margin.right; //900;
     var h = 300 - margin.top - margin.bottom; //600;
-    //var padding = 30;
 
     var xScale = d3.scale.linear()
         .domain([x1, x2])
-        .range([0, w]); //.range([padding, w - padding * 2]); //old 810
-
-
-
+        .range([0, w]); 
 
     var yScale = d3.scale.linear()
         .domain([y1, y2])
         .range([h, 0]);
 
     var array_test1 = [""];
-    //var array_test2=[padding];
     var array_test2 = [0];
+
     for (var i = 0; i < chrom_acum_length.length; i++) {
         var num = i + 1;
-
-        //array_test1.push( "chr "+num );
         array_test1.push(num);
         array_test2.push(xScale(chrom_acum_length[i]));
     }
@@ -566,10 +517,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
     //Define X axis top
     var xAxis_top = d3.svg.axis()
         .scale(xScale_top)
-    //.orient("top")
-    .orient("bottom")
-    //.ticks(5)
-    ;
+        .orient("bottom");
 
 
 
@@ -588,11 +536,8 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
 
     //Create SVG element
     var svg = d3.select("#minmap_mp")
-    // svg = d3.select("#chart")
-    .append("svg")
-    //.attr("width", w)
-    //.attr("height", h)
-    .attr("width", w + margin.left + margin.right)
+        .append("svg")
+        .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -606,17 +551,16 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         .attr("x1", function(d) {
             return xScale(d);
         })
-    //.attr("y1", 32)
-    .attr("y1", 0)
+        .attr("y1", 0)
         .attr("x2", function(d) {
             return xScale(d);
         })
-    //.attr("y2", h - padding)
-    .attr("y2", h)
+   
+        .attr("y2", h)
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", 5)
-        .style("stroke", "black") //stroke-dasharray="5"
-    .style("opacity", 0.2);
+        .style("stroke", "black")
+        .style("opacity", 0.2);
 
 
 
@@ -634,12 +578,9 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             return yScale(d[1]);
         })
         .attr("r", 1.5)
-    //.style("fill", function(d) { return graphColor(d[2]) })
-    .style("fill", function(d) {
-        return colorScale(d[2])
-    })
-    //.on("mouseover", fade(0))
-    ;
+        .style("fill", function(d) {
+            return colorScale(d[2]);
+        });
 
 
 
@@ -653,8 +594,8 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             .attr("x", xScale(rect_x1))
             .attr("y", yScale(rect_y1))
             .attr("width", xScale(rect_x2))
-            .attr("height", yScale(rect_y2) - yScale(rect_y1)) //rgb(0,0,255) "rgba(255, 255, 0, 0.1)"
-        .attr("fill", "rgba(0, 0, 255, 0.1)")
+            .attr("height", yScale(rect_y2) - yScale(rect_y1))
+            .attr("fill", "rgba(0, 0, 255, 0.1)")
             .attr("stroke", "rgba(0, 0, 255, 1)")
             .attr("stroke-width", "5");
 
@@ -664,24 +605,18 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
 
     svg.append("g").attr("transform", "translate(0," + h + ")")
         .attr("class", "xt_min axis")
-    //.attr("transform", "translate(" + padding + ",0)")
-    .call(xAxis_top); //;       
+        .call(xAxis_top); //;       
 
     svg.selectAll(".xt_min text") // select all the text elements for the xaxis
-    .attr("transform", function(d) {
-        return "translate(" + this.getBBox().height * 1.4 + "," + this.getBBox().height * 1.7 + ")rotate(90)";
-    })
-    //.attr("transform", "rotate(-45)")
-    ;
+        .attr("transform", function(d) {
+            return "translate(" + this.getBBox().height * 1.4 + "," + this.getBBox().height * 1.7 + ")rotate(90)";
+        });
 
 
     //Create Y axis
     svg.append("g")
         .attr("class", "axis")
-    //.attr("transform", "translate(" + padding + ",0)")
-    .call(yAxis)
-
-    ;
+        .call(yAxis);
 
 
 }
