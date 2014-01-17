@@ -135,7 +135,7 @@ function read_file_to_manhattan_plot(file_name) {
  * @param {array} data
  */
 function manhattan_plot(x1, x2, y1, y2, data) {
-    //creat the manhattan plot              
+    //create the manhattan plot              
 
     //--------------------------- create color scale  --------------------------------------------------
     var margin_s = {
@@ -430,7 +430,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
 
 /**
- * creat a mini manhataan plot from the dots in data and do the zoom from x1, x2, y1, y2 values.
+ * create a mini manhataan plot from the dots in data and do the zoom from x1, x2, y1, y2 values.
  * If rect_x1, rect_y1, rect_x2, rect_y2 are diferent from zero (0) this create a rectangle
  * to help a see the location of the zoom.
  * @param {number} x1
@@ -444,7 +444,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
  * @param {array} data
  */
 function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y2, data) {
-    //creat the manhattan plot
+    //create the manhattan plot
 
     var margin_s = {
         top: 5,
@@ -555,7 +555,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         .attr("x2", function(d) {
             return xScale(d);
         })
-   
         .attr("y2", h)
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", 5)
