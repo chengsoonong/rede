@@ -85,34 +85,34 @@ function read_file_to_manhattan_plot(file_name) {
                 } else {
                     data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2], d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
                 }
-
-		});
-		
-		//var for maximum and minimum value of p-values from the dataset 
-		
-		var min_pvalue = d3.min(data_weight_pvalue, function(d) {
+                
+            });
+        
+        //var for maximum and minimum value of p-values from the dataset 
+        
+        var min_pvalue = d3.min(data_weight_pvalue, function(d) {
             return d;
         });
         
         var max_pvalue = d3.max(data_weight_pvalue, function(d) {
             return d;
         });
-		
-		// var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
+        
+        // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
             
         var extend_scale = (max_pvalue - min_pvalue) *0.05;
 
         ix_1 = 0;
         ix_2 = chrom_lenght;
-        iy_1 = min_pvalue - 1;
-        iy_2 = max_pvalue + 1;
+        iy_1 = min_pvalue - extend_scale;
+        iy_2 = max_pvalue + extend_scale;
 
         data_from_HDS = "no"
 
-        manhattan_plot_minmap(0, chrom_lenght, min_pvalue - extend_scale, max_pvalue + extend_scale, 0, 0, 0, 0, data);
+        manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
 
 
-        manhattan_plot(0, chrom_lenght, min_pvalue - extend_scale, max_pvalue + extend_scale, data);
+        manhattan_plot(x_1, ix_2, iy_1, iy_2, data);
 
 
 
@@ -135,7 +135,7 @@ function read_file_to_manhattan_plot(file_name) {
  * @param {array} data
  */
 function manhattan_plot(x1, x2, y1, y2, data) {
-    //creat the manhataan plot  			
+    //creat the manhataan plot              
 
     //--------------------------- create color scale  --------------------------------------------------
     var margin_s = {
@@ -226,7 +226,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
             });
 
 
-    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
 
 
 
@@ -246,17 +246,17 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     //Create scale functions
     /*
-			var xScale = d3.scale.linear()
-								 .domain([x1,x2])
-								 .range([padding, w - padding * 2]);//.range([padding, w - padding * 2]); //old 810
+            var xScale = d3.scale.linear()
+                                 .domain([x1,x2])
+                                 .range([padding, w - padding * 2]);//.range([padding, w - padding * 2]); //old 810
 
-			
-								 
+            
+                                 
 
-			var yScale = d3.scale.linear()
-								 .domain([y1,y2])
-								 .range([h - padding, padding]);	
-				*/
+            var yScale = d3.scale.linear()
+                                 .domain([y1,y2])
+                                 .range([h - padding, padding]);    
+                */
 
     var xScale = d3.scale.linear()
         .domain([x1, x2])
@@ -281,7 +281,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     }
 
 
-    //Create scale top			 
+    //Create scale top           
     var xScale_top = d3.scale.ordinal()
         .domain(array_test1)
         .range(array_test2);
@@ -401,7 +401,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     svg.append("g").attr("transform", "translate(0," + 0 + ")")
         .attr("class", "xt axis")
     //.attr("transform", "translate(" + padding + ",0)")
-    .call(xAxis_top); //;		
+    .call(xAxis_top); //;       
 
     svg.selectAll(".xt text") // select all the text elements for the xaxis
     .attr("transform", function(d) {
@@ -522,7 +522,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
 
 
 
-    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^			
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
 
     var margin = {
         top: 30,
@@ -558,7 +558,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
     }
 
 
-    //Create scale top			 
+    //Create scale top           
     var xScale_top = d3.scale.ordinal()
         .domain(array_test1)
         .range(array_test2);
@@ -665,7 +665,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
     svg.append("g").attr("transform", "translate(0," + h + ")")
         .attr("class", "xt_min axis")
     //.attr("transform", "translate(" + padding + ",0)")
-    .call(xAxis_top); //;		
+    .call(xAxis_top); //;       
 
     svg.selectAll(".xt_min text") // select all the text elements for the xaxis
     .attr("transform", function(d) {
