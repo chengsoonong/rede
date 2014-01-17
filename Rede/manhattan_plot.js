@@ -179,7 +179,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     //create color scale bar
     svg3.selectAll("rect") 
-    .data(dataset)
+        .data(dataset)
         .enter()
         .append("rect")
         .attr("x", function(d, i) {
