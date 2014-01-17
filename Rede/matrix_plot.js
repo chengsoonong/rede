@@ -50,7 +50,16 @@ function read_file_to_matrix_plot(file_name) {
         json.links.forEach(
             function(d) {
 
-                var obj = {}
+                var obj = {};
+                // temporary variable
+                var temp;
+
+                // check to place the points on the correct side of the diagonal  
+                if(d.source > d.target) {
+                    temp = d.target;
+                    d.target = d.source;
+                    d.source = temp;
+                }
 
                 obj["label_x"] = dic_chr["chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position];
                 obj["label_y"] = dic_chr["chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position];
