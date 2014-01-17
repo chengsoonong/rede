@@ -112,7 +112,7 @@ function read_file_to_manhattan_plot(file_name) {
         manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
 
 
-        manhattan_plot(x_1, ix_2, iy_1, iy_2, data);
+        manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
 
 
 
