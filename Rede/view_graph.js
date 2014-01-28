@@ -380,6 +380,23 @@ d3.select("#Plot_select").on("change", function change() {
         histogram_edges_subgraphId(file_json);
         read_file_to_matrix_comm_plot(file_json);
         histogram_degree_SNPs(file_json, 0);
+
+    } else if (this.value === "p_arc") {
+        // arc diagram interaction plot
+       
+        d3.select("body").select("#two_weight_value").transition().style("opacity", 1);
+        d3.select("body").select("#cb").transition().style("opacity", 1);
+        d3.select("body").select("#hc").transition().style("opacity", 1);
+        d3.select("body").select("#snps_text").transition().style("opacity", 1);
+        d3.select("body").select("#footer").transition().style("opacity", 1);
+        d3.select("#hds_matrix").selectAll('svg').remove();
+
+        read_file_to_arc_plot(file_json);
+        histogram_degree_SNPs(file_json, 0);
+
+
+         
+
     }
 });
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ chose the plot - drop box ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
@@ -541,7 +558,7 @@ function change_drop_box1() {
             d3.select("#scalecolor_matrix2").selectAll('svg').remove();
             d3.select("#minmap_matrixp").selectAll('svg').remove();
             d3.select("#chart").selectAll('svg').remove();
-            read_file_to_matrix_plot(file_json);
+            read_file_to_arc_plot(file_json);
 
         }
     });
@@ -1222,6 +1239,24 @@ function hide_selection() {
         d3.select("#scalecolor_matrix1").transition().style("opacity", 0);
         d3.select("#scalecolor_matrix2").transition().style("opacity", 0);
 
+    } else if (plot_chosen === "p_arc") {
+
+        d3.select("body").select("#butpl").transition().style("opacity", 0);
+        d3.select("body").select("#butrl").transition().style("opacity", 0);
+
+        d3.select("#min_num_scale_bar").selectAll("h1").remove(); // numbers of  color scale bar 
+        d3.select("#max_num_scale_bar").selectAll("h1").remove(); // numbers of  color scale bar
+        d3.select("#degree_scale_bar").transition().style("opacity", 0); // title of  color scale bar  
+
+        d3.select("#load_data").remove();
+
+        d3.select("#up").transition().style("opacity", 0);
+        d3.select("#ll").transition().style("opacity", 0);
+        d3.select("#scalecolor1_dropbox").transition().style("opacity", 0);
+        d3.select("#scalecolor2_dropbox").transition().style("opacity", 0);
+
+        d3.select("#scalecolor_matrix1").transition().style("opacity", 0);
+        d3.select("#scalecolor_matrix2").transition().style("opacity", 0);
 
 
     }
@@ -1264,6 +1299,15 @@ function show_selection() {
     } else if (plot_chosen === "p_mat_c") {
         d3.select("body").select("#butz").transition().style("opacity", 1);
         d3.select("body").select("#butr").transition().style("opacity", 1);
+
+    } else if (plot_chosen === "p_arc") {
+
+        d3.select("body").select("#butz").transition().style("opacity", 1);
+        d3.select("#ec_scale_bar_c").transition().style("opacity", 1); // title of  color scale bar
+        d3.select("#scale_bar_c").transition().style("opacity", 1);
+        d3.select("body").select("#butr").transition().style("opacity", 1);
+        d3.select("#st_select2").transition().style("opacity", 1);
+
     };
 }
 
@@ -1415,6 +1459,12 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
 
         matrix_comm_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0, 0, 0, 0)
         matrix_comm_plot(mx_1, mx_2, my_1, my_2);
+
+    } else if (plot_chosen === "p_arc") {
+        //  arc diagram interaction plot
+        reset();
+        d3.select("#hds_matrix").selectAll('svg').remove();
+        histogram_degree_SNPs(file_json, 0);
     };
 });
 
