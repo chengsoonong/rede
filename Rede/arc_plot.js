@@ -1,5 +1,7 @@
 /**
- * @fileoverview All functions to create the arc SNP interactions plot
+ * @title Implemented linear plot
+ * @fileoverview This file creates an arc diagram, which shows the interaction between SNPs. These links are displayed 
+ * through arcs. The 24 Human chromosomes (x and y are included) are plotted as bars in a row on one axis. 
  * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  */
@@ -20,12 +22,12 @@ var width = 1000, //800,  ->  300
     height2 = 800; //800,   -> 400              //for transition
    
 /**
- * Constant only for arc_plot.js to create the color of the chromosoms
+ * Constant only for arc_plot.js to create the colour of the chromosomes
  * (TODO: change to function reading from ucsc_colour.csv)
  * @const
  * @type {array}
  */
-var chromColor = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
+var chromcolour = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
     d3.rgb(255, 0, 0), d3.rgb(255, 0, 204), d3.rgb(255, 204, 204), d3.rgb(255, 153, 0),
     d3.rgb(255, 204, 0), d3.rgb(255, 255, 0), d3.rgb(204, 255, 0), d3.rgb(0, 255, 0),
     d3.rgb(53, 128, 0), d3.rgb(0, 0, 204), d3.rgb(102, 153, 255), d3.rgb(153, 204, 255),
@@ -33,11 +35,11 @@ var chromColor = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153,
     d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
     d3.rgb(1, 1, 1));
 /**
- * Constant only for arc_plot.js to create the color of the nodes
+ * Constant only for arc_plot.js to create the colour of the nodes
  * @const
- * @type {d3} graphColor
+ * @type {d3} graphcolour
  */
- var chrom_lenght = 0;
+ var chrom_length = 0;
 /**
  * Global variable only for arc_plot.js to create the scale in arc plot.
  * @type {array} chrom_acum_length
@@ -55,7 +57,7 @@ var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
     81195210, 78077248, 59128983, 63025520,
     48129895, 51304566, 155270560, 59373566);
 
-// Array for the ticks on the chromosoms
+// Array for the ticks on the chromosomes
 
 var axis_chrom = new Array(0, 25000000, 50000000, 75000000, 100000000,
     125000000, 150000000, 175000000, 200000000, 225000000, 250000000,
@@ -63,23 +65,23 @@ var axis_chrom = new Array(0, 25000000, 50000000, 75000000, 100000000,
 
 
 
-//this initializes chrom_lenght and chrom_acum_length to be used in arc plot
+// this initialized chrom_length and chrom_acum_length to be used in the arc plot
 for (var i = 0; i < chromLength.length; i++) {
-    chrom_lenght = chrom_lenght + chromLength[i];
-    chrom_acum_length.push(chrom_lenght);
+    chrom_length = chrom_length + chromLength[i];
+    chrom_acum_length.push(chrom_length);
 }
 
-// var for messuaring the ticks
+// var for measuaring the ticks
 
 var ticks_chrom = new Array();
 
-// counting the ticks for every chromosom
+// counting the ticks for every chromosome
 for(var i = 0; i < chromLength.length; i++) {
 
     ticks_chrom.push((chromLength[i] / 25000000 >> 0) +1 );
 }
 
-var graphColor = d3.scale.category20();
+var graphcolour = d3.scale.category20();
 
 /**
  * Global variable only for arc_plot.js to create the arc plot
@@ -87,22 +89,22 @@ var graphColor = d3.scale.category20();
  */
 var all_chrom;
 /**
- * Global variable only for arc_plot.js to create color bar scale.
- * @type {d3} colorScaleedges
+ * Global variable only for arc_plot.js to create colour bar scale.
+ * @type {d3} colourScaleedges
  */
-var colorScaleedges;
+var colourScaleedges;
 /**
- * Global variable only for arc_plot.js to create color bar scale.
- * @type {d3} colorScaleedges2
+ * Global variable only for arc_plot.js to create colour bar scale.
+ * @type {d3} colourScaleedges2
  */
-var colorScaleedges2;
+var colourScaleedges2;
 /**
- * Global variable that is used in arc_plot.js. It will be used to get the information about of the communitties in json file.
+ * Global variable that is used in arc_plot.js. It will be used to get the information about of the communities in json file.
  * @type {array[objects]} communities
  */
 var communities;
 
-// y coordinate of the chromosom bars
+// y coordinate of the chromosome bars
 
 var height_chrom_bar = 600
 
@@ -117,7 +119,7 @@ var allNodes = new Array();
 //---------------------------------------read json file --------------------------------------
 
 /**
- * Read a .json to inicialaze the variables and call the function arc_plot() to craete the arc plot
+ * Read a .json to initialize the variables and call the function arc_plot() to create the arc plot
  * @param {string} file_name
  */
 function read_file_to_arc_plot(file_name) {
@@ -130,35 +132,41 @@ function read_file_to_arc_plot(file_name) {
     d3.json(file_name, function(json) {
         var links = json.links; 
 
-        //function to fill the information of the nodes in allNodes
+        // function to fill the information of the nodes in allNodes
         json.nodes.forEach(function(d) {
             allNodes.push(d)
         });
 
-        //function to fill the information of the links in the array
+        // function to fill the information of the links in the array
         json.links.forEach(
 
-            function(d) { //this will fill the array with data
+            function(d) { // this will fill the array with data
 
                 data_weight_pvalue.push(d[st_chosen]);
 
 
 
-                if (allNodes[d.source].chrom === 1) { //"chr"+d.chrom+':'+d.bp_position
+                if (allNodes[d.source].chrom === 1) { 
 
-                    data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
+                    data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
+                    allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
 
                 } else {
 
-                    data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2], d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
+                    data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2], 
+                    d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' 
+                    + allNodes[d.source].bp_position]);
                 }
 
                 if (allNodes[d.target].chrom === 1) {
 
-                    data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
+                    data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" + 
+                    allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
 
                 } else {
-                    data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2], d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
+                    data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2],
+                    d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + 
+                    allNodes[d.target].bp_position]);
                 }
                 
             });
@@ -166,7 +174,7 @@ function read_file_to_arc_plot(file_name) {
        
 
         ix_1 = 0;
-        ix_2 = chrom_lenght;
+        ix_2 = chrom_length;
         
 
         
@@ -186,7 +194,7 @@ function read_file_to_arc_plot(file_name) {
 
 function create_arc_plot(x1, x2, data) {
 
-    // generall margin for the  plot
+    // general margin for the plot
     var margin = {
         top: 1,
         right: 1,
@@ -195,16 +203,14 @@ function create_arc_plot(x1, x2, data) {
     };
 
 
-
-    
-    //padding between the chromosoms
+    // padding between the chromosomes
     var padding = 5;
 
     // width and height of the plot
-    var w = 800 - margin.left - margin.right - (24 * padding); //900;
-    var h = 600 - margin.top - margin.bottom; //600;
+    var w = 800 - margin.left - margin.right - (24 * padding);
+    var h = 600 - margin.top - margin.bottom; 
 
-    // scale function for the chromosoms 
+    // scale function for the chromosomes 
     var xScale = d3.scale.linear()
         .domain([x1, x2 ])
         .range([0, w]);
@@ -213,7 +219,7 @@ function create_arc_plot(x1, x2, data) {
     var chr_scale = [0];
 
 
-    //create chromosom id and store the scaled x-location of the chromosoms in the chr_scale array
+    //create chromosome id and store the scaled x-location of the chromosomes in the chr_scale array
     for (var i = 0; i < chrom_acum_length.length; i++) {
         var num = i + 1;
         chr_id.push("chr" + num);
@@ -229,34 +235,34 @@ function create_arc_plot(x1, x2, data) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-    // create g container for every chromosom
+    // create g container for every chromosome
     var group_chrom = svg.selectAll("g.group")
         .data(chromLength)
         .enter().append("svg:g")
         .attr("transform", function(d, i) {
             return "translate("+ ( chr_scale[i] +  i * padding)  + "," + height_chrom_bar + ")";
         })
-        .attr("width", function(d, i) { return  xScale(chromLength[i]); })// scales the width of chromosoms
+        .attr("width", function(d, i) { return  xScale(chromLength[i]); })// scales the width of chromosomes
         .attr("height", 40)
         .attr("class", "group");
 
-    // create rectangular in the g container
+    // create rectangle in the g container
     var chrom_bar = group_chrom.append("rect")
         .attr("transform", "translate(" + 0 + "," + padding + ")")
         .attr("class", "rect")
-        .attr("width", function(d, i) { return  xScale(chromLength[i]); })// scales the width of chromosoms
+        .attr("width", function(d, i) { return  xScale(chromLength[i]); })// scales the width of chromosomes
         .attr("height", 20)
         .style("fill", function(d, i) {
-            return chromColor[i];
+            return chromcolour[i];
         })
         .style("stroke", function(d, i) {
-            return chromColor[i];
+            return chromcolour[i];
         });
 
-    // create the label for the chromosoms
+    // create the label for the chromosomes
     group_chrom.append("svg:text")
         .attr("class", "chromosom_number")
-        .attr("transform", "translate(" + (2 * padding)  + "," + 35 + ")") // 2* padding for double digits chromosom numbers 
+        .attr("transform", "translate(" + (2 * padding)  + "," + 35 + ")") // 2* padding for double digits chromosome numbers 
         .append("svg:textPath")
             .text(function(d, i) {
                 return i + 1;
@@ -264,20 +270,20 @@ function create_arc_plot(x1, x2, data) {
             .attr("font-size", "9px")
             .attr("text-anchor", "end")
             .style("fill", function(d, i) {
-                return chromColor[i];
+                return chromcolour[i];
             })
             .style("stroke", function(d, i) {
-                return chromColor[i];
+                return chromcolour[i];
             });
 
-    //create the ticks of the chromosoms
+    //create the ticks of the chromosomes
     
     group_chrom.selectAll("line")
         .data(function (d,i) {
-            return axis_chrom.slice(0, ticks_chrom[i]); // creates a new array which stored the exact amount of ticks for the chromosoms
+            return axis_chrom.slice(0, ticks_chrom[i]); // creates a new array which stored the exact amount of ticks for the chromosomes
         })
         .enter().append("line")
-        .attr("class", "tickchromosoms")
+        .attr("class", "tickchromosomes")
         .attr("x1", function (d) {return xScale(d);})
         .attr("y1", 0)
         .attr("x2",  function (d) {return xScale(d);})
@@ -285,7 +291,7 @@ function create_arc_plot(x1, x2, data) {
         .style("stroke", "#000");    
 
   
-// create circles for the location of the interacting SNPs   
+    // create circles for the location of the interacting SNPs   
 
      
     svg.selectAll("circle.vertex")
@@ -293,34 +299,40 @@ function create_arc_plot(x1, x2, data) {
         .enter().append("circle")
         .attr("class", "nodes")
         .style("fill", function(d) {
-            return graphColor(d.probe_group)
+            return graphcolour(d.probe_group)
         })
         .style("stroke", function(d) {
-            return graphColor(d.probe_group)
+            return graphcolour(d.probe_group)
         })
         .attr("cx", function(d) {
-            return chr_scale[(d.chrom -1 )] + ((d.chrom -1) * padding) + xScale(d.bp_position); // position of the cricles
+            return chr_scale[(d.chrom -1 )] + ((d.chrom -1) * padding) + xScale(d.bp_position); // position of the circles
         })
         .attr("cy", high_nodes)
         .attr("r", 2)
         // to get information about the SNPs from different sources, if you click on a circle
         .on("click", function(d, i) {
 
-            var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n6) openSNP\n7) SNPedia\n8) UCSC");
+            var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
+                                "6) openSNP\n7) SNPedia\n8) UCSC");
 
             if (person != null) {
                 if ("8" == person) {
-                    html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000)
+                    html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + 
+                    allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000)
                 } else if ("6" == person) {
                     html = 'http://opensnp.org/snps/' + allNodes[i].rs
                 } else if ("2" == person) {
 
-                    html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + allNodes[i].rs.substring(2)
+                    html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
+                    allNodes[i].rs.substring(2)
                 } else if ("4" == person) {
 
-                    html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + allNodes[i].rs.substring(2)
+                    html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
+                    allNodes[i].rs.substring(2)
                 } else if ("3" == person) {
-                    html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000) + ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) + ';vdb=variation'
+                    html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
+                    allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + 
+                    (allNodes[i].bp_position + 1000) + ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) + ';vdb=variation'
 
                 } else if ("7" == person) {
                     html = 'http://www.snpedia.com/index.php/Rs' + allNodes[i].rs.substring(2)
@@ -338,7 +350,8 @@ function create_arc_plot(x1, x2, data) {
         svg.selectAll("g circle") //show degree as tooltip - title
         .append("title")
         .text(function(d) {
-            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + "\nposition: " + d.bp_position
+            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
+            "\nposition: " + d.bp_position
         });
 
 
@@ -349,7 +362,7 @@ function create_arc_plot(x1, x2, data) {
         .enter().append("path")
         .attr("class", "link")
         .style("stroke", function(d) {
-            return graphColor(d.probe_group);
+            return graphcolour(d.probe_group);
         })
         .style("stroke", 1)
         .style("opacity", 0.7)
@@ -365,10 +378,12 @@ function create_arc_plot(x1, x2, data) {
                 d.target = temp;
             }
 
-            var start_position_x = chr_scale[(allNodes[d.source].chrom - 1)] + ((allNodes[d.source].chrom - 1) * padding) + xScale(allNodes[d.source].bp_position),
+            var start_position_x = chr_scale[(allNodes[d.source].chrom - 1)] + ((allNodes[d.source].chrom - 1) * padding) + 
+                xScale(allNodes[d.source].bp_position),
                 start_position_y = high_nodes ;
                 
-            var end_position_x =  chr_scale[(allNodes[d.target].chrom - 1 )] + ((allNodes[d.target].chrom - 1) * padding) + xScale(allNodes[d.target].bp_position),
+            var end_position_x =  chr_scale[(allNodes[d.target].chrom - 1 )] + ((allNodes[d.target].chrom - 1) * padding) + 
+                xScale(allNodes[d.target].bp_position),
                 end_position_y = high_nodes ;
 
             // to ensure that the arc links are drawn on the correct side    
@@ -388,7 +403,8 @@ function create_arc_plot(x1, x2, data) {
                 c2y = end_position_y  - radius ;
 
 
-            return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + end_position_x + "," + end_position_y ; 
+            return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
+            end_position_x + "," + end_position_y ; 
 
         });
 
