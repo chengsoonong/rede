@@ -32,9 +32,8 @@ var chromcolour = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153
     d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
     d3.rgb(1, 1, 1));
 /**
- * Constant only for arc_plot.js to create the colour of the nodes
- * @const
- * @type {d3} graphcolourh
+ * Global variable for measuring the complete length of all chromosomes together
+ *@type integer
  */
  var chrom_length = 0;
 /**
@@ -314,7 +313,7 @@ function create_arc_plot(x1, x2, data) {
                 window.open(html)
             }
         })
-        //show degree as tooltip - title
+        // show degree as tooltip - title
         svg.selectAll("g circle") 
         .append("title")
         .text(function(d) {
