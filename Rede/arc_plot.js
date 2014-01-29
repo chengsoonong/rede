@@ -16,10 +16,10 @@
  * @const
  * @type {number}
  */
-var width = 1000, //800,  ->  300
-    height = 800, //800,  -> 300
-    width2 = 800, //800,  -> 1500               //for transition
-    height2 = 800; //800,   -> 400              //for transition
+var width = 1000, 
+    height = 800,
+    width2 = 800, 
+    height2 = 800;      
    
 /**
  * Constant only for arc_plot.js to create the colour of the chromosomes
