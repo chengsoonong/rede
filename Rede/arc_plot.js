@@ -65,13 +65,13 @@ var axis_chrom = new Array(0, 25000000, 50000000, 75000000, 100000000,
 
 
 
-// this initialized chrom_length and chrom_acum_length to be used in the arc plot
+// this initialised chrom_length and chrom_acum_length to be used in the arc plot
 for (var i = 0; i < chromLength.length; i++) {
     chrom_length = chrom_length + chromLength[i];
     chrom_acum_length.push(chrom_length);
 }
 
-// var for measuaring the ticks
+// var for measuring the ticks
 
 var ticks_chrom = new Array();
 
@@ -149,24 +149,24 @@ function read_file_to_arc_plot(file_name) {
                 if (allNodes[d.source].chrom === 1) { 
 
                     data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
-                    allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
+                        allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
 
                 } else {
 
                     data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2], 
-                    d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' 
-                    + allNodes[d.source].bp_position]);
+                        d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' 
+                        + allNodes[d.source].bp_position]);
                 }
 
                 if (allNodes[d.target].chrom === 1) {
 
                     data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" + 
-                    allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
+                        allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
 
                 } else {
                     data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2],
-                    d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + 
-                    allNodes[d.target].bp_position]);
+                        d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + 
+                        allNodes[d.target].bp_position]);
                 }
                 
             });
@@ -219,7 +219,7 @@ function create_arc_plot(x1, x2, data) {
     var chr_scale = [0];
 
 
-    //create chromosome id and store the scaled x-location of the chromosomes in the chr_scale array
+    // create chromosome id and store the scaled x-location of the chromosomes in the chr_scale array
     for (var i = 0; i < chrom_acum_length.length; i++) {
         var num = i + 1;
         chr_id.push("chr" + num);
@@ -276,11 +276,12 @@ function create_arc_plot(x1, x2, data) {
                 return chromcolour[i];
             });
 
-    //create the ticks of the chromosomes
+    // create the ticks of the chromosomes
     
     group_chrom.selectAll("line")
         .data(function (d,i) {
-            return axis_chrom.slice(0, ticks_chrom[i]); // creates a new array which stored the exact amount of ticks for the chromosomes
+            // creates a new array which stored the exact amount of ticks for the chromosomes
+            return axis_chrom.slice(0, ticks_chrom[i]);        
         })
         .enter().append("line")
         .attr("class", "tickchromosomes")
@@ -313,26 +314,29 @@ function create_arc_plot(x1, x2, data) {
         .on("click", function(d, i) {
 
             var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
-                                "6) openSNP\n7) SNPedia\n8) UCSC");
+                "6) openSNP\n7) SNPedia\n8) UCSC");
 
             if (person != null) {
                 if ("8" == person) {
                     html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + 
-                    allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000)
+                        allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000)
+
                 } else if ("6" == person) {
                     html = 'http://opensnp.org/snps/' + allNodes[i].rs
+
                 } else if ("2" == person) {
-
                     html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
-                    allNodes[i].rs.substring(2)
-                } else if ("4" == person) {
+                        allNodes[i].rs.substring(2)
 
+                } else if ("4" == person) {
                     html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
-                    allNodes[i].rs.substring(2)
+                        allNodes[i].rs.substring(2)
+
                 } else if ("3" == person) {
                     html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
-                    allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + 
-                    (allNodes[i].bp_position + 1000) + ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) + ';vdb=variation'
+                        allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + 
+                        (allNodes[i].bp_position + 1000) + ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) 
+                        + ';vdb=variation'
 
                 } else if ("7" == person) {
                     html = 'http://www.snpedia.com/index.php/Rs' + allNodes[i].rs.substring(2)
@@ -351,7 +355,7 @@ function create_arc_plot(x1, x2, data) {
         .append("title")
         .text(function(d) {
             return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
-            "\nposition: " + d.bp_position
+                "\nposition: " + d.bp_position
         });
 
 
@@ -404,7 +408,7 @@ function create_arc_plot(x1, x2, data) {
 
 
             return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
-            end_position_x + "," + end_position_y ; 
+                end_position_x + "," + end_position_y ; 
 
         });
 
