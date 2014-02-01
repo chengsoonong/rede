@@ -145,7 +145,7 @@ function read_file_to_arc_plot(file_name) {
 
 // ---------------------------------- create arc plot ----------------------------------------
 
-function create_arc_plot(x1, x2, data) {
+function create_arc_plot(x1, x2) {
     // general margin for the plot
     var margin = {
         top: 1,
@@ -372,5 +372,127 @@ function create_arc_plot(x1, x2, data) {
 
 // ---------------------------------- create arc plot ----------------------------------------
 
-// ---------------------------------- functions ----------------------------------------------
+// ----------------------------------  zoom functions ----------------------------------------------
+
+function zoom_arc_plot(v_chr, v_start, v_end) {
+    // chosen chromosome for zoom
+    var xScale_chosen,
+    // all other chromsomes
+        xScale_compare;
+
+    var margin = {
+        top: 1,
+        right: 1,
+        bottom: 20,
+        left: 1
+    };
+
+    // padding between the chromosomes
+    var padding = 2;
+
+    // width and height of the plot
+    var w = 800 - margin.left - margin.right - (24 * padding);
+    var h = 600 - margin.top - margin.bottom; 
+
+    
+
+    var x_chosen_chrom = (((w/2) / (chrom_length)) * chrom_acum_length[(v_chr - 1)]);
+    // chromosomes without the chosen one
+   
+
+   // scale the chosen chromosome for zoom plot
+    if (v_start == 0 && v_end == 0) {
+        xScale_chosen = d3.scale.linear()
+            .domain([0, chromLength[(v_chr - 1)]])
+            .range([x_chosen_chrom, (x_chosen_chrom + (w/2))]);
+    } else { // also option for startbase 1 and endbase NULL        
+        xScale_chosen = d3.scale.linear()
+            .domain([v_start, v_end])
+            .range([x_chosen_chrom, (x_chosen_chrom + (w/2))]);
+    }
+
+    var chr_length_scale = [];
+    var without = chrom_length - chromLength[v_chr-1];
+
+    // arrays for storing the chromosome ID and the scaled x-coordinate 
+    var chr_id = [];
+    var chr_zoom_scale = [0];
+    // stores scaled chrom length
+    var chromLength_scaled = [];
+
+    for (var i = 0; i < chromLength.length; i++) {
+        var temp;
+         if(i < (v_chr - 1) || i > (v_chr - 1)) {
+            temp = (((w/2) - (23 * padding)) / without) * chromLength[i];
+            chromLength_scaled.push(temp);
+        } else {
+            temp = (w / 2) - i * padding;
+            chromLength_scaled.push(temp);
+        }
+    }
+
+    for(var i = 0; i < chrom_acum_length.length; i++) {
+        if(i < (v_chr - 1)) {
+            chr_zoom_scale.push((((w/2) / chrom_length) * chrom_acum_length[i]) + i * padding);
+        } else if(i == (v_chr - 2)) {
+            chr_zoom_scale.push(x_chosen_chrom + i * padding);
+        } else {
+            chr_zoom_scale.push((((w/2) / chrom_length) * chrom_acum_length[i]) + i * padding + (w/2));
+        }
+    }
+
+    
+   
+    
+
+
+  
+
+
+    // create SVG for the plot
+    var svg = d3.select("#chart")
+        .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  
+
+    var group_chrom = svg.selectAll("g.group")
+        .data(chromLength)
+        .enter().append("svg:g")
+        .attr("transform", function(d, i) {
+            return "translate(" +  (chr_zoom_scale[i] + i * padding)  + "," + height_chrom_bar + ")";     
+        })
+        // scales the width of chromosomes
+        .attr("width", function(d, i) {
+            return chromLength_scaled[i]; 
+        })
+        .attr("height", 40)
+        .attr("class", "group");
+
+    // create rectangle in the g container
+    var chrom_bar = group_chrom.append("rect")
+        .attr("transform", "translate(" + 0 + "," + 0 + ")")
+        .attr("class", "rect")
+        // scales the width of chromosomes
+        .attr("width", function(d, i) {
+            return chromLength_scaled[i]; 
+        })
+        .attr("height", 20)
+        .style("fill", function(d, i) {
+            return chromcolour[i];
+        })
+        .style("stroke", function(d, i) {
+            return chromcolour[i];
+        });
+
+
+
+
+   
+
+
+};
 

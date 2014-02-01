@@ -1393,7 +1393,24 @@ d3.select("body").select("#butz").on("click", function change() {
             //d3.select("#minmap_matrixp").selectAll('svg').remove();
             //matrix_plot_minmap(mix_1,mix_2,miy_1,miy_2, 0,0,0,0)
         };
+    } else if (plot_chosen === "p_arc") {
+
+       d3.select("#hesid").selectAll('svg').remove();
+        d3.select("#scale_bar").selectAll('svg').remove();
+        d3.select("#chart").selectAll('svg').remove();
+        d3.select("#pairs").selectAll("p").remove();
+        d3.select("body").selectAll('svg').remove();
+        d3.select("#two_weight_value").selectAll("h").remove();
+        d3.select("#hds_matrix").selectAll('svg').remove();
+
+        // read the zoom parameters
+        view_chr = document.getElementById("view_chr").value;
+        view_start = document.getElementById("texzs").value;
+        view_end = document.getElementById("texze").value;
+
+        zoom_arc_plot(+view_chr, +view_start, +view_end);
     }
+
 });
 
 
