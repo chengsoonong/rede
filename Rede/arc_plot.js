@@ -394,60 +394,28 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
     var w = 800 - margin.left - margin.right - (24 * padding);
     var h = 600 - margin.top - margin.bottom; 
 
-    
+    // chromosome length without the chosen chromosome
+    var chrom_scale_compare = chrom_length - chromLength[(v_chr -1)];
 
-    var x_chosen_chrom = (((w/2) / (chrom_length)) * chrom_acum_length[(v_chr - 1)]);
-    // chromosomes without the chosen one
-   
-
-   // scale the chosen chromosome for zoom plot
-    if (v_start == 0 && v_end == 0) {
-        xScale_chosen = d3.scale.linear()
-            .domain([0, chromLength[(v_chr - 1)]])
-            .range([x_chosen_chrom, (x_chosen_chrom + (w/2))]);
-    } else { // also option for startbase 1 and endbase NULL        
-        xScale_chosen = d3.scale.linear()
-            .domain([v_start, v_end])
-            .range([x_chosen_chrom, (x_chosen_chrom + (w/2))]);
-    }
-
-    var chr_length_scale = [];
-    var without = chrom_length - chromLength[v_chr-1];
-
-    // arrays for storing the chromosome ID and the scaled x-coordinate 
-    var chr_id = [];
-    var chr_zoom_scale = [0];
-    // stores scaled chrom length
+    //for loop to create the length of the chromosomes
     var chromLength_scaled = [];
-
-    for (var i = 0; i < chromLength.length; i++) {
+    for (var i = 0;i < chromLength.length; i++) {
         var temp;
-         if(i < (v_chr - 1) || i > (v_chr - 1)) {
-            temp = (((w/2) - (23 * padding)) / without) * chromLength[i];
-            chromLength_scaled.push(temp);
+        if ((v_chr - 1) == i) {
+            chromLength_scaled.push(w/2);
         } else {
-            temp = (w / 2) - i * padding;
+            temp = ((w/2) / chrom_scale_compare) * chromLength[i];
             chromLength_scaled.push(temp);
         }
     }
 
-    for(var i = 0; i < chrom_acum_length.length; i++) {
-        if(i < (v_chr - 1)) {
-            chr_zoom_scale.push((((w/2) / chrom_length) * chrom_acum_length[i]) + i * padding);
-        } else if(i == (v_chr - 2)) {
-            chr_zoom_scale.push(x_chosen_chrom + i * padding);
-        } else {
-            chr_zoom_scale.push((((w/2) / chrom_length) * chrom_acum_length[i]) + i * padding + (w/2));
-        }
+    //for loop to calculate the x position
+    var chrom_x_position = [0];
+    var length_chrom_x = 0;
+    for (var i = 0; i < chrom_acum_length.length ; i++) {
+        length_chrom_x = length_chrom_x + chromLength_scaled[i] + padding;
+        chrom_x_position.push(length_chrom_x);
     }
-
-    
-   
-    
-
-
-  
-
 
     // create SVG for the plot
     var svg = d3.select("#chart")
@@ -463,7 +431,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         .data(chromLength)
         .enter().append("svg:g")
         .attr("transform", function(d, i) {
-            return "translate(" +  (chr_zoom_scale[i] + i * padding)  + "," + height_chrom_bar + ")";     
+            return "translate(" + chrom_x_position[i]  + "," + height_chrom_bar + ")";     
         })
         // scales the width of chromosomes
         .attr("width", function(d, i) {
