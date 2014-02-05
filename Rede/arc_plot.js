@@ -377,14 +377,14 @@ function create_arc_plot(x1, x2) {
 function zoom_arc_plot(v_chr, v_start, v_end) {
     // chosen chromosome for zoom
     var xScale_chosen,
-    // all other chromsomes
+        // all other chromsomes
         xScale_compare;
 
     var margin = {
         top: 1,
         right: 1,
         bottom: 20,
-        left: 1
+        left: 10
     };
 
     // padding between the chromosomes
@@ -417,15 +417,52 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         chrom_x_position.push(length_chrom_x);
     }
 
+    // var for the chromsome length of the chosen area
+    var chosenLength = v_end - v_start;
+    
+    // array for the ticks
+    var ticks_chrom_chosen = [];
+    // for loop to create the ticks for the chosen chromosome
+    for (var i = 0; i< 20 ; i++) {
+        var temp_x,
+            temp_label,
+            temp_range,
+            temp_range_label,
+            temp;
+        if(chosenLength == 0) {
+            temp_x = chrom_x_position[(v_chr - 1)] + (chromLength_scaled[(v_chr - 1)] / 20) * i;
+            temp_label = Math.round(((chromLength[(v_chr - 1)] / 20) / 1000000) * i) + "MB";
+        } else {
+            
+            temp_x = chrom_x_position[(v_chr - 1)] + (chromLength_scaled[(v_chr - 1)] / 20) * i;
+            temp = Math.round(v_start + (chosenLength / 20)* i);
+            if(temp < 50000) {
+                temp_range = 1;
+                temp_range_label = "";
+            } else if(temp < 50000000) {
+                temp_range = 1000;
+                temp_range_label = "Kb";
+            } else {
+                temp_range = 1000000;
+                temp_range_label = "Mb";
+            }
+            temp_label = Math.round((temp / temp_range)) + temp_range_label; 
+        }
+        var obj = {};
+        obj["x"] = temp_x;
+        obj["label"] = temp_label;
+        ticks_chrom_chosen.push(obj);
+    }
+   
     // create SVG for the plot
     var svg = d3.select("#chart")
         .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  
+
 
     var group_chrom = svg.selectAll("g.group")
         .data(chromLength)
@@ -433,7 +470,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         .attr("transform", function(d, i) {
             return "translate(" + chrom_x_position[i]  + "," + height_chrom_bar + ")";     
         })
-        // scales the width of chromosomes
+    // scales the width of chromosomes
         .attr("width", function(d, i) {
             return chromLength_scaled[i]; 
         })
@@ -456,11 +493,284 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             return chromcolour[i];
         });
 
+    //create ticks for the chrom_bar
+    svg.selectAll("line")
+        .data(ticks_chrom_chosen)
+        .enter().append("line")
+        .attr("class", "tickchromosome")
+        .attr("x1", function(d) {
+            return + d.x;
+        })
+        .attr("y1", high_nodes + 25)
+        .attr("x2", function (d) {
+            return +  d.x;
+        })
+        .attr("y2", high_nodes + 30)
+        .style("stroke", "#000")
+
+    svg.selectAll("text")
+        .data(ticks_chrom_chosen)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("dy", ".35em")
+        .attr("transform", function (d) {
+            return "translate("+ d.x + "," + (high_nodes + 38) + ")" + "rotate(90)";  
+        })
+        .attr("font-size", "10")
+        .text(function (d) {
+            return d.label;    
+        });
+
+    // create the label for the chromosomes
+    group_chrom.append("svg:text")
+        .attr("class", "chromosom_number")
+        // 2* padding for double digits chromosome numbers
+        .attr("transform", function (d, i) {
+            if (i == (v_chr-1)) {
+                return "translate(" + (8 * padding)  + "," + 15 + ")";
+            } else {
+                return "translate(" + (4 * padding)  + "," + 35 + ")";  
+            }
+        })
+        .append("svg:textPath")
+        .text(function(d, i) {
+            return i + 1;
+        })
+        .attr("font-size", function (d, i) {
+            if (i == (v_chr-1)) {
+                return "14px";
+            } else {
+                return "9px";
+            }
+        })
+        .attr("text-anchor", "end")
+        .style("fill", function(d, i) {
+            if (i == (v_chr - 1)) {
+                return "#000";
+            } else {
+                return chromcolour[i];
+            }
+        })
+        .style("stroke", function(d, i) {
+            if (i == (v_chr - 1)) {
+                return "#000";
+            } else {
+                return chromcolour[i];
+            }
+        });
+    
+    
+       
+    // array to store all nodes and all links which should not be displayed in the zoom function
+    var zoom_allNodes = [],
+        zoom_links = [];
+    links.forEach( function(d) {
+        if((allNodes[d.source].chrom == v_chr  
+            && allNodes[d.source].bp_position >= v_start 
+            && allNodes[d.source].bp_position <= v_end) ||
+            (allNodes[d.source].chrom == v_chr && chosenLength == 0) ||
+            (allNodes[d.target].chrom == v_chr && 
+            allNodes[d.target].bp_position >= v_start && 
+            allNodes[d.target].bp_position <= v_end) ||
+            (allNodes[d.target].chrom == v_chr && chosenLength == 0)) {
+            
+                zoom_allNodes.push(allNodes[d.source]);
+                zoom_allNodes.push(allNodes[d.target]);
+                zoom_links.push(d);
+        }
+    });
+
+    // object to store the position of the zoomed chromosomes
+    var id_chosen = [];
+    // create circles for the location of the interacting SNPs     
+    svg.selectAll("circle.vertex")
+        .data(zoom_allNodes)
+        .enter().append("circle")
+        .attr("class", "nodes")
+        .style("fill", function(d) {
+            return graphcolour(d.probe_group);
+        })
+        .style("stroke", function(d) {
+            return graphcolour(d.probe_group);
+        })
+        // positioning the SNPs
+        .attr("cx", function(d) {
+            if(d.chrom == v_chr && chosenLength == 0) {
+                id_chosen[d.id] = chrom_x_position[(d.chrom -1 )] + 
+                    ((w/2) / chromLength[(d.chrom - 1)]) * d.bp_position;          
+                return id_chosen[d.id];
+            } else if (d.chrom == v_chr && chosenLength > 0 && d.bp_position >= v_start && 
+                d.bp_position <= v_end) {
+                    id_chosen[d.id] = chrom_x_position[(d.chrom -1)] + 
+                        ((w/2) / chosenLength) * (d.bp_position - v_start);
+                    return  id_chosen[d.id];
+            } else if(d.chrom == v_chr && chosenLength > 0 && d.bp_position < v_start  ) {
+                id_chosen[d.id] = chrom_x_position[(d.chrom -1)];
+                return id_chosen[d.id];
+            } else if (d.chrom == v_chr && chosenLength > 0 && d.bp_position > v_end) {
+                id_chosen[d.id] = chrom_x_position[(d.chrom - 1)] + (w/2);
+                return id_chosen[d.id];
+            } else if(d.chrom != v_chr) {
+                id_chosen[d.id] = chrom_x_position[(d.chrom -1 )] +
+                    ((w/2) / chrom_scale_compare) * d.bp_position; 
+                return id_chosen[d.id];
+            } else {
+                return id_chosen[d.id] = "NaN" ;
+            }
+        })
+        .attr("cy", high_nodes)
+        .attr("r", function(d) {
+            if(id_chosen[d.id] == "NaN" && d.chrom == v_chr  ) {
+                return 0;
+            } else {
+                return 2;
+            }
+        })
+        // to get information about the SNPs from different sources, if you click on a circle
+        .on("click", function(d, i) {
+
+            var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
+                "6) openSNP\n7) SNPedia\n8) UCSC");
+
+            if (person != null) {
+                switch(person) {
+                    case "1":
+                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + d.rs.substring(2);
+                        break;
+                    case "2": 
+                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
+                            d.rs.substring(2);
+                        break;
+                    case "3":
+                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
+                            d.chrom + ':' + (d.bp_position - 1000) + '-' + 
+                            (d.bp_position + 1000) + ';source=dbSNP;v=rs' + d.rs.substring(2) 
+                            + ';vdb=variation';
+                        break;
+                     case "4": 
+                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
+                            d.rs.substring(2);
+                        break;
+                    case "5":
+                        html = 'http://omim.org/search?index=entry&search=rs' + d.rs.substring(2);
+                        break;
+                    case "6": 
+                        html = 'http://opensnp.org/snps/' + d.rs;
+                        break;
+                    case "7":
+                        html = 'http://www.snpedia.com/index.php/Rs' + d.rs.substring(2);
+                        break;
+                    case "8":
+                        html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + 
+                            d.chrom + ':' + (d.bp_position - 1000) + '-' + 
+                            (d.bp_position + 1000);
+                        break;
+                    default: 
+                        alert("You have not chosen a source");         
+                }               
+                window.open(html)
+            }
+        })
+        // show degree as tooltip - title
+        svg.selectAll("g circle") 
+        .append("title")
+        .text(function(d) {
+            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
+                "\nposition: " + d.bp_position
+        });
+
+        // draw the edges between linked SNP's nodes
+        var arcs = svg.selectAll("path.link")
+            .data(zoom_links)
+            .enter().append("path")
+            .attr("class", "link")
+            .style("stroke", function(d) {
+                return graphcolour(d.probe_group);
+            })
+            .style("stroke", 1)
+            .style("opacity", 0.7)
+            .style("fill", "none")
+            // function to create the arc for the links
+            .attr("d", function (d) {
+                // to ensure that the path is drawn correct 
+                if(d.source > d.target) {
+                    var temp;
+                    temp = d.source;
+                    d.source = d.target;
+                    d.target = temp;
+                } 
+            
+                
+//                if((allNodes[d.source].chrom - 1) == (v_chr - 1) && (allNodes[d.target].chrom - 1) == (v_chr - 1)) {
+//                    var start_position_x = chrom_x_position[(allNodes[d.source].chrom - 1)] + 
+//                            ((w/2) / chromLength[allNodes[d.source].chrom - 1]) * allNodes[d.source].bp_position,          
+//                        start_position_y = high_nodes ;
+//                    var end_position_x = chrom_x_position[(allNodes[d.target].chrom - 1)] + 
+//                            ((w/2) / chromLength[allNodes[d.target].chrom - 1]) * allNodes[d.target].bp_position,          
+//                        end_position_y = high_nodes ;
+//
+//                } else if((allNodes[d.source].chrom - 1) == (v_chr - 1) && (allNodes[d.target].chrom - 1) != (v_chr - 1)) {        
+//                     var start_position_x = chrom_x_position[(allNodes[d.source].chrom - 1)] + 
+//                            ((w/2) / chromLength[(allNodes[d.source].chrom - 1)]) * allNodes[d.source].bp_position,          
+//                        start_position_y = high_nodes ;
+//                    var end_position_x =   chrom_x_position[(allNodes[d.target].chrom -1 )] +
+//                            ((w/2) / chrom_scale_compare) * allNodes[d.target].bp_position,
+//                        end_position_y = high_nodes ;
+//                        
+//                } else if((allNodes[d.source].chrom - 1) != (v_chr - i) && (allNodes[d.target].chrom - 1) == (v_chr - 1)){
+//                    var start_position_x = chrom_x_position[(allNodes[d.source].chrom -1 )] +
+//                            ((w/2) / chrom_scale_compare) * allNodes[d.source].bp_position,
+//                        start_position_y = high_nodes ;
+//                    var end_position_x = chrom_x_position[(allNodes[d.target].chrom - 1)] + 
+//                            ((w/2) / chromLength[allNodes[d.target].chrom - 1]) * allNodes[d.target].bp_position,          
+//                        end_position_y = high_nodes ;
+//
+//                } else { 
+//                    var start_position_x = chrom_x_position[(allNodes[d.source].chrom -1 )] +
+//                            ((w/2) / chrom_scale_compare) * allNodes[d.source].bp_position,
+//                        start_position_y = high_nodes ;
+//
+//                    var end_position_x =   chrom_x_position[(allNodes[d.target].chrom -1 )] +
+//                            ((w/2) / chrom_scale_compare) * allNodes[d.target].bp_position,
+//                        end_position_y = high_nodes ;
+//                }
+                if (allNodes[d.source].chrom == v_chr || allNodes[d.target].chrom == v_chr)  {
+                    var start_position_x = id_chosen[d.source],
+                        start_position_y = high_nodes ;
+
+                    var end_position_x = id_chosen[d.target],
+                        end_position_y = high_nodes ;
+                } else {
+                    var start_position_x = "NaN",
+                        start_position_y = high_nodes ;
+
+                    var end_position_x = "NaN",
+                        end_position_y = high_nodes ;
+                }
 
 
 
-   
+                // to ensure that the arc links are drawn on the correct side    
+                if (end_position_x < start_position_x) {
+                    var temp; 
+                    temp = end_position_x; 
+                    end_position_x = start_position_x;
+                    start_position_x = temp; 
+                }
 
+                var radius = (end_position_x - start_position_x) / 2 ;
+
+                var c1x = start_position_x,
+                    c1y = start_position_y - radius,
+                    c2x = end_position_x,
+                    c2y = end_position_y  - radius ;
+
+                return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
+                    end_position_x + "," + end_position_y ; 
+            })
+            .on("click" , function(d, i) {
+                    alert( "source: " + allNodes[d.source].rs + "\ntarget: " + allNodes[d.target].rs);
+            });
+     
 
 };
-
