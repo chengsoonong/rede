@@ -256,7 +256,7 @@ function upload_json(file_name) {
 
         //alert(st_chosen)
 
-        show_snp_pairs_list(file_name, st_chosen)
+        show_snp_pairs_list(file_name, st_chosen, 0)
 
         creat_drop_box1("st_select2")
         creat_drop_box_sort("st_select_snp_pairs")
@@ -342,6 +342,7 @@ d3.select("#Plot_select").on("change", function change() {
         brush_weight(file_json);
         histogram_edges_subgraphId(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
 
     } else if (this.value === "p_man") {
         // Manhattan plot
@@ -354,6 +355,7 @@ d3.select("#Plot_select").on("change", function change() {
         d3.select("#table_snps").selectAll('table').remove();
         read_file_to_manhattan_plot(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
 
     } else if (this.value === "p_mat") {
         // Heat map of association matrix
@@ -367,6 +369,7 @@ d3.select("#Plot_select").on("change", function change() {
         //matrix_plot( file_json);  // plot matrix of the snps association 
         read_file_to_matrix_plot(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
 
     } else if (this.value === "p_mat_c") {
         // the number of edges per community
@@ -380,6 +383,7 @@ d3.select("#Plot_select").on("change", function change() {
         histogram_edges_subgraphId(file_json);
         read_file_to_matrix_comm_plot(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
 
     } else if (this.value === "p_arc") {
         // arc diagram interaction plot
@@ -392,7 +396,11 @@ d3.select("#Plot_select").on("change", function change() {
         d3.select("#hds_matrix").selectAll('svg').remove();
 
         read_file_to_arc_plot(file_json);
+        Create_SNP_association(file_json);
+        brush_weight(file_json);
+        histogram_edges_subgraphId(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
 
 
          
@@ -494,7 +502,7 @@ function change_drop_box_sort_by() {
         stat_test_choosed = this.value;
         d3.select("#pairs").selectAll("p").remove();
 
-        show_snp_pairs_list(file_json, stat_test_choosed)
+        show_snp_pairs_list(file_json, stat_test_choosed, 0)
 
         /*
   	d3.select("#pairs").selectAll("p") 
@@ -1068,6 +1076,7 @@ function reset() {
     Create_SNP_association(file_json);
     brush_weight(file_json);
     histogram_edges_subgraphId(file_json);
+    show_snp_pairs_list(file_name, st_chosen, 0);
 
 };
 
@@ -1337,6 +1346,7 @@ d3.select("body").select("#butz").on("click", function change() {
         brush_weight(file_json);
         histogram_edges_subgraphId(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_name, st_chosen, 0);
 
     } else if (plot_chosen === "p_man") {
         // Manhattan plot
@@ -1409,6 +1419,11 @@ d3.select("body").select("#butz").on("click", function change() {
         view_end = document.getElementById("texze").value;
 
         zoom_arc_plot(+view_chr, +view_start, +view_end);
+        Create_SNP_association(file_json);
+        brush_weight(file_json);
+        histogram_edges_subgraphId(file_json);
+        histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0)
     }
 
 });
@@ -1479,9 +1494,18 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
 
     } else if (plot_chosen === "p_arc") {
         //  arc diagram interaction plot
-        reset();
-        d3.select("#hds_matrix").selectAll('svg').remove();
+        d3.select("#chart").selectAll('svg').remove();
+        d3.select("#minmap_matrixsc").selectAll('svg').remove();
+        d3.select("#minmap_matrixp").selectAll('svg').remove();
+        d3.select("#scalecolor_matrix1").selectAll('svg').remove();
+        d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+
+        read_file_to_arc_plot(file_json);
+        Create_SNP_association(file_json);
+        brush_weight(file_json);
+        histogram_edges_subgraphId(file_json);
         histogram_degree_SNPs(file_json, 0);
+        show_snp_pairs_list(file_json, st_chosen, 0);
     };
 });
 

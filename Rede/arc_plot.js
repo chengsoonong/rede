@@ -88,6 +88,9 @@ var high_nodes = height_chrom_bar - 5;
 // Array to store all node information of the json file
 var allNodes = new Array();
 
+// file name for zoom function to highlight the selected links
+var file_name_zoom;
+
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
@@ -100,7 +103,7 @@ var allNodes = new Array();
 function read_file_to_arc_plot(file_name) {
     data = new Array();
     var data_weight_pvalue = new Array();
-
+    file_name_zoom = file_name;
     // load data from json file
     d3.json(file_name, function(json) {
         var links = json.links; 
@@ -678,7 +681,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
                 "\nposition: " + d.bp_position
         });
-
+        
         // draw the edges between linked SNP's nodes
         var arcs = svg.selectAll("path.link")
             .data(zoom_links)
@@ -687,8 +690,8 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             .style("stroke", function(d) {
                 return graphcolour(d.probe_group);
             })
-            .style("stroke", 1)
-            .style("opacity", 0.7)
+            .style("stroke", 9)
+            .style("opacity", 3.7)
             .style("fill", "none")
             // function to create the arc for the links
             .attr("d", function (d) {
@@ -768,9 +771,10 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
                 return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                     end_position_x + "," + end_position_y ; 
             })
-            .on("click" , function(d, i) {
-                    alert( "source: " + allNodes[d.source].rs + "\ntarget: " + allNodes[d.target].rs);
+            .on("mousedown" , function(d, i) {
+                // var to store the id of the link
+                d3.select("#pairs").selectAll("p").remove() 
+                show_snp_pairs_list(file_name_zoom, select_dropbox_sort, 1, d.ct_id);
             });
-     
-
+        
 };
