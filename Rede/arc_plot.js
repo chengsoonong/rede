@@ -690,7 +690,8 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             .style("stroke", function(d) {
                 return graphcolour(d.probe_group);
             })
-            .style("stroke", 9)
+            .style("stroke", 1)
+            .style("stroke-width", 2.5)
             .style("opacity", 3.7)
             .style("fill", "none")
             // function to create the arc for the links
@@ -771,7 +772,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
                 return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                     end_position_x + "," + end_position_y ; 
             })
-            .on("mousedown" , function(d, i) {
+            .on("click" , function(d, i) {
                 // var to store the id of the link
                 d3.select("#pairs").selectAll("p").remove() 
                 show_snp_pairs_list(file_name_zoom, select_dropbox_sort, 1, d.ct_id);

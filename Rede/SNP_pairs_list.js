@@ -5,7 +5,7 @@
  */
 // global array to store the highlighted links
 var highlighting_links = new Array();
-
+var check = [];
 
 function show_snp_pairs_list(file_name, stat_value,if_selected ,selected_links) {
 
@@ -20,8 +20,13 @@ function show_snp_pairs_list(file_name, stat_value,if_selected ,selected_links) 
         });
 
         if(!temp) {
-            highlighting_links.push(selected_links);
+            highlighting_links[selected_links] = selected_links;
+            check[selected_links] = true;
+        } else {
+            check[selected_links] = false;
+            highlighting_links[selected_links] = undefined;  
         }
+
 
 
 
@@ -40,9 +45,11 @@ function show_snp_pairs_list(file_name, stat_value,if_selected ,selected_links) 
             if (!if_selected) {
                 return "white"
             } else {
-                if(highlighting_links.slice(1).some( function (v) { return v == d.ct_id;} )) {
+                if(highlighting_links.some( function (v) { return v === d.ct_id;}) && check[i]) {
                     return "red";
-                }  
+                }  else {
+                    return "white";
+                }
             }
         })
         .on("mousedown", function(g, i) {
