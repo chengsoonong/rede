@@ -35,23 +35,26 @@ function show_snp_pairs_list(file_name, stat_value,if_selected ,selected_links) 
                 return b[stat_value] - a[stat_value];
             }))
             .enter().append("p")
+            .attr("id", function (d) {
+                return "SNPpair"+ d.ct_id;
+            })
         //.append("link").attr("href","view_graph.html")
 
 
-        .text(function(d) {
-            return showInteract(d);
-        })
-        .style("background-color", function (d, i) {
-            if (!if_selected) {
-                return "white"
-            } else {
-                if(highlighting_links.some( function (v) { return v === d.ct_id;}) && check[i]) {
-                    return "red";
-                }  else {
-                    return "white";
+            .text(function(d) {
+                return showInteract(d);
+            })
+            .style("background-color", function (d, i) {
+                if (!if_selected) {
+                    return "white"
+                } else {
+                    if(highlighting_links.some( function (v) { return v === d.ct_id;}) && check[i]) {
+                        return "red";
+                    }  else {
+                        return "white";
+                    }
                 }
-            }
-        })
+            })
         .on("mousedown", function(g, i) {
 
             d3.select("#table_snps").selectAll('table').remove();

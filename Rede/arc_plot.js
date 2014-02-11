@@ -478,8 +478,37 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             return chromLength_scaled[i]; 
         })
         .attr("height", 40)
-        .attr("class", "group");
+        .attr("class", function (d,i) {
+            return "chrom" + (i+1);
+        });
 
+    var id_chrom_zoom = "g.chrom" + (v_chr);
+    // store the the new startpoint
+    var startzoom = 0;
+    //function to zoom with the mouse
+    var selected_chrom = svg.select(id_chrom_zoom)
+        .on("mousedown", function () {
+            var p = d3.mouse(this);
+            if(chosenLength == 0){
+                v_start = Math.round((chromLength[(v_chr - 1)] / chromLength_scaled[(v_chr - 1)]) * p[0]);
+                document.getElementById("texzs").value = v_start;
+            } else {
+                startzoom = Math.round(v_start + (chosenLength/chromLength_scaled[(v_chr -1)]) * p[0]);
+                document.getElementById("texzs").value = startzoom;
+            }
+        })
+    .on("mouseup", function () {
+        var s = d3.mouse(this);
+        if(chosenLength == 0) {
+            v_end = Math.round((chromLength[(v_chr - 1)] / chromLength_scaled[(v_chr - 1)]) * s[0]);
+        } else {
+            v_end = Math.round(v_start + ((chosenLength/chromLength_scaled[(v_chr -1)]) * s[0]));
+            v_start = startzoom;
+        }
+        document.getElementById("texze").value = v_end;
+    });
+
+    
     // create rectangle in the g container
     var chrom_bar = group_chrom.append("rect")
         .attr("transform", "translate(" + 0 + "," + 0 + ")")
@@ -776,6 +805,8 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
                 // var to store the id of the link
                 d3.select("#pairs").selectAll("p").remove() 
                 show_snp_pairs_list(file_name_zoom, select_dropbox_sort, 1, d.ct_id);
+                var scrollpair = $("#pairs");
+                $('html,body').animate({scrollTop: scrollpair.offset().top});
             });
         
 };
