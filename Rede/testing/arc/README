@@ -1,0 +1,16 @@
+Instructions for users:
+
+	1- Create the json files with assoc_group or without assoc_group.
+	2- Upload the json file in "Dataset"
+	3- Select the plots in "Plots" below "Dataset"
+	
+
+python -m SimpleHTTPServer 8888
+http://localhost:8888/view_graph.html
+
+use this to create web server to use the python cgi programming
+python -m CGIHTTPServer 8000 
+
+
+Using d3.js, Tutorial:
+http://alignedleft.com/tutorials/d3/

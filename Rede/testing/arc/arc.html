@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>    
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Interaction pathways</title>
+        <script type="text/javascript" src="d3/d3.v2.js"></script>
+        <script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="genome.js"></script>
+       <script  type="text/javascript" src="d3/lib/Blob.js"></script>
+        <link type="text/css" rel="stylesheet" href="genome.css"/>
+        
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css" />
+
+        		<style type="text/css">
+			
+			h3{background-color:#826aa5;color:#fff;padding:3px;}
+			h3 span{float:right;font-size:28px;font-weight:normal;padding:1px;}
+			h3 span a{color:#fff;text-decoration:none;}
+
+		</style>
+        <script> 
+        /* drag
+        $(function() {
+   		 $( "#hesid_text" ).draggable();
+ 		 });
+ 
+          */
+            $(document).ready(function(){
+              $("#min1").click(function(){
+               // $("#hesid").slideToggle("fast");
+                
+                if( $("#hesid").is(':visible') ) {
+					$("#hesid").slideUp();
+					$(this).html('+');
+				} else {
+					$("#hesid").slideDown();
+					$(this).html('-');
+				}
+                
+                  });
+            });  
+              
+               
+             $(document).ready(function(){
+              $("#min2").click(function(){
+                 if( $("#hds_matrix").is(':visible') ) {
+					$("#hds_matrix").slideUp();
+					$(this).html('+');
+				} else {
+					$("#hds_matrix").slideDown();
+					$(this).html('-');
+				}
+                  });
+            });              
+               
+            $(document).ready(function(){
+              $("#min3").click(function(){
+                if( $("#pairs").is(':visible') ) {
+					$("#pairs").slideUp();
+					$(this).html('+');
+				} else {
+					$("#pairs").slideDown();
+					$(this).html('-');
+				}
+                  });
+            });               
+               
+			/*
+              
+            $(document).ready(function(){
+              $("#snps_text1").click(function(){
+                $("#hds_matrix").slideToggle("fast");
+                  });
+            });
+            $(document).ready(function(){
+              $("#snps_text2").click(function(){
+                $("#pairs").slideToggle("fast");
+                  });
+            });  */
+           
+           
+            $(document).ready(function(){
+              $("#TRCT").click(function(){
+                $("#table_snps,#rp,#contp").slideToggle("fast");
+                  });
+            });
+            
+          
+        </script>
+    </head>
+    <body>
+        <button type="button" name="butreset" id="butr" onclick="start_arc_plot()" >Reset</button>
+        <button type="button" name="butzoom" id="butz" onclick="zoom_arc()">Zoom</button>
+
+        <div id="textzoom">Chromosome <select id="view_chr">
+             <option value="1">1</option>
+             <option value="2">2</option>
+             <option value="3">3</option>
+             <option value="4">4</option>
+             <option value="5">5</option>
+             <option value="6">6</option>
+             <option value="7">7</option>
+             <option value="8">8</option>
+             <option value="9">9</option>
+             <option value="10">10</option>
+             <option value="11">11</option>
+             <option value="12">12</option>
+             <option value="13">13</option>
+             <option value="14">14</option>
+             <option value="15">15</option>
+             <option value="16">16</option>
+             <option value="17">17</option>
+             <option value="18">18</option>
+             <option value="19">19</option>
+             <option value="20">20</option>
+             <option value="21">21</option>
+             <option value="22">22</option>
+             <option value="23">X</option>
+             <option value="24">Y</option>
+          </select>
+          start base
+          <input type="text" size="10" name="textzoomstart" id="texzs" value=""> 
+          end base
+          <input type="text" size="10" name="textzoomend" id="texze" value=""> 
+        </div>
+        <div id="container">	
+            <div id="chart"></div>
+            <div id="controls">  
+                <h5>Dataset <br>
+  	                <input type="file" id="files" name="files[]" multiple ><br>
+                    <!--<input type="button" value="Show .json" onclick="selected_json()" > -->                    
+						<input id="inputFileNameToSaveAs"  placeholder="filename.json"></input>
+						<button onclick="start_arc_plot()">Save json</button><br>
+						<a id="downloadfile"></a>
+                </h5>
+                <br>
+                <h5>Plots <select id="Plot_select">
+                        <option value="p_arc">Arc plot</option><!--Matrix-->
+                        <!--<option value="p_mat_c">Community</option>-->
+                    </select>
+                </h5>  
+                <br>
+                <h5><div id="st_select2">Statistical Test  </div></h5>
+                <br><br> 
+                <div id="minmap_mp"></div> 
+                <br><br> 
+                <div id="two_weight_value"> Values: <span></span></div>	
+      
+                <div id="brush_weight"></div>  
+                <br><br>
+                
+
+                <div id="hesid_text">
+                	<h3>
+                		<span>
+               			  <a href="#" id="min1" class="lnk-minimizar"> - </a> 
+                		 <!-- <a href="#" class="lnk-maximizar">[ [] ]</a>
+                		  <a href="#" class="lnk-remover">[ x ]</a>
+                		 -->
+              			</span>
+                	Probe group
+                	</h3>  
+     	 		</div>               
+                
+                <div id="hesid"></div>
+                <br><br> 
+                <h5 id="TRCT"> ROC plot and Contigency table  </h5> 
+                <p>
+                    <input id="search_snps" type="text" value=""> 
+                    <input type="button" onclick="Javascript:show_roc_ct();"  value="search">
+                </p> 	
+                <br><br>
+                <div id="table_snps"></div>  
+                <br><br>
+                <div id="rp"></div>
+                <br><br>
+                <div id="contp"></div> 
+                <br><br>                
+                <div id="snps_text1"><h3>
+                	<span><a href="#" id="min2" class="lnk-minimizar"> - </a></span>
+                	SNPs</h3></div> 
+                <div id="hds_matrix"></div>  
+                               
+                <div id="snps_text2"><h3>
+                	<span><a href="#" id="min3" class="lnk-minimizar"> - </a></span>
+                	SNPs Pairs</h3></div>
+                	<h5><div id="st_select_snp_pairs">Sort by </div></h5>
+               <div id="pairs"></div>
+                
+                
+                <div id="footer">
+                    Copyright: 
+                    <br/>Cheng Soon Ong, 
+                    <br/>Cristóvão F. Iglesias Jr 
+                    <br/>National ICT Australia, 2012, 2013
+                    <br/>Version 0.1.1  
+                </div>    
+                <script type="text/javascript" src="arc_plot.js"></script>
+                <script type="text/javascript" src="matrix_snp_comm_plot.js"></script>
+                <script type="text/javascript" src="ROC_plot.js"></script>
+                <script type="text/javascript" src="cont_plot.js"></script>
+                <script type="text/javascript" src="table_snp_pairs.js"></script>
+                <script type="text/javascript" src="hist_degree_snps_plot.js"></script>
+                <script type="text/javascript" src="hist_edges_subgraphID_plot.js"></script>	
+                <script type="text/javascript" src="SNP_pairs_list.js"></script>		
+                <script type="text/javascript" src="arc_view.js"></script>
+            </div>
+        </div> 
+</body>
+</html>
+
+
+
