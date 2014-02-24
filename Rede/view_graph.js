@@ -544,13 +544,13 @@ function change_drop_box1() {
 
         } else if (plot_chosen === "p_man") {
 
-            d3.select("#chart").selectAll('svg').remove();
-            d3.select("#scale_bar").selectAll('svg').remove();
-            d3.select("#minmap_mp").selectAll('svg').remove();
-            d3.select("#hds_matrix").selectAll('svg').remove();
-            read_file_to_manhattan_plot(file_json);
+        d3.select("#chart").selectAll('svg').remove();
+        d3.select("#scale_bar").selectAll('svg').remove();
+        d3.select("#minmap_mp").selectAll('svg').remove();
+        d3.select("#hds_matrix").selectAll('svg').remove();
+        read_file_to_manhattan_plot(file_json);
 
-            histogram_degree_SNPs(file_json, 0);
+        histogram_degree_SNPs(file_json, 0);
 
 
 

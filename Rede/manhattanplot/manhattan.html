@@ -21,12 +21,7 @@
 
 		</style>
         <script> 
-        /* drag
-        $(function() {
-   		 $( "#hesid_text" ).draggable();
- 		 });
- 
-          */
+        
             $(document).ready(function(){
               $("#min1").click(function(){
                // $("#hesid").slideToggle("fast");
@@ -41,7 +36,6 @@
                 
                   });
             });  
-              
                
              $(document).ready(function(){
               $("#min2").click(function(){
@@ -66,27 +60,7 @@
 				}
                   });
             });               
-               
-			/*
-              
-            $(document).ready(function(){
-              $("#snps_text1").click(function(){
-                $("#hds_matrix").slideToggle("fast");
-                  });
-            });
-            $(document).ready(function(){
-              $("#snps_text2").click(function(){
-                $("#pairs").slideToggle("fast");
-                  });
-            });  */
-           
-           
-            $(document).ready(function(){
-              $("#TRCT").click(function(){
-                $("#table_snps,#rp,#contp").slideToggle("fast");
-                  });
-            });
-            
+                       
           
         </script>
     </head>
@@ -96,37 +70,6 @@
         <button type="button" name="but_put_label" id="butpl" onclick="label_manhattan_plot()" >label</button>
         <button type="button" name="but_remove_label" id="butrl" onclick="unlabel_manhattan_plot()" >remove label</button>
 
-        <div id="textzoom">Chromosome <select id="view_chr">
-             <option value="1">1</option>
-             <option value="2">2</option>
-             <option value="3">3</option>
-             <option value="4">4</option>
-             <option value="5">5</option>
-             <option value="6">6</option>
-             <option value="7">7</option>
-             <option value="8">8</option>
-             <option value="9">9</option>
-             <option value="10">10</option>
-             <option value="11">11</option>
-             <option value="12">12</option>
-             <option value="13">13</option>
-             <option value="14">14</option>
-             <option value="15">15</option>
-             <option value="16">16</option>
-             <option value="17">17</option>
-             <option value="18">18</option>
-             <option value="19">19</option>
-             <option value="20">20</option>
-             <option value="21">21</option>
-             <option value="22">22</option>
-             <option value="23">X</option>
-             <option value="24">Y</option>
-          </select>
-          start base
-          <input type="text" size="10" name="textzoomstart" id="texzs" value=""> 
-          end base
-          <input type="text" size="10" name="textzoomend" id="texze" value=""> 
-        </div>
         <div id="container">	
             <div id="chart"></div>
             <h5 id="up">Upper Right</h5><div id="scalecolor1_dropbox"></div>

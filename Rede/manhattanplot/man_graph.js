@@ -168,6 +168,7 @@ function start_manhattan_plot() {
     d3.select("body").select("#snps_text").transition().style("opacity", 0);
     d3.select("body").select("#footer").transition().style("opacity", 0);
     d3.select("#table_snps").selectAll('table').remove();
+    d3.select("#load_data").remove();
 
     load_stat_value(file_json);
     read_file_to_manhattan_plot(file_json);
