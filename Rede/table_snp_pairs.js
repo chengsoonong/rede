@@ -13,8 +13,7 @@
 function create_table_snps(dat) {
 
     var dataset = [],
-        tmpDataset = []; //, i, j;
-
+        tmpDataset = []; 
 
     tmpDataset.push("prb_a");
     tmpDataset.push("prb_b");
@@ -24,7 +23,6 @@ function create_table_snps(dat) {
     tmpDataset.push("browser_b");
     tmpDataset.push("rs_a");
     tmpDataset.push("rs_b");
-
 
     for (var e in dat) {
         if ("assoc_group" != e && "source" != e && "target" != e && "probe_group" != e && "ct_id" != e) {
@@ -51,17 +49,14 @@ function create_table_snps(dat) {
     }
     dataset.push(tmpDataset);
 
-
     d3.select("#table_snps")
         .append("table")
         .style("border-collapse", "collapse")
         .style("border", "2px black solid")
-
-    .selectAll("tr")
+        .selectAll("tr")
         .data(dataset)
         .enter().append("tr")
-
-    .selectAll("td")
+        .selectAll("td")
         .data(function(d) {
             return d;
         })
