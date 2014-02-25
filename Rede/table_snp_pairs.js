@@ -4,8 +4,6 @@
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  */
 
-
-
 /**
  * From data about snps pairs in dat this function create a table
  * @param {array} dat

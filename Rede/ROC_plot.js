@@ -28,10 +28,8 @@ function ROC_plot(idx, filename) {
         var datact2 = json.cont_table; // var links = json.links;
 
         function preval_mapping(dat, t0, t1) {
-            E = 0.0001
-
+            E = 0.0001;
             return (dat.cases / t1) * (t0 / (dat.controls + E));
-
         }
 
         function sort_unv(dat, t0, t1) {
@@ -44,12 +42,9 @@ function ROC_plot(idx, filename) {
             for (var i in p) {
                 p_sort.push(p[i])
             }
-
-            //p_sort.sort(function(a,b){return a-b});
             p_sort.sort(function(a, b) {
                 return b - a
             });
-            //document.write("psort"+p_sort.length+"<br>")
             for (var i in p_sort) {
                 id = p.indexOf(p_sort[i])
                 dat_sort.push(dat[id])
@@ -63,7 +58,6 @@ function ROC_plot(idx, filename) {
             var p = [];
             var p_sort = [];
             var dat_sort = [];
-
             for (var i in [0, 1, 2]) {
                 for (var j in [0, 1, 2]) {
                     dat_list.push(dat[i][j])
@@ -78,7 +72,7 @@ function ROC_plot(idx, filename) {
             p_sort.sort(function(a, b) {
                 return b - a
             });
-
+            
             for (var i in p_sort) {
 
                 id = p.indexOf(p_sort[i])
@@ -104,7 +98,7 @@ function ROC_plot(idx, filename) {
                     TPR: tpr
                 })
             }
-            return dat_fpr_tpr
+            return dat_fpr_tpr;
         }
 
         unva_data = dots_fpr_tpr(sort_unv(datact2[idx].unv1, datact2[idx].total.controls, datact2[idx].total.cases),
@@ -221,25 +215,25 @@ function ROC_plot(idx, filename) {
         svg.selectAll("path3")
             .data(biv_data)
             .enter().append("svg:path").style("fill", '#ee1500') //red
-        .attr("transform", function(d) {
-            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-        })
+            .attr("transform", function(d) {
+                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+            })
             .attr("d", d3.svg.symbol().type("cross").size("30"));
 
         svg.selectAll("path2")
             .data(unva_data)
             .enter().append("svg:path").style("fill", '#0d1dee') //blue
-        .attr("transform", function(d) {
-            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-        })
+            .attr("transform", function(d) {
+                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+            })
             .attr("d", d3.svg.symbol().type("square").size("30"));
 
         svg.selectAll("path1")
             .data(unvb_data)
             .enter().append("svg:path").style("fill", '#00d70b') //green
-        .attr("transform", function(d) {
-            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-        })
+            .attr("transform", function(d) {
+                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+            })
             .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
 
         /*
@@ -332,12 +326,10 @@ triangle-up - an upward-pointing equilateral triangle.
             .style("text-anchor", "end")
             .text("FPR");
 
-
         svg.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(" + (height), 0 + ")")
             .call(xAxis2)
-
 
         //Create Y axis
         svg.append("g")

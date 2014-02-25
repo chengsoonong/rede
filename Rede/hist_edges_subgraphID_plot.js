@@ -80,10 +80,10 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
 
         if (d3.max(data_obj, function(d) {
             return d.n_probe_group;
-        }) > 10) {
-            var height = 34.1796875 * d3.max(data_obj, function(d) {
-                return d.n_probe_group;
-            }) - margin.top - margin.bottom; //200
+            }) > 10) {
+                var height = 34.1796875 * d3.max(data_obj, function(d) {
+                    return d.n_probe_group;
+                }) - margin.top - margin.bottom; 
         } else {
             var height = 34.1796875 * 10 - margin.top - margin.bottom;
         }
@@ -111,13 +111,14 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
         y.domain(data_obj.map(function(d) {
             return "probe_group " + d.n_probe_group;
         }));
+
         x.domain([0, d3.max(data_obj, function(d) {
             return d.n_edgs;
         })]);
 
         svg.append("g")
             .attr("class", "x axis")
-        .call(xAxis);
+            .call(xAxis);
         
         // now rotate text on x axis
         // first move the text left so no longer centered on the tick
@@ -163,7 +164,6 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                     string_html = "{\"directed\": false, \"graph\": [], \"nodes\": [";
 
                     json_nodes_selected(file_json, sid);
-
                     json_links_selected(file_json, sid);
 
                     d3.select("#chart")
@@ -272,7 +272,6 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
             .attr("fill", "black")
             .on("mousedown", function(g, i) {
                 //when mousedown this selected the probe_group and create the string_html to show in html the seleced data 
-
                 d3.select("#hc").select("svg").remove();
                 sid = data_obj[i].n_probe_group;
                 string_html = "{\"directed\": false, \"graph\": [], \"nodes\": [";
@@ -350,6 +349,5 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                     });
             });
     });
-
 }
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ histogram edges X probe_group ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

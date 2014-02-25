@@ -595,7 +595,6 @@ function change_drop_box2(selectDB) {
 
 }
 
-
 /**
  * Do atualizations when the dropbox with dropbox with statistical tests (lower left) is changed.
  */

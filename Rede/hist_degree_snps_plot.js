@@ -4,9 +4,6 @@
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  */
 
-
-
-
 /**
  * Create the histogram degree x snp. When click in a bar of the histogram this will selected egds in circle plot
  *     and dots in manhattan plot.
@@ -19,29 +16,27 @@ function histogram_degree_SNPs(file_name, probe_group) {
     var links_hes = new Array();
 
     d3.json(file_name, function(json) {
-        json.links.forEach(
-            function(d) {
-                if (probe_group === 0) {
+        json.links.forEach( function(d) {
+            if (probe_group === 0) {
+                links_hes.push(d);
+            } else {
+                if (d.probe_group === probe_group) {
                     links_hes.push(d);
-                } else {
-                    if (d.probe_group === probe_group) {
-                        links_hes.push(d)
-                    }
                 }
-            });
+            }
+        });
         
-        json.nodes.forEach(
-            function(d) {
-                if (probe_group === 0) {
-                    allNodes_hes.push(d);
+        json.nodes.forEach(function(d) {
+            if (probe_group === 0) {
+                allNodes_hes.push(d);
+                data.push(d);
+            } else {
+                allNodes_hes.push(d);
+                if (d.probe_group === probe_group) {
                     data.push(d);
-                } else {
-                    allNodes_hes.push(d);
-                    if (d.probe_group === probe_group) {
-                        data.push(d);
-                    }
                 }
-            });
+            }
+        });
 
         //it will create the histogram degree X SNPs in circle_plot
         var margin = {
@@ -214,8 +209,6 @@ function histogram_degree_SNPs(file_name, probe_group) {
                     })
                     .transition()
                     .style("opacity", 1);
-
-
 
                 d3.select("#chart").selectAll(".link").transition().style("opacity", 0);
 

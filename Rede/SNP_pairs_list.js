@@ -7,9 +7,8 @@
 var highlighting_links = new Array();
 
 function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected_links) {
-
-
-    d3.json(file_name, function(json) { // Plot nodes and SNPs_links for the default dataset
+    // Plot nodes and SNPs_links for the default dataset
+    d3.json(file_name, function(json) { 
         var SNPs_links = [];
         if(if_zoom) {
             SNPs_links = zoom_links;
@@ -22,6 +21,7 @@ function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected
             return d == selected_links;
         });
 
+        // if you click on a link asecond time the highlighting will disappear
         if(!temp) {
             highlighting_links[selected_links] = selected_links;
         } else {
@@ -36,7 +36,6 @@ function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected
             .attr("id", function (d) {
                 return "SNPpair"+ d.ct_id;
             })
-
             .text(function(d) {
                 return showInteract(d.ct_id);
             })
