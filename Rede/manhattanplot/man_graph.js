@@ -153,12 +153,9 @@ var brush_value1, brush_value2;
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
-
-
-
 //------------------------------------------ load -  first vizualization   ---------------------------------------------- 
 function start_manhattan_plot() {
-    file_json = "bc571.json";
+    file_json = "asthma_opensnp.json";
     file_name = file_json;
     
     d3.select("#hds_matrix").selectAll('svg').remove();
@@ -227,7 +224,6 @@ function label_manhattan_plot() { //button LABEL
     d3.select("#scale_bar").selectAll('svg').remove();
     d3.select("#minmap_mp").selectAll('svg').remove();
 
-
     if (data_from_HDS === "no") {
 
         if (x_1) { // if x_1 is not null make ..
@@ -240,7 +236,6 @@ function label_manhattan_plot() { //button LABEL
 
     } else {
 
-
         if (x_1) { // if x_1 is not null make ..
             manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
@@ -248,8 +243,6 @@ function label_manhattan_plot() { //button LABEL
             manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
         }
-
-
     }
     label_text.transition().style("opacity", 1);
 };
@@ -258,13 +251,10 @@ function label_manhattan_plot() { //button LABEL
  * REMOVE LABEL when the button "REMOVE LABEL" is clicked
  */
 function unlabel_manhattan_plot() { //button REMOVE LABEL	
-
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#scale_bar").selectAll('svg').remove();
     d3.select("#minmap_mp").selectAll('svg').remove();
-
     if (data_from_HDS === "no") {
-
         if (x_1) { // if x_1 is not null make ..
             manhattan_plot(x_1, x_2, y_1, y_2, data);
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
@@ -273,8 +263,6 @@ function unlabel_manhattan_plot() { //button REMOVE LABEL
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
         }
     } else {
-
-
         if (x_1) { // if x_1 is not null make ..
             manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
@@ -282,7 +270,6 @@ function unlabel_manhattan_plot() { //button REMOVE LABEL
             manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
             manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
         }
-
     }
     label_text.transition().style("opacity", 0);
 };

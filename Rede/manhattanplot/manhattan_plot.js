@@ -402,7 +402,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
  */
 function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y2, data) {
     //create the manhattan plot
-
     var margin_s = {
         top: 5,
         right: 30,
@@ -429,7 +428,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         })])
         .interpolate(d3.interpolateHsl)
         .range(["#00b300", "#F50808"]);
-
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
 
     var margin = {
