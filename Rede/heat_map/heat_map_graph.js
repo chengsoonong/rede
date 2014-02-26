@@ -169,78 +169,8 @@ function zoom_heatmap(file_name) {
     } else {
         matrix_plot(mix_1, mix_2, miy_1, miy_2);
     }
-}
-//function to display the all informaiton of the interaction of SNP
-function showInteract(d) {
-    str = allNodes[links[d].source].rs + " " +  "chr" + allNodes[links[d].source].chrom + 
-        ':' + allNodes[links[d].source].bp_position + " " + allNodes[links[d].target].rs + " " +
-        "chr" + allNodes[links[d].target].chrom + ':' + allNodes[links[d].target].bp_position + " "; 
-
-    for (var i in links[d]) {
-        if (i != "assoc_group" && i != "ct_id" && i != "source" && i != "target") {
-            str = str + i + ": " + links[d][i] + " ";
-        }
-    }
-    return str;
 }; 
-/**
- * create LABEL when the button LABEL is clicked
- */
-function label_manhattan_plot() { //button LABEL
 
-    d3.select("#chart").selectAll('svg').remove();
-    d3.select("#scale_bar").selectAll('svg').remove();
-    d3.select("#minmap_mp").selectAll('svg').remove();
-
-    if (data_from_HDS === "no") {
-
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        }
-    } else {
-
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        }
-    }
-    label_text.transition().style("opacity", 1);
-};
-
-/**
- * REMOVE LABEL when the button "REMOVE LABEL" is clicked
- */
-function unlabel_manhattan_plot() { //button REMOVE LABEL	
-
-    d3.select("#chart").selectAll('svg').remove();
-    d3.select("#scale_bar").selectAll('svg').remove();
-    d3.select("#minmap_mp").selectAll('svg').remove();
-    if (data_from_HDS === "no") {
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        }
-    } else {
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        }
-    }
-    label_text.transition().style("opacity", 0);
-};
 //function to load the stattistical values of the links
 function load_stat_value_man(file_json) {
     data_weight_pvalue = [];
@@ -304,36 +234,6 @@ function creat_drop_box_man(classinput) {
             });             
             break;
 
-        case "st_select2":
-            select_dropbox = d3.select("#" + classinput).append("select")
-                .attr("id", "dropselect");
-            // create the options
-            select_dropbox.selectAll("option")
-                .data(d3.keys(statOptions))
-                .enter().append("option")
-                .text(function(d) {
-                    return d;
-                });
-            // add values to the options
-            select_dropbox.selectAll("option")
-                .data(d3.values(statOptions))
-                .attr("value", function(d) {
-                    return d;
-                });
-            // select the Statistical test of the dropbox and scales the axis 
-            d3.select("#dropselect").on("change",  function() {
-                st_chosen = this.value;
-                
-                d3.select("#chart").selectAll('svg').remove();
-                d3.select("#scale_bar").selectAll('svg').remove();
-                d3.select("#minmap_mp").selectAll('svg').remove();
-                d3.select("#hds_matrix").selectAll('svg').remove();
-                read_file_to_manhattan_plot(file_json);
-
-                histogram_degree_SNPs(file_json, 0);
-            });
-            break;
-
         case "scalecolor1_dropbox":
             // create the select element
             select_dropbox_scale1 = d3.select("#" + classinput).append("select")
@@ -384,28 +284,7 @@ function creat_drop_box_man(classinput) {
             break;
         }
 }
-/**
- * return a string from um number with 2 decimal after "."
- * @param {number} value
- * @return {string}
- */
-function two_dec(value) {
-    var v = value.toString();
-    var point = ".";
-    var index_point = v.indexOf(point);
-    var index_twodec = index_point + 3;
 
-    return v.substring(0, index_twodec);
-}
-/**
- * Check if a object is inside an array and return true if correct and false if no correct.
- * @param {number} arr
- * @param {number} obj
- * @return {Boolean}
- */
-function include_in_arr(arr, obj) {
-    return (arr.indexOf(obj) != -1);
-}
 // create container for heatmap
 function create_stat_container_mat() {
     // creat new div for matrix
@@ -432,4 +311,4 @@ function create_stat_container_mat() {
     scale_mat_con.append("div")
         .attr("id", "scalecolor_matrix2");
 
-}
+};

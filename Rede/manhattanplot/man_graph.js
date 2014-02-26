@@ -172,20 +172,7 @@ function start_manhattan_plot(file_name) {
     histogram_degree_SNPs(file_json, 0);
     show_snp_pairs_list(file_json, st_chosen, 0);
 }
-
-//function to display the all informaiton of the interaction of SNP
-function showInteract(d) {
-    str = allNodes[links[d].source].rs + " " +  "chr" + allNodes[links[d].source].chrom + 
-        ':' + allNodes[links[d].source].bp_position + " " + allNodes[links[d].target].rs + " " +
-        "chr" + allNodes[links[d].target].chrom + ':' + allNodes[links[d].target].bp_position + " "; 
-
-    for (var i in links[d]) {
-        if (i != "assoc_group" && i != "ct_id" && i != "source" && i != "target") {
-            str = str + i + ": " + links[d][i] + " ";
-        }
-    }
-    return str;
-}; 
+ 
 // function for the zoom of the manhattan plot
 function zoom_manhattan(file_name) {
     // Manhattan plot

@@ -167,30 +167,7 @@ function zoom_circular(file_name) {
     histogram_edges_subgraphId(file_json);
     histogram_degree_SNPs(file_json, 0);
 }
-//function to display the all informaiton of the interaction of SNP
-function showInteract(d) {
-    str = allNodes[links[d].source].rs + " " +  "chr" + allNodes[links[d].source].chrom + 
-        ':' + allNodes[links[d].source].bp_position + " " + allNodes[links[d].target].rs + " " +
-        "chr" + allNodes[links[d].target].chrom + ':' + allNodes[links[d].target].bp_position + " "; 
 
-        for (var i in links[d]) {
-            if (i != "assoc_group" && i != "ct_id" && i != "source" && i != "target") {
-                str = str + i + ": " + links[d][i] + " ";
-            }
-        }
-    return str;
-}; 
-
-// function to highlight the link
-function highlight_snp_pairs (d, i, if_zoom) {
-    // var to store the id of the link
-    d3.select("#pairs").selectAll("p").remove() 
-    // file_name for the implementation of the roc curve and the contigency table
-    file_json = file_name;
-    show_snp_pairs_list(file_json, select_dropbox_sort, 1 ,if_zoom , d.ct_id);
-    var scrollpair = $("#pairs");
-    $('html,body').animate({scrollTop: scrollpair.offset().top});
-}
 
 
 function select_snp_stat_range(if_zoom) {
@@ -410,91 +387,4 @@ function select_snp_stat_range(if_zoom) {
     function brushend() { //selected de circles in x cordenate for diferent vizualization
         svg_brush.classed("selecting", !d3.event.target.empty());
     }
-}
-//------------------------------------------  Statistical Test - drop box----------------------------------------------
-
-/**
- * Create the dropbox statistical test to circle plot and manhattan plot
- * @param {string} classinput is a name to create um class
- */
-
-
-/**
- * return a string from um number with 2 decimal after "."
- * @param {number} value
- * @return {string}
- */
-function two_dec(value) {
-    var v = value.toString();
-    var point = ".";
-    var index_point = v.indexOf(point);
-    var index_twodec = index_point + 3;
-
-    return v.substring(0, index_twodec);
-}
-/**
- * Check if a object is inside an array and return true if correct and false if no correct.
- * @param {number} arr
- * @param {number} obj
- * @return {Boolean}
- */
-function include_in_arr(arr, obj) {
-    return (arr.indexOf(obj) != -1);
-}
-/**
- * Get the all snps pairs that were selected in the brush in circle plot.
- * All pairs betewen p-values s1 and s2.
- * @param {number} s1
- * @param {number} s2
- * @return {array} l
- */
-function nodes_selected(s1, s2, link_selected) {
-    l = []
-
-    for (var i in link_selected) {
-        if (link_selected[i][st_chosen] >= s1 && link_selected[i][st_chosen] <= s2) {
-            l.push(link_selected[i]["target"]);
-            l.push(link_selected[i]["source"]);
-        };
-    }
-
-    return l;
-}
-/**
- * This function selected the elementes inside nodes with a subgraph_id chosen and put in the string string_html
- * @param {string} file_name
- * @param {number} probe_group
- */
-function json_nodes_selected(file_name, probe_group) {
-
-    d3.json(file_name, function(json) {
-        json.nodes.forEach(function(d) {
-            if (d.probe_group === probe_group) {
-                string_html += "{\"label\": \"" + d.label + "\", \"degree\": " + d.degree + ", \"rs\": \"" +
-                    d.rs + "\", \"bp_position\": " + d.bp_position + ", \"chrom\": " + d.chrom + ", \"id\": " +
-                    d.id + ", \"probe_group\": " + d.probe_group + "},";
-            }
-        });
-        string_html = string_html.substring(0, string_html.lastIndexOf(","));
-        string_html += "], \"links\": [";
-    });
-}
-/**
- * This function selected the elementes inside nodes with a subgraph_id chosen and put in the string string_html
- * @param {string} file_name
- * @param {number} probe_group
- */
-function json_links_selected(file_name, probe_group) {
-    d3.json(file_name, function(json) {
-        json.links.forEach(function(d) {
-            if (d.probe_group === probe_group) {
-                string_html += "{\"source:\" " + d.source + ", \"probe_group\": " + d.probe_group + ", \"weight\": " +
-                    d.weight + ", \"target\": " + d.target + ", \"edgs_in_comm\": " + d.edgs_in_comm +
-                    ", \"assoc_group\": " + d.assoc_group + "},";
-            }
-        });
-
-        string_html = string_html.substring(0, string_html.lastIndexOf(",")); // IMP -> 		remover a ultima virgula 	   <- IMP
-        string_html += "], \"multigraph\": false}";
-    });
-}
+};
