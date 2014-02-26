@@ -154,10 +154,8 @@ var brush_value1, brush_value2;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 //------------------------------------------ load -  first vizualization   ---------------------------------------------- 
-function start_manhattan_plot() {
-    file_json = "asthma_opensnp.json";
-    file_name = file_json;
-    
+function start_manhattan_plot(file_name) {
+    file_json = file_name; 
     d3.select("#hds_matrix").selectAll('svg').remove();
     d3.select("body").select("#two_weight_value").transition().style("opacity", 0);
     d3.select("body").select("#cb").transition().style("opacity", 0);
@@ -166,7 +164,9 @@ function start_manhattan_plot() {
     d3.select("body").select("#footer").transition().style("opacity", 0);
     d3.select("#table_snps").selectAll('table').remove();
     d3.select("#load_data").remove();
-
+    
+    create_container_manhattan();
+    create_label_button();
     load_stat_value(file_json);
     read_file_to_manhattan_plot(file_json);
     histogram_degree_SNPs(file_json, 0);
@@ -187,8 +187,10 @@ function showInteract(d) {
     return str;
 }; 
 // function for the zoom of the manhattan plot
-function zoom_manhattan() {
+function zoom_manhattan(file_name) {
     // Manhattan plot
+    file_json = file_name;
+
     if (data_from_HDS === "no") {
         d3.select("#chart").selectAll('svg').remove();
         d3.select("#scale_bar").selectAll('svg').remove();
@@ -214,158 +216,88 @@ function zoom_manhattan() {
     };
 
 };
-fu
-/**
- * create LABEL when the button LABEL is clicked
+
+
+/* create the labelbutton and unlabelbutton for manhattan plot
  */
-function label_manhattan_plot() { //button LABEL
+function create_label_button() {
+    // creat label on button 
+    d3.select("#control_buttons").append("button")
+        .attr("type", "button")
+        .attr("id", "butpl")
+        .attr("name", "but_put_label")
+        .text("label")
+        .on("click", function change() { //button LABEL
 
-    d3.select("#chart").selectAll('svg').remove();
-    d3.select("#scale_bar").selectAll('svg').remove();
-    d3.select("#minmap_mp").selectAll('svg').remove();
+            d3.select("#chart").selectAll('svg').remove();
+            d3.select("#scale_bar").selectAll('svg').remove();
+            d3.select("#minmap_mp").selectAll('svg').remove();
 
-    if (data_from_HDS === "no") {
 
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        }
+            if (data_from_HDS === "no") {
 
-    } else {
+                if (x_1) { // if x_1 is not null make ..
+                    manhattan_plot(x_1, x_2, y_1, y_2, data);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
+                } else {
+                    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
+                }
 
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        }
-    }
-    label_text.transition().style("opacity", 1);
-};
+            } else {
 
-/**
- * REMOVE LABEL when the button "REMOVE LABEL" is clicked
- */
-function unlabel_manhattan_plot() { //button REMOVE LABEL	
-    d3.select("#chart").selectAll('svg').remove();
-    d3.select("#scale_bar").selectAll('svg').remove();
-    d3.select("#minmap_mp").selectAll('svg').remove();
-    if (data_from_HDS === "no") {
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
-        }
-    } else {
-        if (x_1) { // if x_1 is not null make ..
-            manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        } else {
-            manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
-            manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
-        }
-    }
-    label_text.transition().style("opacity", 0);
-};
-//function to load the stattistical values of the links
-function load_stat_value(file_json) {
-    data_weight_pvalue = [];
-    // load data from json file
-    
-    d3.json(file_json, function(json) {
-        links = json.links;
-        //for loop to get all available statistical test of the dataset
-        for (var i in json.links[0]) {
-            if (i != "assoc_group" && i != "source" && i != "target" && i != "probe_group" && i != "ct_id") {
-                statOptions[i] = i;
-                st_1.push(i);  
+
+                if (x_1) { // if x_1 is not null make ..
+                    manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
+                } else {
+                    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
+                }
             }
-        }
+            label_text.transition().style("opacity", 1);
 
-        //the first element to be visualited
-        st_chosen = st_1[0];
-        //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_name, st_chosen, 0, 0);
+        });
 
-        //load p_values 
-        json.links.forEach(
-            function(d) {
-                data_weight_pvalue.push(d[st_chosen])
-            } //data_weight_pvalue[]
-        );
+    // create label off button
+    d3.select("#control_buttons").append("button")
+        .attr("type", "button")
+        .attr("id", "butrl")
+        .attr("name", "but_put_label")
+        .text("remove_label")
+        .on("click", function change() { //button REMOVE LABEL	
 
-        // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box1("st_select2");
-        // to create the dropbox in the SNP pair list
-        creat_drop_box1("st_select_snp_pairs");
-    });
+            d3.select("#chart").selectAll('svg').remove();
+            d3.select("#scale_bar").selectAll('svg').remove();
+            d3.select("#minmap_mp").selectAll('svg').remove();
+
+            if (data_from_HDS === "no") {
+
+                if (x_1) { // if x_1 is not null make ..
+                    manhattan_plot(x_1, x_2, y_1, y_2, data);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
+                } else {
+                    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data)
+                }
+            } else {
+
+
+                if (x_1) { // if x_1 is not null make ..
+                    manhattan_plot(x_1, x_2, y_1, y_2, data_select_from_HDS);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
+                } else {
+                    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
+                    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, x_1, y_2, x_2 - x_1, y_1, data_select_from_HDS)
+                }
+            }
+            label_text.transition().style("opacity", 0);
+        });
+
 }
-/**
- * Create the dropbox statistical test to circle plot and manhattan plot
- * @param {string} classinput is a name to create um class
- */
-function creat_drop_box1(classinput) {
-    d3.select("#" + classinput).selectAll('select').remove();
-    // create the select element
-    switch(classinput) {
-        case "st_select_snp_pairs":
-            select_dropbox_sort = d3.select("#" + classinput).append("select")
-                .attr("id", "drop_sort");
-            // create the options
-            select_dropbox_sort.selectAll("option")
-                .data(d3.keys(statOptions))
-                .enter().append("option")
-                .text(function(d) {
-                    return d;
-                });
-            // add values to the options
-            select_dropbox.selectAll("option")
-                .data(d3.values(statOptions))
-                .attr("value", function(d) {
-                    return d;
-                });
-            // select the Statistical test of the dropbox and scales the axis 
-            d3.select("#drop_sort").on("change",  function() {
-                st_chosen = this.value;
-                d3.select("#pairs").selectAll("p").remove();
-                show_snp_pairs_list(file_json, st_chosen, 0, 0 );
-            });             
-            break;
 
-        case "st_select2":
-            select_dropbox = d3.select("#" + classinput).append("select")
-                .attr("id", "dropselect");
-            // create the options
-            select_dropbox.selectAll("option")
-                .data(d3.keys(statOptions))
-                .enter().append("option")
-                .text(function(d) {
-                    return d;
-                });
-            // add values to the options
-            select_dropbox.selectAll("option")
-                .data(d3.values(statOptions))
-                .attr("value", function(d) {
-                    return d;
-                });
-            // select the Statistical test of the dropbox and scales the axis 
-            d3.select("#dropselect").on("change",  function() {
-                st_chosen = this.value;
-                
-                d3.select("#chart").selectAll('svg').remove();
-                d3.select("#scale_bar").selectAll('svg').remove();
-                d3.select("#minmap_mp").selectAll('svg').remove();
-                d3.select("#hds_matrix").selectAll('svg').remove();
-                read_file_to_manhattan_plot(file_json);
-
-                histogram_degree_SNPs(file_json, 0);
-            });
-            break;
-        }
-}
+// int this section we create the needed containers for the manhattan plot
+function create_container_manhattan() {
+    d3.select("#container").append("div")
+        .attr("id", "scale_bar");
+};

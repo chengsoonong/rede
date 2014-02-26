@@ -83,8 +83,7 @@ var graphColor = d3.scale.category20();
 // var to check is plot is in the zoom function
 var if_zoom;
 //everything needed in arcplot
-function start_arc_plot() {
-    file_name = "asthma_opensnp.json";
+function start_arc_plot(file_name) {
 
     d3.select("body").select("#two_weight_value").transition().style("opacity", 1);
     d3.select("body").select("#cb").transition().style("opacity", 1);
@@ -113,7 +112,9 @@ function start_arc_plot() {
 };
 
 // function to prepair everything for zoom of arc_plot
-function zoom_arc() {
+function zoom_arc(file_name) {
+    file_json = file_name;
+
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#pairs").selectAll("p").remove();
@@ -142,7 +143,7 @@ function zoom_arc() {
     histogram_degree_SNPs(file_json, 0);
     histogram_edges_subgraphId(file_json, if_zoom);
 
-    show_snp_pairs_list(file_name, st_chosen, 0, if_zoom);
+    show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
 };
 
 //function to display the all informaiton of the interaction of SNP
@@ -166,53 +167,15 @@ function showInteract(d) {
 // function to highlight the link
 function highlight_snp_pairs (d, i, if_zoom) {
     // var to store the id of the link
-    d3.select("#pairs").selectAll("p").remove() 
-        // file_name for the implementation of the roc curve and the contigency table
-        file_json = file_name;
+    d3.select("#pairs").selectAll("p").remove();
+
+    // file_name for the implementation of the roc curve and the contigency table
+    file_name_zoom = file_json;
     show_snp_pairs_list(file_name_zoom, select_dropbox_sort, 1 ,if_zoom , d.ct_id);
     var scrollpair = $("#pairs");
     $('html,body').animate({scrollTop: scrollpair.offset().top});
 }
 
-//function to load the stattistical values of the links
-function load_stat_value(file_json) {
-    data_weight_pvalue = [];
-    // load data from json file
-    
-    d3.json(file_json, function(json) {
-        //for loop to get all available statistical test of the dataset
-        for (var i in json.links[0]) {
-            if (i != "assoc_group" && i != "source" && i != "target" && i != "probe_group" && i != "ct_id") {
-                statOptions[i] = i;
-                st_1.push(i);  
-            }
-        }
-
-        //the first element to be visualited
-        st_chosen = st_1[0];
-        //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_name, st_chosen, 0, 0);
-
-        //load p_values 
-        json.links.forEach(
-            function(d) {
-                data_weight_pvalue.push(d[st_chosen])
-            } //data_weight_pvalue[]
-        );
-
-        // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box1("st_select2");
-        // to create the dropbox in the SNP pair list
-        creat_drop_box1("st_select_snp_pairs");
-        //brushweight function for the p_values of the snps
-        select_snp_stat_range(0);
-        
-        //select statistical in dropbox
-        //change_drop_box1();
-
-        
-    });
-};
 
 //function for #two_weight:value and # brush_weight to select the SNP in an certain range(statistical test)
 function select_snp_stat_range(if_zoom) {
@@ -430,70 +393,7 @@ function select_snp_stat_range(if_zoom) {
 }
 //------------------------------------------  Statistical Test - drop box----------------------------------------------
 
-/**
- * Create the dropbox statistical test to circle plot and manhattan plot
- * @param {string} classinput is a name to create um class
- */
-function creat_drop_box1(classinput) {
-    d3.select("#" + classinput).selectAll('select').remove();
-    // create the select element
-    switch(classinput) {
-        case "st_select_snp_pairs":
-            select_dropbox_sort = d3.select("#" + classinput).append("select")
-                .attr("id", "drop_sort");
-            // create the options
-            select_dropbox_sort.selectAll("option")
-                .data(d3.keys(statOptions))
-                .enter().append("option")
-                .text(function(d) {
-                    return d;
-                });
-            // add values to the options
-            select_dropbox.selectAll("option")
-                .data(d3.values(statOptions))
-                .attr("value", function(d) {
-                    return d;
-                });
-            // select the Statistical test of the dropbox and scales the axis 
-            d3.select("#drop_sort").on("change",  function() {
-                st_chosen = this.value;
-                d3.select("#pairs").selectAll("p").remove();
-                show_snp_pairs_list(file_json, st_chosen, 0, 0 );
-            });             
-            break;
 
-        case "st_select2":
-            select_dropbox = d3.select("#" + classinput).append("select")
-                .attr("id", "dropselect");
-            // create the options
-            select_dropbox.selectAll("option")
-                .data(d3.keys(statOptions))
-                .enter().append("option")
-                .text(function(d) {
-                    return d;
-                });
-            // add values to the options
-            select_dropbox.selectAll("option")
-                .data(d3.values(statOptions))
-                .attr("value", function(d) {
-                    return d;
-                });
-            // select the Statistical test of the dropbox and scales the axis 
-            d3.select("#dropselect").on("change",  function() {
-                st_chosen = this.value;
-                //load p 
-                data_weight_pvalue = [];
-                d3.json(file_json, function(json) {
-                    json.links.forEach(
-                        function(d) {
-                            data_weight_pvalue.push(d[st_chosen])
-                        });
-                    select_snp_stat_range(0);
-                })
-            });
-            break;
-        }
-}
 
 /**
  * return a string from um number with 2 decimal after "."

@@ -135,9 +135,8 @@ var brush_value1, brush_value2;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 //------------------------------------------ load -  first vizualization   ---------------------------------------------- 
-function start_heat_map() {
-    file_json = "bc571.json";
-    file_name = file_json;
+function start_heat_map(file_name) {
+    file_json = file_name; 
     // Heat map of association matrix
     d3.select("#load_data").remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
@@ -145,20 +144,24 @@ function start_heat_map() {
     d3.select("#table_snps").selectAll('table').remove();
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#minmap_matrixp").selectAll('svg').remove();
-    d3.select("#scalecolor_matrix1").selectAll('svg').remove();
-    d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+    d3.select("#container_matrix").remove();
+    
+    create_stat_container_mat();
 
-    load_stat_value(file_json);
+    load_stat_value_man(file_json);
     read_file_to_matrix_plot(file_json);
     histogram_degree_SNPs(file_json, 0);
     show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 }
-function zoom_heatmap() {
+function zoom_heatmap(file_name) {
+    file_json = file_name;
     // Heat map of association matrix
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#minmap_matrixp").selectAll('svg').remove();
-    d3.select("#scalecolor_matrix1").selectAll('svg').remove();
-    d3.select("#scalecolor_matrix2").selectAll('svg').remove();
+    d3.select("#container_matrix").remove();
+    
+    create_stat_container_mat();
+
 
     if (mx_1) { // if x_1 is not null make ..
         matrix_plot(mx_1, mx_2, my_1, my_2);
@@ -239,8 +242,11 @@ function unlabel_manhattan_plot() { //button REMOVE LABEL
     label_text.transition().style("opacity", 0);
 };
 //function to load the stattistical values of the links
-function load_stat_value(file_json) {
+function load_stat_value_man(file_json) {
     data_weight_pvalue = [];
+    
+    // remove the optional statistical test if you select a new plot
+    statOptions = [];
     // load data from json file
     d3.json(file_json, function(json) {
         links = json.links;
@@ -251,27 +257,26 @@ function load_stat_value(file_json) {
                 st_1.push(i);  
             }
         }
-
         //the first element to be visualited
         st_chosen_colourscale1 = st_1[0];
         st_chosen_colourscale2 = st_1[0];
         //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_name, st_chosen_colourscale1, 0, 0);
+        show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, 0);
         
         // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box1("drop_sort");
+        creat_drop_box_man("drop_sort");
 
         // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box1("scalecolor1_dropbox");
+        creat_drop_box_man("scalecolor1_dropbox");
         // to create the dropbox in the SNP pair list
-        creat_drop_box1("scalecolor2_dropbox");
+        creat_drop_box_man("scalecolor2_dropbox");
     });
 }
 /**
  * Create the dropbox statistical test to circle plot and manhattan plot
  * @param {string} classinput is a name to create um class
  */
-function creat_drop_box1(classinput) {
+function creat_drop_box_man(classinput) {
     d3.select("#" + classinput).selectAll('select').remove();
     // create the select element
     switch(classinput) {
@@ -400,4 +405,31 @@ function two_dec(value) {
  */
 function include_in_arr(arr, obj) {
     return (arr.indexOf(obj) != -1);
+}
+// create container for heatmap
+function create_stat_container_mat() {
+    // creat new div for matrix
+    var scale_mat_con = d3.select("#container").append("div")
+        .attr("id", "container_matrix");
+
+    scale_mat_con.append("h5")
+        .attr("id", "up")
+        .text("Upper Right");
+
+    scale_mat_con.append("div")
+        .attr("id", "scalecolor1_dropbox");
+
+    scale_mat_con.append("h5")
+        .attr("id", "ll")
+        .text("Lower Left");
+    
+    scale_mat_con.append("div")
+        .attr("id", "scalecolor2_dropbox");
+   
+    scale_mat_con.append("div")
+        .attr("id", "scalecolor_matrix1");
+
+    scale_mat_con.append("div")
+        .attr("id", "scalecolor_matrix2");
+
 }

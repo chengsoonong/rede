@@ -10,10 +10,10 @@
  * @param {string} file_name
  */
 function histogram_edges_subgraphId(file_name, if_zoom) {
-    var data_probe_group1 = new Array();
+    var data_probe_group1 = [];
     //this array will receive the probe_group of the json file, example -> [1,3,2,4,1,1,3,4,4,4,2] .
     //Next it will be sorted,  exemplo -> [1,1,1,2,2,3,3,4,4,4]
-    var data_probe_group2 = new Array();
+    var data_probe_group2 = [];
     //this array will receive small array from data_probe_group1.
     //the length the each sub-array represent the number the edges in a subgraph, 
     //example -> [[1,1,1],[2,2],[3,3],[4,4,4]], in this array the 1ª element is the subgraph 1 and has 3 edges.    
