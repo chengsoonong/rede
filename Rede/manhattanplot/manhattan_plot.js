@@ -33,32 +33,6 @@ for (var i = 0; i < chromLength.length; i++) {
     chrom_lenght = chrom_lenght + chromLength[i];
     chrom_acum_length.push(chrom_lenght);
 }
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes.
- * @type {array} allNodes
- */
-var allNodes;
-/**
- * Global variable that is used in circle_plot.js to create the brush and manhattan_plot.js
- * to create the axis y of the manhattan plot. It has the dots about wich statistical test
- * was selected to be used.
- * @type {array} data_weight_pvalue
- */
-var data_weight_pvalue;
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes pairs.
- * @type {array} links
- */
-var links;
-/**
- * Global variable that have information about of the file path choosen.
- * @type {srtring} file_json
- */
-var file_json;
-// data for manhattan plot 
-var data = [];
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 

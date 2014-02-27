@@ -14,7 +14,6 @@ var data_obj_m = [];
  * @type {array} array_SNPs
  */
 var array_SNPs = [];
-var allNodes = new Array();
 /**
  * Read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
  * @param {string} file_name

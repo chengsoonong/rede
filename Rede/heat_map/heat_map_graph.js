@@ -1,51 +1,11 @@
 /**
- * @fileoverview Utilities such as global variable and functions for handling the functions in another javascript files and create the plots.
+ * @fileoverview Ruling file for heat-map matrix_plot  
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
 
-// marks :
-// a: creat_dropbox to chose the statistical test
 //------------------------------------------   Global variable   ---------------------------------------------- 
-
-/**
- * Global variable for circle_plot.js and view_graph.js to save a selected information of a json file
- * @type {string} string_html
- */
-var string_html;
-/**
- * Global variable for manhattan_plot.js and view_graph.js to put label in dots in manhattan plot
- * @type {svg} label_text
- */
-var label_text;
-/**
- * Global variable for manhattan_plot.js and view_graph.js with the all dots to create manhattan plot.
- * It's used inside read_file_to_manhattan_plot() and here in button zoom, reset, label and remove label.
- * @type {array} data
- */
-var data;
-/**
- * Constant for manhattan_plot.js and view_graph.js decide if it will use the variable "data" or  "data_select_from_HDS".
- * with the data to create manhattan plot and used inside read_file_to_manhattan_plot()
- * @type {string} data_from_HDS
- */
-var data_from_HDS = "no"
-/**
- * Global variable for hit_degree_snps_plot.js and view_graph.js hindle to create the manhattan plot with specifcs dots.
- * @type {array} data_select_from_HDS
- */
-var data_select_from_HDS;
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
- * @type {number} ix_1, ix_2, iy_1, iy_2
- */
-var ix_1, ix_2, iy_1, iy_2;
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan
- * plot with specifcs dots selected by brush.
- * @type {number} x_1, x_2, y_1, y_2
- */
-var x_1, x_2, y_1, y_2;
 /* global variable for statistical test for the colourscale of the heat-map
  * @type int st_chosen_colourscale1
  */
@@ -54,40 +14,6 @@ var st_chosen_colourscale1;
  * @type int st_chosen_colourscale2
  */
 var st_chosen_colourscale2;
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes.
- * @type {array} allNodes
- */
-var allNodes;
-/**
- * Global variable that is used in circle_plot.js to create the brush and manhattan_plot.js
- * to create the axis y of the manhattan plot. It has the dots about wich statistical test
- * was selected to be used.
- * @type {array} data_weight_pvalue
- */
-var data_weight_pvalue;
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes pairs.
- * @type {array} links
- */
-var links;
-/**
- * Global variable that have information about of the file path choosen.
- * @type {srtring} file_json
- */
-var file_json;
-/**
- * Global variable that will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_sort
- */
-var select_dropbox_sort;
-/**
- * Global variable that will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox
- */
-var select_dropbox;
 /**
  * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test choosen.
  * @type {d3} select_dropbox_scale1
@@ -98,44 +24,11 @@ var select_dropbox_scale1;
  * @type {d3} select_dropbox_scale2
  */
 var select_dropbox_scale2;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test to
- * create the dropbox.
- * @type {object} statOptions
- */
-var statOptions = {}
-/**
- * Global variable that is used in view_graph.js. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {array} list_keys_json
- */
-var list_keys_json = []
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {string} use_communities
- */
-var use_communities = "no"
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is cont. table in the json file.
- * @type {string} use_cont_table
- */
-var use_cont_table = "no"
-/**
- * Global variable that is used in view_graph.js. It is save the first statistical test to be visualited
- * create the dropbox.
- * @type {string} st_1
- */
-var st_1 = []
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
- * @type {number} ix_1, ix_2, iy_1, iy_2
- */
-var brush_value1, brush_value2;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
-//------------------------------------------ load -  first vizualization   ---------------------------------------------- 
+// start heat map plot
 function start_heat_map(file_name) {
+    // write file name in the global var file_json
     file_json = file_name; 
     // Heat map of association matrix
     d3.select("#load_data").remove();
@@ -146,21 +39,35 @@ function start_heat_map(file_name) {
     d3.select("#minmap_matrixp").selectAll('svg').remove();
     d3.select("#container_matrix").remove();
     
+    // create the container for the statistical bars under the plot
     create_stat_container_mat();
 
-    load_stat_value_man(file_json);
+    // load the statistical values of the heat-map
+    load_stat_value_mat(file_json);
+    // start plot matrix_plot.js
     read_file_to_matrix_plot(file_json);
+    // list the SNPs
     histogram_degree_SNPs(file_json, 0);
+    // list the links
     show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 }
 function zoom_heatmap(file_name) {
+    // write file name in the global var file_json
     file_json = file_name;
     // Heat map of association matrix
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#minmap_matrixp").selectAll('svg').remove();
     d3.select("#container_matrix").remove();
     
+    // create bar container under the plot
     create_stat_container_mat();
+    
+    // load the statistical values of the heat-map
+    load_stat_value_mat(file_json);
+    // list the SNPs
+    histogram_degree_SNPs(file_json, 0);
+    // list the links
+    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 
 
     if (mx_1) { // if x_1 is not null make ..
@@ -171,8 +78,9 @@ function zoom_heatmap(file_name) {
     }
 }; 
 
-//function to load the stattistical values of the links
-function load_stat_value_man(file_json) {
+// function to load the stattistical values of the links
+function load_stat_value_mat(file_json) {
+    // remove old statistical values
     data_weight_pvalue = [];
     
     // remove the optional statistical test if you select a new plot

@@ -1,6 +1,7 @@
 /**
  * @title Implemented linear plot
- * @fileoverview This file creates an arc diagram, which shows the interaction between SNPs. These links are displayed 
+ * @fileoverview This file creates an arc diagram, which shows the interaction between SNPs. 
+ * These links are displayed 
  * through arcs. The 24 Human chromosomes (x and y are included) are plotted as bars in a row on one axis. 
  * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
@@ -73,24 +74,14 @@ for (var i = 0; i < chromLength.length; i++) {
     chrom_acum_length.push(chrom_length);
 }
 
-// the colour for the different probe groups
-var graphColor = d3.scale.category20();
-
 // y coordinate of the chromosome bars
 var height_chrom_bar = 600;
 
 // y coordinate of the SNP-nodes
 var high_nodes = height_chrom_bar - 5;
 
-// Array to store all node information of the json file
-var allNodes = new Array();
-
 // file name for zoom function to highlight the selected links
 var file_name_zoom;
-// array links of the snps
-var links = [];
-// array of the weight of p-values
-var data_weight_pvalue = [];
 // test for data_weight_pvalue
 var test;
 // array for zoom 

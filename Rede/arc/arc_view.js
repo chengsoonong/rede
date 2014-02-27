@@ -1,120 +1,53 @@
 /**
- * Global variable that is used in view_graph.js, circle_plot.js,  hist_degree_snps_plot.js and manhattan_plot.js
- *  It have information about wich statistical test was selected.
- * @type {string} st_chosen
+ * @fileoverview The ruling file which start the arc plot, and the zoom function located in the arc_plot.js
+ * and the preparation.
+ * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
+ * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
-var st_chosen;
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes.
- * @type {array} allNodes
- */
-var allNodes;
-/**
- * Global variable that is used in circle_plot.js to create the brush and manhattan_plot.js
- * to create the axis y of the manhattan plot. It has the dots about wich statistical test
- * was selected to be used.
- * @type {array} data_weight_pvalue
- */
-var data_weight_pvalue;
-/**
- * Global variable that is used in view_graph.js and circle_plot.js
- * It have information each nodes pairs.
- * @type {array} links
- */
-var links;
-/**
- * Global variable that have information about of the file path choosen.
- * @type {srtring} file_json
- */
-var file_json;
-/**
- * Global variable that will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox
- */
-var select_dropbox;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_scale1
- */
-var select_dropbox_scale1;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_scale2
- */
-var select_dropbox_scale2;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test to
- * create the dropbox.
- * @type {object} statOptions
- */
-var statOptions = {}
-/**
- * Global variable that is used in view_graph.js. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {array} list_keys_json
- */
-var list_keys_json = []
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {string} use_communities
- */
-var use_communities = "no"
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is cont. table in the json file.
- * @type {string} use_cont_table
- */
-var use_cont_table = "no"
-/**
- * Global variable that is used in view_graph.js. It is save the first statistical test to be visualited
- * create the dropbox.
- * @type {string} st_1
- */
-var st_1 = []
 
-/**
- * Constant only for circle_plot.js to create the color of the nodes
- * @const
- * @type {d3} graphColor
- */
-var graphColor = d3.scale.category20();
+/* marks for vim editor
+ * "'a" --> change otherwise you always have to click the zoom button again to get the selected p-values
+ *  displayed on stat-range even
 
-// var to check is plot is in the zoom function
+/*
+ *Global variable for arc plot to check if it is in zoom function
+ */
 var if_zoom;
-//everything needed in arcplot
+
+
+// everything needed in arcplot
 function start_arc_plot(file_name) {
 
-    d3.select("body").select("#two_weight_value").transition().style("opacity", 1);
-    d3.select("body").select("#cb").transition().style("opacity", 1);
-    d3.select("body").select("#hc").transition().style("opacity", 1);
-    d3.select("body").select("#snps_text").transition().style("opacity", 1);
-    d3.select("body").select("#footer").transition().style("opacity", 1);
-    d3.select("body").select("#butz").transition().style("opacity", 1);
+    // remove the old plot the probe-groups and SNP list
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
     
-    // because show_snp_pairs_list needs this var
+    // write file_name in the global var file_json
     file_json = file_name;
     
     // set if_zoom on 0
     if_zoom = 0;
    
-   // load statistical values
+    // load statistical values
     load_stat_value(file_json);
 
-    //function in arc_plot.js
+    // functions in arc_plot.js
     read_file_to_arc_plot(file_json);
     graphColor = d3.scale.category10();
+    // function in hist_edges_subgraphID_plot.js to start probe-group
     histogram_edges_subgraphId(file_json, if_zoom);
+    // function in hist_degree_snps_plot.js to show SNP list
     histogram_degree_SNPs(file_json, 0);
 };
 
-// function to prepair everything for zoom of arc_plot
+// function to prepair everything for the zoom function of arc_plot
 function zoom_arc(file_name) {
+    // write file_name in the global variable file_json
     file_json = file_name;
 
+    // remove the old containers
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#pairs").selectAll("p").remove();
@@ -130,14 +63,16 @@ function zoom_arc(file_name) {
     // set var to check zoom on 1
     if_zoom = 1;
     
+    // zoom-function
     zoom_arc_plot(+view_chr, +view_start, +view_end);
+    // empty the array 
     data_weight_pvalue = [];
     // pvalue only of the zoomed links
     zoom_links.forEach( function(d) {
         data_weight_pvalue.push(d[st_chosen])
     });
 
-    //brushweight function for the p_values of the snps
+    // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
     histogram_degree_SNPs(file_json, 0);
@@ -160,225 +95,4 @@ function showInteract(d) {
         }
     }
     return str;
-
 }; 
-
-//function for #two_weight:value and # brush_weight to select the SNP in an certain range(statistical test)
-function select_snp_stat_range(if_zoom) {
- 
-    // cleaup diagramm
-    d3.select("#brush_weight").selectAll("svg").remove();
-    
-    //Width and height
-    var w = 500;
-    var h = 300;
-    var padding = 30;
-    // scale the axis for the brush weight plot
-    var xScale_brush = d3.scale.linear()
-        .domain([d3.min( data_weight_pvalue, function(d) {
-            return d;
-        }) - 1, d3.max(data_weight_pvalue, function(d) {
-            return d;
-        }) + 1])
-        .range([padding, w - padding * 2]);
-    //scale of yaxis
-    var yScale_brush = d3.scale.linear()
-        .domain([0, 0])
-        .range([h - padding - 250, padding - 250]);
-    // define xAxis
-    var xAxis_brush = d3.svg.axis()
-        .scale(xScale_brush)
-        .orient("bottom")
-        .ticks(8);
-
-    //Create SVG element
-    var svg_brush = d3.select("#brush_weight")
-        .append("svg")
-        .attr("class", "weightPvalue")
-        .attr("width", w)
-        .attr("height", 50);
-
-    //create circles on the axis
-    var circle = svg_brush.selectAll("circle")
-        .data(data_weight_pvalue)
-        .enter().append("circle")
-        .attr("cx", function(d) {
-            return xScale_brush(d);
-        })
-        .attr("cy", function(d) {
-            return yScale_brush(0);
-        }) 
-        .attr("r", 2);
-
-    //create xaxis
-    svg_brush.append("g")
-        .attr("class", "axis")
-        .attr("transform", "translate(0," + (h - padding - 250) + ")")
-        .call(xAxis_brush);
-    
-   svg_brush.append("g")
-        .attr("class", "brush")
-        .call(d3.svg.brush().x(xScale_brush)
-            .on("brushstart", brushstart)
-            .on("brush", brushmove)
-            .on("brushend", brushend))
-        .selectAll("rect")
-        .attr("height", 40);
-
-       function brushstart() { //selected de circles in x cordenate for diferent vizualization
-            svg_brush.classed("selecting", true);
-        }
-
-        function brushmove() {
-            var s = d3.event.target.extent(); //return 2 value that are the 1ª and 2ª position the brush on x coordenate
-            circle.classed("selected", function(d) {
-                return s[0] <= d && d <= s[1];
-            }); //selected de circles in x cordenate for diferent vizualization
-
-            d3.select("#two_weight_value").selectAll("h").remove(); //remove the old text
-            d3.select("#two_weight_value").selectAll("h") //create the new text
-                .data([1])
-                .enter().append("h")
-                .text(two_dec(s[0]) + " - " + two_dec(s[1]));
-
-            brush_value1 = s[0]
-            brush_value2 = s[1]
-
-            if (if_zoom) {
-                d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
-   
-                d3.select("#mainplot").selectAll(".link") 
-                    .filter(function(d) {
-                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
-                    })
-                .transition().style("opacity", 0);
-
-                d3.select("#chart")
-                    .selectAll("g .circle_zoom")
-                    .transition()
-                    .style("opacity", 0);
-
-                //to make all the selected nodes visible 
-                var link_selected_stat = [];
-                link_selected_stat = nodes_selected(s[0], s[1], zoom_links);
-                d3.select("#chart")
-                    .selectAll("g .circle_zoom")
-                    .filter(function(d, i) {
-                        if (include_in_arr(link_selected_stat, d.id)) { // nodes_selected (s[0],s[1]) )
-                            return d;
-                        }
-                    })
-                    .transition()
-                    .style("opacity", 1);
-
-                d3.select("#snps").selectAll("p").remove(); //remove old text
-
-                // Write out the data selected in text 
-                d3.select("#snps").selectAll("p")
-                    .data(zoom_allNodes)
-                    .enter().append("p")
-                    .filter(function(d, i) {
-                        if (include_in_arr(link_selected_stat, d.id)) { // nodes_selected (s[0],s[1]) )
-                            return d;
-                        }
-                    })
-                    .append("link").attr("href", function(d) { 
-                    return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
-                        d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
-                    })
-                    .attr("target", "_blank")
-                    .style("text-decoration", 'none')
-                    .style("color", "black")
-                    .text(function(d) {
-                        return showSnp(d);
-                    });
-
-                //brush selecte the pairs 	
-                d3.select("#pairs").selectAll("p").remove();
-
-                d3.select("#pairs").selectAll("p")
-                    .data(zoom_links)
-                    .enter().append("p")
-                    .text(function(d) {
-                        if (d[st_chosen] >= s[0] && d[st_chosen] <= s[1]) {
-                            return showInteract(d.ct_id);
-                        } else {
-                            return "";
-                        }
-                    });
-
-            } else {
-                d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
-
-                d3.select("#mainplot").selectAll(".link") // this declaretion selected the association between specifics  weight values 
-                    .filter(function(d) {
-                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
-                    })
-                    .transition().style("opacity", 0);
-                
-                d3.select("#chart")
-                    .selectAll("g circle")
-                    .transition()
-                    .style("opacity", 0);
-
-                //to make all the selected nodes visible 
-                var link_selected_stat = [];
-                link_selected_stat = nodes_selected(s[0], s[1], links);
-
-                d3.select("#chart")
-                    .selectAll("g circle")
-                    .filter(function(d, i) {
-                        if (include_in_arr(link_selected_stat, i)) { 
-                            return d;
-                        }
-                    })
-                    .transition()
-                    .style("opacity", 1);
-                    
-                d3.select("#snps").selectAll("p").remove(); //remove old text
-
-                // Write out the data selected in text 
-                d3.select("#snps").selectAll("p")
-                    .data(allNodes)
-                    .enter().append("p")
-                    .filter(function(d, i) {
-                        if (include_in_arr(link_selected_stat, i)) { 
-                            return d;
-                        }
-                    })
-                    .append("link").attr("href", function(d) { 
-                        return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
-                            d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
-                    })
-                    .attr("target", "_blank")
-                    .style("text-decoration", 'none')
-                    .style("color", "black")
-                    .text(function(d) {
-                        return showSnp(d);
-                    });
-
-                //brush selecte the pairs 	
-                d3.select("#pairs").selectAll("p").remove();
-
-                d3.select("#pairs").selectAll("p")
-                    .data(links)
-                    .enter().append("p")
-                    .text(function(d) {
-                        if (d[st_chosen] >= s[0] && d[st_chosen] <= s[1]) {
-                            return showInteract(d.ct_id);
-                        } else {
-                            return "";
-                        }
-                    });
-            }
-        }
-
-        function brushend() { //selected de circles in x cordenate for diferent vizualization
-            svg_brush.classed("selecting", !d3.event.target.empty());
-        }
-}
-//------------------------------------------  Statistical Test - drop box----------------------------------------------
-
-
-
-

@@ -2,6 +2,7 @@
  * @fileoverview All functions to create the circle plot
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
 
 //------------------------------------------   Global variables   ---------------------------------------------- 
@@ -29,12 +30,6 @@ var chromColor = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153,
     d3.rgb(0, 255, 255), d3.rgb(204, 255, 255), d3.rgb(153, 0, 204), d3.rgb(204, 51, 255),
     d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
     d3.rgb(1, 1, 1));
-/**
- * Constant only for circle_plot.js to create the color of the nodes
- * @const
- * @type {d3} graphColor
- */
-var graphColor = d3.scale.category20();
 /**
  * Global variable only for circle_plot.js to create the circle plot
  * @type {svg} svg

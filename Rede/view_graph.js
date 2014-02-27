@@ -2,12 +2,8 @@
  * @fileoverview Utilities such as global variable and functions for handling the functions in another javascript files and create the plots.
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
-/* marks
- * a) remove the function after creating all the stuff
- */
-
-
 
 //------------------------------------------   Global variable   ---------------------------------------------- 
 
@@ -38,17 +34,6 @@ var data_from_HDS = "no"
  * @type {array} data_select_from_HDS
  */
 var data_select_from_HDS;
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
- * @type {number} ix_1, ix_2, iy_1, iy_2
- */
-var ix_1, ix_2, iy_1, iy_2;
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan
- * plot with specifcs dots selected by brush.
- * @type {number} x_1, x_2, y_1, y_2
- */
-var x_1, x_2, y_1, y_2;
 /**
  * Global variables for matrix_snp_comm_plot.js, matrix_plot.js and view_graph.js use the initial dots.
  * when a of this plots is selected it will use this variables.
@@ -107,16 +92,7 @@ var select_dropbox_sort;
  * @type {d3} select_dropbox
  */
 var select_dropbox;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_scale1
- */
-var select_dropbox_scale1;
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_scale2
- */
-var select_dropbox_scale2;
+
 /**
  * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test to
  * create the dropbox.
@@ -151,9 +127,12 @@ var st_1 = []
  * @type {number} ix_1, ix_2, iy_1, iy_2
  */
 var brush_value1, brush_value2;
-
-
-
+/**
+ * Constant only for circle_plot.js and arc_plot.js to create the color of the nodes
+ * @const
+ * @type {d3} graphColor
+ */
+var graphColor = d3.scale.category20();
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
@@ -645,8 +624,6 @@ function showInteract(d) {
 function highlight_snp_pairs (d, i, if_zoom) {
     // var to store the id of the link
     d3.select("#pairs").selectAll("p").remove() 
-    // file_name for the implementation of the roc curve and the contigency table
-    file_json = file_name;
     show_snp_pairs_list(file_json, select_dropbox_sort, 1 ,if_zoom , d.ct_id);
     var scrollpair = $("#pairs");
     $('html,body').animate({scrollTop: scrollpair.offset().top});
@@ -786,8 +763,7 @@ function json_links_selected(file_name, probe_group) {
 //--------------------------------------  BUTTONs AND OPERATIONS --------------------------------------
 
 /**
- * Do zoom when the button ZOOM is clicked
- */
+ * Do zoom when the button ZOOM is clicked */
 d3.select("body").select("#butz").on("click", function change() {
     switch(plot_chosen) {
         case "p_arc":
@@ -842,7 +818,7 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             // create used containers
             drop_stat_cma();
             // start manhattan plot
-            start_manhattan_plot(file_json);
+            reset_manhattan();
             break;
         case "p_mat":
             // remove all unused containers
@@ -1073,5 +1049,218 @@ function create_container_probegroup() {
             });
         });
 
-}
+};
+//function for #two_weight:value and # brush_weight to select the SNP in an certain range(statistical test)
+function select_snp_stat_range(if_zoom) {
+ 
+    // remove stat-range even diagramm
+    d3.select("#brush_weight").selectAll("svg").remove();
+    
+    //Width and height
+    var w = 500;
+    var h = 300;
+    var padding = 30;
+    // scale the axis for the brush weight plot
+    var xScale_brush = d3.scale.linear()
+        .domain([d3.min( data_weight_pvalue, function(d) {
+            return d;
+        }) - 1, d3.max(data_weight_pvalue, function(d) {
+            return d;
+        }) + 1])
+        .range([padding, w - padding * 2]);
+    //scale of yaxis
+    var yScale_brush = d3.scale.linear()
+        .domain([0, 0])
+        .range([h - padding - 250, padding - 250]);
+    // define xAxis
+    var xAxis_brush = d3.svg.axis()
+        .scale(xScale_brush)
+        .orient("bottom")
+        .ticks(8);
 
+    //Create SVG element
+    var svg_brush = d3.select("#brush_weight")
+        .append("svg")
+        .attr("class", "weightPvalue")
+        .attr("width", w)
+        .attr("height", 50);
+
+    //create circles on the axis
+    var circle = svg_brush.selectAll("circle")
+        .data(data_weight_pvalue)
+        .enter().append("circle")
+        .attr("cx", function(d) {
+            return xScale_brush(d);
+        })
+        .attr("cy", function(d) {
+            return yScale_brush(0);
+        }) 
+        .attr("r", 2);
+
+    //create xaxis
+    svg_brush.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (h - padding - 250) + ")")
+        .call(xAxis_brush);
+    
+   svg_brush.append("g")
+        .attr("class", "brush")
+        .call(d3.svg.brush().x(xScale_brush)
+            .on("brushstart", brushstart)
+            .on("brush", brushmove)
+            .on("brushend", brushend))
+        .selectAll("rect")
+        .attr("height", 40);
+
+       function brushstart() { //selected de circles in x cordenate for diferent vizualization
+            svg_brush.classed("selecting", true);
+        }
+
+        function brushmove() {
+            var s = d3.event.target.extent(); //return 2 value that are the 1ª and 2ª position the brush on x coordenate
+            circle.classed("selected", function(d) {
+                return s[0] <= d && d <= s[1];
+            }); //selected de circles in x cordenate for diferent vizualization
+
+            d3.select("#two_weight_value").selectAll("h").remove(); //remove the old text
+            d3.select("#two_weight_value").selectAll("h") //create the new text
+                .data([1])
+                .enter().append("h")
+                .text(two_dec(s[0]) + " - " + two_dec(s[1]));
+
+            brush_value1 = s[0]
+            brush_value2 = s[1]
+
+            if (if_zoom) {
+                d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
+   
+                d3.select("#mainplot").selectAll(".link") 
+                    .filter(function(d) {
+                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
+                    })
+                .transition().style("opacity", 0);
+
+                d3.select("#chart")
+                    .selectAll("g .circle_zoom")
+                    .transition()
+                    .style("opacity", 0);
+
+                //to make all the selected nodes visible 
+                var link_selected_stat = [];
+                link_selected_stat = nodes_selected(s[0], s[1], zoom_links);
+                d3.select("#chart")
+                    .selectAll("g .circle_zoom")
+                    .filter(function(d, i) {
+                        if (include_in_arr(link_selected_stat, d.id)) { // nodes_selected (s[0],s[1]) )
+                            return d;
+                        }
+                    })
+                    .transition()
+                    .style("opacity", 1);
+
+                d3.select("#snps").selectAll("p").remove(); //remove old text
+
+                // Write out the data selected in text 
+                d3.select("#snps").selectAll("p")
+                    .data(zoom_allNodes)
+                    .enter().append("p")
+                    .filter(function(d, i) {
+                        if (include_in_arr(link_selected_stat, d.id)) { // nodes_selected (s[0],s[1]) )
+                            return d;
+                        }
+                    })
+                    .append("link").attr("href", function(d) { 
+                    return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
+                        d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
+                    })
+                    .attr("target", "_blank")
+                    .style("text-decoration", 'none')
+                    .style("color", "black")
+                    .text(function(d) {
+                        return showSnp(d);
+                    });
+
+                //brush selecte the pairs 	
+                d3.select("#pairs").selectAll("p").remove();
+
+                d3.select("#pairs").selectAll("p")
+                    .data(zoom_links)
+                    .enter().append("p")
+                    .text(function(d) {
+                        if (d[st_chosen] >= s[0] && d[st_chosen] <= s[1]) {
+                            return showInteract(d.ct_id);
+                        } else {
+                            return "";
+                        }
+                    });
+
+            } else {
+                d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
+
+                d3.select("#mainplot").selectAll(".link") // this declaretion selected the association between specifics  weight values 
+                    .filter(function(d) {
+                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
+                    })
+                    .transition().style("opacity", 0);
+                
+                d3.select("#chart")
+                    .selectAll("g circle")
+                    .transition()
+                    .style("opacity", 0);
+
+                //to make all the selected nodes visible 
+                var link_selected_stat = [];
+                link_selected_stat = nodes_selected(s[0], s[1], links);
+
+                d3.select("#chart")
+                    .selectAll("g circle")
+                    .filter(function(d, i) {
+                        if (include_in_arr(link_selected_stat, i)) { 
+                            return d;
+                        }
+                    })
+                    .transition()
+                    .style("opacity", 1);
+                    
+                d3.select("#snps").selectAll("p").remove(); //remove old text
+
+                // Write out the data selected in text 
+                d3.select("#snps").selectAll("p")
+                    .data(allNodes)
+                    .enter().append("p")
+                    .filter(function(d, i) {
+                        if (include_in_arr(link_selected_stat, i)) { 
+                            return d;
+                        }
+                    })
+                    .append("link").attr("href", function(d) { 
+                        return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
+                            d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
+                    })
+                    .attr("target", "_blank")
+                    .style("text-decoration", 'none')
+                    .style("color", "black")
+                    .text(function(d) {
+                        return showSnp(d);
+                    });
+
+                //brush selecte the pairs 	
+                d3.select("#pairs").selectAll("p").remove();
+
+                d3.select("#pairs").selectAll("p")
+                    .data(links)
+                    .enter().append("p")
+                    .text(function(d) {
+                        if (d[st_chosen] >= s[0] && d[st_chosen] <= s[1]) {
+                            return showInteract(d.ct_id);
+                        } else {
+                            return "";
+                        }
+                    });
+            }
+        }
+
+        function brushend() { //selected de circles in x cordenate for diferent vizualization
+            svg_brush.classed("selecting", !d3.event.target.empty());
+        }
+};
