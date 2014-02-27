@@ -4,7 +4,6 @@
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  */
 
-
 //------------------------------------------   Global variables   ---------------------------------------------- 
 
 /**
@@ -37,9 +36,6 @@ for (var i = 0; i < chromLength.length; i++) {
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
-
-
-
 //---------------------------------------read json file --------------------------------------
 
 /**
@@ -47,82 +43,57 @@ for (var i = 0; i < chromLength.length; i++) {
  * @param {string} file_name
  */
 function read_file_to_manhattan_plot(file_name) {
-
-
     data = new Array();
     allNodes = new Array();
     var data_weight_pvalue = new Array();
 
-
     d3.json(file_name, function(json) {
-        var links = json.links; // var links = json.links;
-
-
+        var links = json.links; 
         json.nodes.forEach(function(d) {
             allNodes.push(d)
         });
 
         json.links.forEach(
-
             function(d) { //this will fill with data the array
-
                 data_weight_pvalue.push(d[st_chosen]);
-
-
                 if (allNodes[d.source].chrom === 1) { //"chr"+d.chrom+':'+d.bp_position
-
-                    data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
-
+                    data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
+                        allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
                 } else {
-
-                    data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2], d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
+                    data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2],
+                        d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' +
+                        allNodes[d.source].bp_position]);
                 }
-
                 if (allNodes[d.target].chrom === 1) {
-
-                    data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
-
+                    data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" +
+                        allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
                 } else {
-                    data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2], d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
+                    data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2],
+                        d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' +
+                        allNodes[d.target].bp_position]);
                 }
-                
             });
-        
         //var for maximum and minimum value of p-values from the dataset 
-        
         var min_pvalue = d3.min(data_weight_pvalue, function(d) {
             return d;
         });
-        
         var max_pvalue = d3.max(data_weight_pvalue, function(d) {
             return d;
         });
-        
         // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
-            
         var extend_scale = (max_pvalue - min_pvalue) *0.05;
-
+        
         ix_1 = 0;
         ix_2 = chrom_lenght;
         iy_1 = min_pvalue - extend_scale;
         iy_2 = max_pvalue + extend_scale;
 
         data_from_HDS = "no"
-
         manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
-
-
         manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-
-
-
     });
-
 }
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ read json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
 
 //------------------------------------- create manhattan plot ---------------------------------------
 
@@ -156,8 +127,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         return d[2];
     }) + 1);
 
-
-
     var colorScale = d3.scale.log()
         .domain([d3.min(data, function(d) {
             return d[2];
@@ -174,8 +143,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("height", h_scale_bar + margin_s.top + margin_s.bottom)
         .append("g")
         .attr("transform", "translate(" + margin_s.left + "," + margin_s.top + ")");
-
-
 
     //create color scale bar
     svg3.selectAll("rect") 
@@ -199,13 +166,11 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("class", "text_smp")
         .text(function(d) {
             number_tick = 6;
-
             if (d % d3.round(d3.max(data, function(d) {
                 return d[2];
             }) / number_tick) == 0) {
                 return d;
             }
-
         })
         .attr("x", function(d, i) {
             return (i + 0.5) * (w_scale_bar / dataset.length);
@@ -217,12 +182,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
             return colorScale(d);
         });
 
-
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
-
-
-
-
 
     var margin = {
         top: 30,
@@ -233,18 +193,11 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     var w = 800 - margin.left - margin.right; //900;
     var h = 600 - margin.top - margin.bottom; //600;
-    
-
 
     //Create scale functions
-    
-
     var xScale = d3.scale.linear()
         .domain([x1, x2])
         .range([0, w]); 
-
-
-
 
     var yScale = d3.scale.linear()
         .domain([y1, y2])
@@ -259,7 +212,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         array_test2.push(xScale(chrom_acum_length[i]));
     }
 
-
     //Create scale top           
     var xScale_top = d3.scale.ordinal()
         .domain(array_test1)
@@ -269,8 +221,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     var xAxis_top = d3.svg.axis()
         .scale(xScale_top)
         .orient("top");
-
-
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -284,7 +234,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .orient("left")
         .ticks(5);
 
-
     //Create SVG element
     var svg = d3.select("#chart")
         .append("svg")
@@ -292,7 +241,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
     var line_chrom = svg.selectAll("line")
         .data(chrom_acum_length)
@@ -311,7 +259,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("stroke-dasharray", 5)
         .style("stroke", "black") //stroke-dasharray="5"
         .style("opacity", 0.2);
-
 
     //Create circles
     var circle = svg.selectAll("circle")
@@ -350,8 +297,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     label_text.transition().duration(1000).style("opacity", 0); //it will fade the label in circles
 
-
-
     //Create X axis
     svg.append("g")
         .attr("class", "manaxis").attr("font-size", "10px")
@@ -364,7 +309,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .style("text-anchor", "end").attr("font-size", "17px")
         .text("Chromosome Lengths (nº bases)");
 
-
     svg.append("g").attr("transform", "translate(0," + 0 + ")")
         .attr("class", "xt axis")
         .call(xAxis_top);     
@@ -373,7 +317,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
         .attr("transform", function(d) {
             return "translate(" + this.getBBox().height + "," + this.getBBox().height * -0.5 + ")rotate(-45)";
         });
-
 
     //Create Y axis
     svg.append("g")
@@ -406,28 +349,16 @@ function manhattan_plot(x1, x2, y1, y2, data) {
             return e[0][0] <= d[0] && d[0] <= e[1][0] && e[0][1] <= d[1] && d[1] <= e[1][1];
         });
 
-
         x_1 = e[0][0];
         x_2 = e[1][0];
         y_1 = e[0][1];
         y_2 = e[1][1];
-
-
-
     }
 
     function brushend() {
         svg.classed("selecting", !d3.event.target.empty());
     }
-
-
 }
-
-
-
-
-
-
 
 /**
  * create a mini manhataan plot from the dots in data and do the zoom from x1, x2, y1, y2 values.
@@ -445,7 +376,6 @@ function manhattan_plot(x1, x2, y1, y2, data) {
  */
 function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y2, data) {
     //create the manhattan plot
-
     var margin_s = {
         top: 5,
         right: 30,
@@ -453,20 +383,16 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         left: 10
     };
     //Then define width and height as the inner dimensions of the chart area.
-
     var w_scale_bar = 500 - margin_s.left - margin_s.right;
     var h_scale_bar = 65 - margin_s.top - margin_s.bottom;
     var barPadding = 0;
 
     //--------------------------- create color scale  --------------------------------------------------
-
     var dataset = d3.range(d3.min(data, function(d) {
         return d[2];
     }), d3.max(data, function(d) {
         return d[2];
     }) + 1);
-
-
 
     var colorScale = d3.scale.log()
         .domain([d3.min(data, function(d) {
@@ -476,9 +402,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         })])
         .interpolate(d3.interpolateHsl)
         .range(["#00b300", "#F50808"]);
-
-
-
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   create color scale  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^           
 
     var margin = {
@@ -508,7 +431,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         array_test2.push(xScale(chrom_acum_length[i]));
     }
 
-
     //Create scale top           
     var xScale_top = d3.scale.ordinal()
         .domain(array_test1)
@@ -518,8 +440,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
     var xAxis_top = d3.svg.axis()
         .scale(xScale_top)
         .orient("bottom");
-
-
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -533,7 +453,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         .orient("left")
         .ticks(5);
 
-
     //Create SVG element
     var svg = d3.select("#minmap_mp")
         .append("svg")
@@ -541,7 +460,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
     var line_chrom = svg.selectAll("line")
         .data(chrom_acum_length)
@@ -561,10 +479,6 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
         .style("stroke", "black")
         .style("opacity", 0.2);
 
-
-
-
-
     //Create circles
     var circle = svg.selectAll("circle")
         .data(data)
@@ -581,11 +495,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             return colorScale(d[2]);
         });
 
-
-
-
     if (rect_x1 != 0 && rect_y1 != 0 && rect_x2 != 0 && rect_y2 != 0) {
-
         svg.selectAll("rect") //create color scale bar
         .data([0])
             .enter()
@@ -597,10 +507,7 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             .attr("fill", "rgba(0, 0, 255, 0.1)")
             .attr("stroke", "rgba(0, 0, 255, 1)")
             .attr("stroke-width", "5");
-
     }
-
-
 
     svg.append("g").attr("transform", "translate(0," + h + ")")
         .attr("class", "xt_min axis")
@@ -611,16 +518,9 @@ function manhattan_plot_minmap(x1, x2, y1, y2, rect_x1, rect_y1, rect_x2, rect_y
             return "translate(" + this.getBBox().height * 1.4 + "," + this.getBBox().height * 1.7 + ")rotate(90)";
         });
 
-
     //Create Y axis
     svg.append("g")
         .attr("class", "axis")
         .call(yAxis);
-
-
 }
-
-
-
-
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ create manhattan plot ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
