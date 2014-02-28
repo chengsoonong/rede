@@ -73,26 +73,22 @@ should click the Browse... button and select a json file with right format(see
 section file format). After this step a plot should appear. You could chose the
 plot you would like to see at the dropbox Plots. 
 
-    -----------------
-    Circular ideogram
-    -----------------
-Statistical test
-----------------
+Circular ideogram
+-----------------
+Statistical test:
 If you selected the Circular plot a dropbox with the available statistical tests
 will appear. The p-values of the SNP interactions will be displayed under the
 statistical test dropbox on an axis. You could select an arbitrary area of
 values through clicking on the axis and moving the mouse. The selected area is
 brushed and you can move it with the mouse.
 
-Probe groups
-------------
+Probe groups:
 In the section Probe group you will se a histogram of the connected edges of the
 probe groups. If you click on a bar the selected probe group will appear in the
 circular plot. You can collapse the section probe group through clicking on the
 "-" in the header.
 
-SNPs histogram
---------------
+SNPs histogram:
 In the SNPs section you will find a histogram of all SNPs and the degree
 (connection) to other SNPs. If you click on a bar only the direct connections of
 this SNP will be shown in the plot. The bar of the selected SNP will be
@@ -101,8 +97,7 @@ on the text of the SNP a prompt window with common literature will open where
 you could search for additional information. You can also collapse the SNPs
 histogram if you like.
 
-SNPs Pairs list
----------------
+SNPs Pairs list:
 The SNPs Pairs section lists all the links. You can sort the links by the
 selected statistical test in the "Sort by" dropbox. If you select a specific
 area of p-value on the axis or select a probe group only these SNP-links will be
@@ -112,8 +107,7 @@ a specific link you only have to click on the link in the SNPs Pairs section and
 a ROC plot and a contingency table will appear. You can also collapse the
 section here if you like.
 
-Zoom function
--------------
+Zoom function:
 If you select a Chromosome in the top of the page, a specific start base, end
 base and click on the zoom button you will receive a circular plot which
 selected area. 
