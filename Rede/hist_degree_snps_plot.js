@@ -199,27 +199,30 @@ function histogram_degree_SNPs(file_name, probe_group) {
                     .transition()
                     .style("fill", "#32ee00");
 
-                d3.select("#chart").selectAll("g circle").transition().style("opacity", 0);
+                if(plot_chosen == "p_cir" || plot_chosen == "p_arc") {
+                    d3.select("#chart").selectAll("g circle").transition().style("opacity", 0);
 
-                d3.select("#chart").selectAll("g circle") //select the circles           
-                    .filter(function(d) {
-                        if (include_in_arr(l, ("chr" + d.chrom + ':' + d.bp_position))) {
-                            return d;
-                        }
-                    })
-                    .transition()
-                    .style("opacity", 1);
+                    d3.select("#chart").selectAll("g circle") //select the circles           
+                        .filter(function(d) {
+                            if (include_in_arr(l, ("chr" + d.chrom + ':' + d.bp_position))) {
+                                return d;
+                            }
+                        })
+                        .transition()
+                        .style("opacity", 1);
 
-                d3.select("#chart").selectAll(".link").transition().style("opacity", 0);
+                    d3.select("#chart").selectAll(".link").transition().style("opacity", 0);
 
-                d3.select("#chart").selectAll(".link") //select the association regarding to the circle selected
-                    .filter(function(d, i) {
-                        if (include_in_arr(list_idx_in_links, d.source + "-" + d.target)) {
-                            return d;
-                        }
-                    })
-                    .transition()
-                    .style("opacity", 0.3);
+                    //select the association regarding to the circle selected
+                    d3.select("#chart").selectAll(".link") 
+                        .filter(function(d, i) {
+                            if (include_in_arr(list_idx_in_links, d.source + "-" + d.target)) {
+                                return d;
+                            }
+                        })
+                        .transition()
+                        .style("opacity", 0.3);
+                }
             });
 
         svg.selectAll(".bar") //show degree as tooltip - title
