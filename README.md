@@ -1,8 +1,9 @@
 Rede
 ====
 
-A visualization tool based on [d3.js](http://d3js.org/) for probe pairs arising
+A visualisation tool based on [d3.js](http://d3js.org/) for probe pairs arising
 in genome wide association studies.  
+
 ------------
 Requirements 
 ------------
@@ -13,55 +14,177 @@ development version 27.0.1 was used).
 File format 
 ------------
 
-The visualized data has to be a .json file  
+The visualised data has to be a .json file  
 
 This is a description of the json file format used to store the epistatic graph.
 
-There are 6 top level components: {"name":  'some name', "nodes": [], "links":
-[], "cont_table": [], "subgraphs": [], "communities": [] }
-
-The last two elements (subgraphs and communities) are optional.
-
-"name" is just a string to identify the dataset. All other elements are a comma
-separated list of key value pairs.
-
-
-Elements in "nodes" are {"prbCode": "rs4147581", "degree": 1.0, "prb": 14, "rs":
-"rs4147581", "probe_group": 4, "bp_position": 67351585, "chrom": 11, "id": 0}
-
-"prbCode" is the string identifier for the probe (comes from BIM file) "degree"
-is the number of pairs involving this probe "prb" is the index of the probe (row
-in the BIM file, 1 based because of GWIS output) "rs" is the rs number.
-"probe_group" is an identifier for connected subgraphs, which is used for
-colouring and selecting subgraphs in the circular plot.  All vertices in the
-same group have the same colour.  "bp_position" is the location along the
-chromosome "chrom" is the chromosome as an integer "id" is a unique identifier
-for the node
-
-
-Elements in "links" are {"source": 1, "target": 7, "probe_group": 1, "Chi2":
-0.0, "SS": 0.0, "GSS": 3.98183, "ct_id":1}
-
-"source" and "target" are the ids of nodes from which the edge is formed
-"probe_group" see above This is followed by a list of statistics and their
-values "ct_id" is a unique identifier for the edge
-
-
-
-Elements in "cont_table" are {"unv1": [{"controls":109 ,"cases":86 },
-{"controls":131 ,"cases":93 }, {"controls":47 ,"cases":25 }], "unv2":
-[{"controls":152 ,"cases":101 }, {"controls":110 ,"cases":91 }, {"controls":25
-,"cases":12 }], "biv": [[{"controls":51 ,"cases":55}, {"controls":49
-,"cases":26}, {"controls":9 ,"cases":5}],[{"controls":72 ,"cases":37},
-{"controls":45 ,"cases":53}, {"controls":14 ,"cases":3}],[{"controls":29
-,"cases":9}, {"controls":16 ,"cases":12}, {"controls":2 ,"cases":4}]], "total":
-{"controls":287 ,"cases":204 }}
-
-"unv1" corresponds to the univariate table for source "unv2" corresponds to the
-univariate table for target "biv" corresponds to the bivariate table "total" is
-the total number of individuals
-
-
+    {
+        "type": "object",
+        "properties": {
+            "type": "array",
+            "items": {
+                "type": [
+                    "nodes": { 
+                        "description": "Information about single SNPs",
+                        "type": "objects"
+                        "properties": {
+                            "prbCode": {
+                                "description": "Id for the probe",
+                                "type": "string"
+                            }, 
+                            "degree": {
+                                "description": "Number of interactions",
+                                "type": "number"
+                            },
+                            "prb": {
+                                "description": "Index of probe",
+                                "type": "number"
+                            },
+                            "rs": {
+                                "description": "The rs number",
+                                "type": "string"    
+                            },
+                            "probe_group": {
+                                "description": "Id of the connected subgraph",
+                                "type": "number"    
+                            },
+                            "bp_position": {
+                                "description": "position on the chromosome",
+                                "type": "number"    
+                            },
+                            "chrom": {
+                                "description": "The chromosome",
+                                "type": "number"    
+                            },
+                            "id": {
+                                "description": "Unique id of SNP",
+                                "type": "number"    
+                            }
+                        },
+                        "required": ["prbCode", "degree", "prb", "rs",
+                            "probe_group", "bp_position", "chrom", "id"]
+                    }
+                ]
+            },
+            "type": "array",
+            "items": {
+                "type": [
+                    "links": {
+                        "type": "object",
+                        "properties": {
+                            "source": {
+                                "description": "Id of the source SNP",
+                                "type": "number"    
+                            },
+                            "target": {
+                                "description": "Id of the target SNP",
+                                "type": "number"    
+                            },
+                            "probe_group": {
+                                "description": "The subgraph of the link",
+                                "type": "number"    
+                            },
+                            "<statistical testsname>": {
+                                "description": "Statistical test(there can be
+                                    multiple tests)",
+                                "type": "number"    
+                            },
+                            "ct_id": {
+                                "description": "Unique id of link",
+                                "type": "number"    
+                            }
+                        },
+                        "required"["source", "target", "probe_group",
+                            "<statistical testsname>", "ct_id"]
+                    }
+                ]
+            },
+            "type": "array",
+            "items": {
+                "type": [
+                    "cont_table": {
+                        "description": "Information about contigency table",
+                        "type": "object",
+                        "properties": {
+                            "unv1": {
+                                "description": "univariate table for source
+                                    (could appear multiple times)",
+                                "type": "object",
+                                "properties": {
+                                    "controls": {
+                                        "description": "control group number",
+                                        "type": "number"
+                                    },
+                                    "cases": {
+                                        "description": "case group number",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["controls", "cases"]
+                            },
+                            "unv2": {
+                                "description": "univariate table for
+                                    target(could appear multiple times)",
+                                "type": "object",
+                                "properties": {
+                                    "controls": {
+                                        "description": "control group number",
+                                        "type": "number"
+                                    },
+                                    "cases": {
+                                        "description": "case group number",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["controls", "cases"]
+                            },
+                            "biv": {
+                                "description": "bivariate table(could appear
+                                    multiple times)",
+                                "type": "object",
+                                "properties": {
+                                    "controls": {
+                                        "description": "control group number",
+                                        "type": "number"
+                                    },
+                                    "cases": {
+                                        "description": "case group number",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["controls", "cases"]
+                            },
+                            "total": {
+                                "description": "total amount of individuals",
+                                "type": "object",
+                                "properties": {
+                                    "controls": {
+                                        "description": "control group number",
+                                        "type": "number"
+                                    },
+                                    "cases": {
+                                        "description": "case group number",
+                                        "type": "number"
+                                    }    
+                                },
+                                "required": ["controls", "cases"]
+                            }
+                        },
+                        "required": ["unv1", "unv2", "biv", "total"]
+                    }
+                ]
+            },
+            "type": "array",
+            "items": {
+                "type": [
+                    "communities": {
+                    "descirption": "shows the communities ...",
+                    "type": "number",
+                    }
+                ]
+            },
+            "required": ["nodes", "links", "cont_table"]
+    }
 
 -----
 Usage
@@ -171,7 +294,7 @@ To get back at the unzoomed plot you only have to click the "Reset" button.
 License
 -------
 
-Copyright (&copy;) 2014, National ICT Australia All rights reserved.
+Copyright (c) 2014, National ICT Australia All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
