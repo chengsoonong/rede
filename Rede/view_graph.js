@@ -978,14 +978,17 @@ function create_textzoom_container() {
         .attr("type", "text")
         .attr("size", "10")
         .attr("name", "textzoomstart")
-        .attr("value", "");
+        .attr("value", "")
+        .attr("placeholder", "start base");
         
     d3.select("#textzoom").append("input")
         .attr("id", "texze")
         .attr("type", "text")
         .attr("size", "10")
         .attr("name", "textzoomend")
-        .attr("value", "");
+        .attr("value", "")
+        .attr("placeholder", "end base");
+;
 }
 
 // create container with p-value rangebar for the circular and arc plot
