@@ -1007,7 +1007,7 @@ function pvalue_range_container() {
 
 };
 
-// create statistical test dropbox container for circular manhattan and arc plot
+// create statistical test dropbox container for circular, manhattan and arc plot
 function drop_stat_cma() {
     d3.select("#st_select_dropbox").selectAll("div").remove();
 

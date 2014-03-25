@@ -78,6 +78,8 @@ function reset_manhattan() {
     // create container needed in the manhattan plot
     create_container_manhattan();
     create_label_button();
+    // load statistical values
+    load_stat_value(file_json);
 
     data_from_HDS == "no";
 
