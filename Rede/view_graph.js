@@ -78,7 +78,7 @@ var data_weight_pvalue;
  */
 var links;
 /**
- * Global variable that have information about of the file path choosen.
+ * Global variable that contains the JSON file encapsulated as a data URL
  * @type {srtring} file_json
  */
 var file_json;
@@ -170,10 +170,11 @@ plot_chosen = document.getElementById('Plot_select').value;
 
 /**
  * This function make the upload of a json file and create the first vizualization with this selected file.
- * @param {string} file_name has information about the file.
+ * @param {string} data_uri contains the JSON file
  */
-function upload_json(file_name) {
-    //this function make the upload of a json file and create the first vizualization with this selected file	
+function upload_json(data_uri) {
+    // copy the file contents to the global variable
+    file_json = data_uri;
 
     //------------------ create and change values in statistic test drop box
     switch(plot_chosen) {
@@ -187,7 +188,7 @@ function upload_json(file_name) {
             pvalue_range_container();
             create_textzoom_container();
             //start arc plot
-            start_arc_plot(file_name);
+            start_arc_plot(data_uri);
             break;
         case "p_cir":
             // remove all unused containers
@@ -199,7 +200,7 @@ function upload_json(file_name) {
             pvalue_range_container();
             create_textzoom_container();
             //start circular plot
-            start_cir_plot(file_name);
+            start_cir_plot(data_uri);
             break;
         case "p_man":
             // remove all unused containers
@@ -208,14 +209,14 @@ function upload_json(file_name) {
             // create used containers
             drop_stat_cma();
             // start manhattan plot
-            start_manhattan_plot(file_name);
+            start_manhattan_plot(data_uri);
             break;
         case "p_mat":
             // remove all unused containers
             remove_section();
         
             // start plot heat-map
-            start_heat_map(file_name);
+            start_heat_map(data_uri);
             break;
     }
 }
@@ -836,7 +837,6 @@ function load_stat_value(file_json) {
     data_weight_pvalue = [];
     statOptions = [];
     // load data from json file
-    
     d3.json(file_json, function(json) {
         //for loop to get all available statistical test of the dataset
         for (var i in json.links[0]) {
