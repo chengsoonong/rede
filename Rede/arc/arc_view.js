@@ -35,7 +35,6 @@ function start_arc_plot(file_name) {
 
     // functions in arc_plot.js
     read_file_to_arc_plot(file_json);
-    graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
     histogram_edges_subgraphId(file_json, if_zoom);
     // function in hist_degree_snps_plot.js to show SNP list

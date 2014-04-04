@@ -1086,7 +1086,7 @@ function select_snp_stat_range(if_zoom) {
         .append("svg")
         .attr("class", "weightPvalue")
         .attr("width", w)
-        .attr("height", 50);
+        .attr("height", 40);
 
     //create circles on the axis
     var circle = svg_brush.selectAll("circle")

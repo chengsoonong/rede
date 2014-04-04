@@ -16,6 +16,7 @@
  */
 var width = 800, 
     height = 800;       
+
 /**
  * Constant only for arc_plot.js to create the colour of the chromosomes
  * (TODO: change to function reading from ucsc_colour.csv)

@@ -11,11 +11,7 @@
  * @const
  * @type {number}
  */
-var width = 800, 
-    height = 800, 
-    width2 = 800, 
-    height2 = 800, 
-    chromRingOuterRadius = Math.min(width, height) * .42,
+var chromRingOuterRadius = Math.min(width, height) * .42,
     chromRingInnerRadius = chromRingOuterRadius * 0.95;
 /**
  * Constant only for circle_plot.js to create the color of the chrommossomos
@@ -69,11 +65,11 @@ function Create_chr_circle(view_chr, view_start, view_end) {
     svg = d3.select("#chart") 
         .append("svg")
         .attr("id", "mainplot")
-        .attr("width", width2)
-        .attr("height", height2)
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
         //This transform moves the element by pixels in both the X and Y directions.
-        .attr("transform", "translate(" + width2 / 2 + "," + height2 / 2 + ")"); 
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); 
         //This transform moves the element by pixels in both the X and Y directions.
         
     // Genome object for drawing Plot the chromosomes in a circle
