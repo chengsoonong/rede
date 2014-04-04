@@ -1,8 +1,12 @@
 Rede
 ====
 
-A visualisation tool based on [d3.js](http://d3js.org/) for probe pairs arising
+A demo of the visualisation tool based on [d3.js](http://d3js.org/) for probe pairs arising
 in genome wide association studies.
+
+https://github.com/chengsoonong/rede
+
+Please view in [Firefox](http://www.mozilla.org/en-US/firefox/new/#)
 
 Usage
 -----
@@ -25,10 +29,5 @@ investigating biological epistasis.
 * zoom, e.g. by click and drag on heatmap or by typing values in circular plot
 * summarise, e.g. degree (number of edges) for each probe
 * drill down, by linking to external resources such as the UCSC genome browser
-
-Open source
------------
-
-https://github.com/chengsoonong/rede
 
 
