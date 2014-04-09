@@ -10,34 +10,46 @@
  * @param {string} file_name
  * @param {number} probe_group
  */
-function histogram_degree_SNPs(file_name, probe_group) {
+function histogram_degree_SNPs(file_name, probe_group, if_zoom) {
+    
     var data = new Array();
     var allNodes_hes = new Array();
     var links_hes = new Array();
 
     d3.json(file_name, function(json) {
-        json.links.forEach( function(d) {
-            if (probe_group === 0) {
+        // filter for the zoom function of the arc plot
+        if (if_zoom) {
+            zoom_links.forEach( function(d) {
                 links_hes.push(d);
-            } else {
-                if (d.probe_group === probe_group) {
-                    links_hes.push(d);
-                }
-            }
-        });
-        
-        json.nodes.forEach(function(d) {
-            if (probe_group === 0) {
+            });
+            zoom_allNodes.forEach( function(d) {
                 allNodes_hes.push(d);
                 data.push(d);
-            } else {
-                allNodes_hes.push(d);
-                if (d.probe_group === probe_group) {
-                    data.push(d);
-                }
-            }
-        });
+            });
 
+        } else {
+            json.links.forEach( function(d) {
+                if (probe_group === 0) {
+                    links_hes.push(d);
+                } else {
+                    if (d.probe_group === probe_group) {
+                        links_hes.push(d);
+                    }
+                }
+            });
+
+            json.nodes.forEach(function(d) {
+                if (probe_group === 0) {
+                    allNodes_hes.push(d);
+                    data.push(d);
+                } else {
+                    allNodes_hes.push(d);
+                    if (d.probe_group === probe_group) {
+                        data.push(d);
+                    }
+                }
+            });
+        }
         //it will create the histogram degree X SNPs in circle_plot
         var margin = {
             top: 50,
@@ -83,7 +95,7 @@ function histogram_degree_SNPs(file_name, probe_group) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         y.domain(data.map(function(d, i) {
-            return "id:" + allNodes_hes.indexOf(d) + " chr" + d.chrom + ':' + d.bp_position + " " + d.rs +
+            return "id:" + d.id + " chr" + d.chrom + ':' + d.bp_position + " " + d.rs +
                 " probe_group:" + d.probe_group;
         }));
 
@@ -104,7 +116,6 @@ function histogram_degree_SNPs(file_name, probe_group) {
                 return "translate(" + this.getBBox().height * -0.5 + "," + this.getBBox().height * 0 + ")rotate(0)";
             })
             .on("click", function(d, i) {
-
                 var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n6) openSNP\n"
                     + "7) SNPedia\n8) UCSC");
 
@@ -164,24 +175,23 @@ function histogram_degree_SNPs(file_name, probe_group) {
                 return x(d.degree);
             })
             .on("mousedown", function(g, i) {
-                bar_hDS.style("fill", "steelblue")
-                l = []
-                list_idx_in_links = []
-                list_idx_in_links2 = []
+                bar_hDS.style("fill", "steelblue");
+                l = [];
+                list_idx_in_links = [];
+                list_idx_in_links2 = [];
                 
-                for (var e in links_hes) {
-                    if (("chr" + allNodes_hes[links_hes[e].source].chrom + ':' + allNodes_hes[links_hes[e].source].bp_position) ===
-                        ("chr" + data[i].chrom + ':' + data[i].bp_position) || ("chr" + allNodes_hes[links_hes[e].target].chrom +
-                        ':' + allNodes_hes[links_hes[e].target].bp_position) === ("chr" + data[i].chrom + ':' + data[i].bp_position)) {
-                        
-                            l.push(("chr" + allNodes_hes[links_hes[e].source].chrom + ':' +
-                                allNodes_hes[links_hes[e].source].bp_position));
-                            l.push(("chr" + allNodes_hes[links_hes[e].target].chrom + ':' +
-                                allNodes_hes[links_hes[e].target].bp_position));
-                            list_idx_in_links.push(links_hes[e].source + "-" + links_hes[e].target);
-                            list_idx_in_links2.push(links_hes[e]);
+				// filters the selected SNPs and write it in the arrays for the
+				// SNPs paragraphs.
+                links_hes.forEach(function(e) {
+                    if (g.id === e.source || g.id === e.target) {
+                        l.push(("chr" + allNodes[e.source].chrom + ':' +
+                                allNodes[e.source].bp_position));
+                        l.push(("chr" + allNodes[e.target].chrom + ':' +
+                                allNodes[e.target].bp_position));
+                        list_idx_in_links.push(e.source + "-" + e.target);
+                        list_idx_in_links2.push(e);
                     }
-                }
+                });	
 
                 bar_hDS.filter(function(d) {
                     if (include_in_arr(l, ("chr" + d.chrom + ':' + d.bp_position))) {
