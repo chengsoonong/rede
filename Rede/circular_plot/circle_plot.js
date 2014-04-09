@@ -417,15 +417,8 @@ function Create_SNP_association(file_name) {
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ create the circle plot ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-// ------------------------   declaration of the functions to plot crhom. in circle  --------------------------------------
+// ----------   declaration of the functions to plot chromosome in circle -----
 
-/**
- * Display the nodes and links for debugging
- */
-function showSnp(d) {
-    return "id:" + d.id + "    chr" + d.chrom + ':' + d.bp_position + "    " + d.rs + " Subgraph:" +
-        d.probe_group;
-};
 
 //Transform radians to degrees
 function degrees(radians) {

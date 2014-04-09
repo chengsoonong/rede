@@ -1106,7 +1106,7 @@ function select_snp_stat_range(if_zoom) {
         .attr("transform", "translate(0," + (h - padding - 250) + ")")
         .call(xAxis_brush);
     
-   svg_brush.append("g")
+    svg_brush.append("g")
         .attr("class", "brush")
         .call(d3.svg.brush().x(xScale_brush)
             .on("brushstart", brushstart)
@@ -1141,7 +1141,7 @@ function select_snp_stat_range(if_zoom) {
                     .filter(function(d) {
                         return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
                     })
-                .transition().style("opacity", 0);
+                    .transition().style("opacity", 0);
 
                 d3.select("#chart")
                     .selectAll("g .circle_zoom")
@@ -1173,8 +1173,8 @@ function select_snp_stat_range(if_zoom) {
                         }
                     })
                     .append("link").attr("href", function(d) { 
-                    return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
-                        d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
+                        return 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
+                            d.chrom + ':' + (d.bp_position - 1000) + '-' + (d.bp_position + 1000);
                     })
                     .attr("target", "_blank")
                     .style("text-decoration", 'none')
@@ -1266,4 +1266,12 @@ function select_snp_stat_range(if_zoom) {
         function brushend() { //selected de circles in x cordenate for diferent vizualization
             svg_brush.classed("selecting", !d3.event.target.empty());
         }
+};
+
+/**
+ * Display the nodes and links for debugging
+ */
+function showSnp(d) {
+    return "id:" + d.id + "    chr" + d.chrom + ':' + d.bp_position + "    " + d.rs + " Subgraph:" +
+        d.probe_group;
 };
