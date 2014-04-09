@@ -40,7 +40,7 @@ function start_manhattan_plot(file_name) {
     // start manhattan plot
     read_file_to_manhattan_plot(file_json);
     // SNP list
-    histogram_degree_SNPs(file_json, 0);
+    histogram_degree_SNPs(file_json, 0, 0, 0);
     // SNP links
     show_snp_pairs_list(file_json, st_chosen, 0);
 }
@@ -81,7 +81,8 @@ function reset_manhattan() {
     // load statistical values
     load_stat_value(file_json);
     // SNP list
-    histogram_degree_SNPs(file_json, 0);
+    // first have to store zoomed snps in array
+    histogram_degree_SNPs(file_json, 0, 0, 0);
 
     data_from_HDS == "no";
 

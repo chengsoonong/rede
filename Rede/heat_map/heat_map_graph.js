@@ -47,7 +47,7 @@ function start_heat_map(file_name) {
     // start plot matrix_plot.js
     read_file_to_matrix_plot(file_json);
     // list the SNPs
-    histogram_degree_SNPs(file_json, 0);
+    histogram_degree_SNPs(file_json, 0, 0, 0);
     // list the links
     show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 }
@@ -65,7 +65,8 @@ function zoom_heatmap(file_name) {
     // load the statistical values of the heat-map
     load_stat_value_mat(file_json);
     // list the SNPs
-    histogram_degree_SNPs(file_json, 0);
+    // first have to store zoomed SNPs in a array  
+    histogram_degree_SNPs(file_json, 0, 0, 0);
     // list the links
     show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 

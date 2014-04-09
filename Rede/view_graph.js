@@ -133,6 +133,12 @@ var brush_value1, brush_value2;
  * @type {d3} graphColor
  */
 var graphColor = d3.scale.category20();
+/*
+ * Global array, which stores the nodes and the links, which are filtered by
+ * their p-value
+ */
+var stat_allNodes = [];
+var stat_links = [];
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
@@ -928,7 +934,7 @@ function creat_drop_box1(classinput) {
                     d3.select("#hds_matrix").selectAll('svg').remove();
                     read_file_to_manhattan_plot(file_json);
 
-                    histogram_degree_SNPs(file_json, 0);
+                    histogram_degree_SNPs(file_json, 0, 0, 0);
                 } else {
                     data_weight_pvalue = [];
                     d3.json(file_json, function(json) {
@@ -1131,15 +1137,21 @@ function select_snp_stat_range(if_zoom) {
                 .enter().append("h")
                 .text(two_dec(s[0]) + " - " + two_dec(s[1]));
 
-            brush_value1 = s[0]
-            brush_value2 = s[1]
+            brush_value1 = s[0];
+
+            
 
             if (if_zoom) {
                 d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
    
                 d3.select("#mainplot").selectAll(".link") 
                     .filter(function(d) {
-                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
+                        if(d[st_chosen] <= s[0] || d[st_chosen] >= s[1]) {
+                            return 1;
+                        } else {
+                            stat_links.push(d);
+                            return 0;
+                        }
                     })
                     .transition().style("opacity", 0);
 
@@ -1151,16 +1163,20 @@ function select_snp_stat_range(if_zoom) {
                 //to make all the selected nodes visible 
                 var link_selected_stat = [];
                 link_selected_stat = nodes_selected(s[0], s[1], zoom_links);
+                
+
                 d3.select("#chart")
                     .selectAll("g .circle_zoom")
                     .filter(function(d, i) {
                         if (include_in_arr(link_selected_stat, d.id)) { // nodes_selected (s[0],s[1]) )
+                            stat_allNodes.push(d);
                             return d;
                         }
                     })
                     .transition()
                     .style("opacity", 1);
 
+                
                 d3.select("#snps").selectAll("p").remove(); //remove old text
 
                 // Write out the data selected in text 
@@ -1202,7 +1218,12 @@ function select_snp_stat_range(if_zoom) {
 
                 d3.select("#mainplot").selectAll(".link") // this declaretion selected the association between specifics  weight values 
                     .filter(function(d) {
-                        return d[st_chosen] <= s[0] || d[st_chosen] >= s[1];
+                        if(d[st_chosen] <= s[0] || d[st_chosen] >= s[1]) {
+                            return 1;
+                        } else {
+                            stat_links.push(d);
+                            return 0;
+                        }
                     })
                     .transition().style("opacity", 0);
                 
@@ -1219,12 +1240,14 @@ function select_snp_stat_range(if_zoom) {
                     .selectAll("g circle")
                     .filter(function(d, i) {
                         if (include_in_arr(link_selected_stat, i)) { 
+                            stat_allNodes.push(d);
                             return d;
                         }
                     })
                     .transition()
                     .style("opacity", 1);
                     
+                                   
                 d3.select("#snps").selectAll("p").remove(); //remove old text
 
                 // Write out the data selected in text 
@@ -1261,17 +1284,24 @@ function select_snp_stat_range(if_zoom) {
                         }
                     });
             }
-        }
+                    }
 
         function brushend() { //selected de circles in x cordenate for diferent vizualization
             svg_brush.classed("selecting", !d3.event.target.empty());
+            // filter for SNPs list
+            d3.select("#hds_matrix").selectAll("svg").remove();
+            histogram_degree_SNPs(file_json, 0, 0, 1);
+
         }
+
+        
+
 };
 
 /**
  * Display the nodes and links for debugging
  */
 function showSnp(d) {
-    return "id:" + d.id + "    chr" + d.chrom + ':' + d.bp_position + "    " + d.rs + " Subgraph:" +
+    return "id:" + d.id + "  chr" + d.chrom + ':' + d.bp_position + "    " + d.rs + " Subgraph:" +
         d.probe_group;
 };

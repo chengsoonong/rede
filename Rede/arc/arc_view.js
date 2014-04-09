@@ -39,7 +39,7 @@ function start_arc_plot(file_name) {
     // function in hist_edges_subgraphID_plot.js to start probe-group
     histogram_edges_subgraphId(file_json, if_zoom);
     // function in hist_degree_snps_plot.js to show SNP list
-    histogram_degree_SNPs(file_json, 0, 0);
+    histogram_degree_SNPs(file_json, 0, 0, 0);
 };
 
 // function to prepair everything for the zoom function of arc_plot
@@ -75,7 +75,7 @@ function zoom_arc(file_name) {
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
-    histogram_degree_SNPs(file_json, 0, 1);
+    histogram_degree_SNPs(file_json, 0, 1, 0);
     histogram_edges_subgraphId(file_json, if_zoom);
 
     show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);

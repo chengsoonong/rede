@@ -25,7 +25,7 @@ function start_cir_plot(file_name) {
     // create group-histogram
     histogram_edges_subgraphId(file_json, 0);
     // create SNP list
-    histogram_degree_SNPs(file_json, 0);
+    histogram_degree_SNPs(file_json, 0, 0, 0);
 
  };
 // function zoom for circular plot
@@ -53,6 +53,7 @@ function zoom_circular(file_name) {
     Create_chr_circle(+view_chr, +view_start, +view_end);
     Create_SNP_association(file_json);
     histogram_edges_subgraphId(file_json);
-    histogram_degree_SNPs(file_json, 0);
+    // have to store before zoomed SNPs in a variable 
+    histogram_degree_SNPs(file_json, 0, 0, 0); 
 };
 
