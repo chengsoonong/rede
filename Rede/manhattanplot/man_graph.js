@@ -73,33 +73,9 @@ function zoom_manhattan(file_name) {
     };
 
 };
-// function for reset 
-function reset_manhattan() {
-    // create container needed in the manhattan plot
-    create_container_manhattan();
-    create_label_button();
-    // load statistical values
-    load_stat_value(file_json);
-    // SNP list
-    // first have to store zoomed snps in array
-    histogram_degree_SNPs(file_json, 0, 0, 0);
 
-    data_from_HDS == "no";
-
-    x_1 = ix_1;
-    x_2 = ix_2;
-    y_1 = iy_1;
-    y_2 = iy_2;
-
-    if (data_from_HDS === "no") {
-        manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
-        manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data)
-    } else {
-        manhattan_plot(ix_1, ix_2, iy_1, iy_2, data_select_from_HDS);
-        manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data_select_from_HDS)
-    };
-};
-/* create the labelbutton and unlabelbutton for manhattan plot
+/* 
+ * create the labelbutton and unlabelbutton for manhattan plot
  */
 function create_label_button() {
     // remove the container
