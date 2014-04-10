@@ -10,14 +10,12 @@
  * @param {string} file_name
  * @param {number} probe_group
  */
-    var allNodes_hes = new Array();
-    var links_hes = new Array();
-
+    
 function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
     
     var data = new Array();
-    allNodes_hes = [];
-    links_hes = [];
+    var allNodes_hes = new Array();
+    var links_hes = new Array();
 
     d3.json(file_name, function(json) {
         // filter for the zoom function of the arc plot

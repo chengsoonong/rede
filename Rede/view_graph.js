@@ -1143,6 +1143,9 @@ function select_snp_stat_range(if_zoom) {
 
             if (if_zoom) {
                 d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
+                // clear statistical array for filtering  the links
+                // (stat-p-value filter)
+                stat_links = [];
    
                 d3.select("#mainplot").selectAll(".link") 
                     .filter(function(d) {
@@ -1163,7 +1166,8 @@ function select_snp_stat_range(if_zoom) {
                 //to make all the selected nodes visible 
                 var link_selected_stat = [];
                 link_selected_stat = nodes_selected(s[0], s[1], zoom_links);
-                
+                // clear array for the statistical p-value filter(SNPs)
+                stat_allNodes = []; 
 
                 d3.select("#chart")
                     .selectAll("g .circle_zoom")
@@ -1215,8 +1219,12 @@ function select_snp_stat_range(if_zoom) {
 
             } else {
                 d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
-
-                d3.select("#mainplot").selectAll(".link") // this declaretion selected the association between specifics  weight values 
+                // clear statistical array for filtering  the links
+                // (stat-p-value filter)
+                stat_links = [];
+                
+                // this declaretion selected the association between specifics  weight values 
+                d3.select("#mainplot").selectAll(".link") 
                     .filter(function(d) {
                         if(d[st_chosen] <= s[0] || d[st_chosen] >= s[1]) {
                             return 1;
@@ -1235,6 +1243,8 @@ function select_snp_stat_range(if_zoom) {
                 //to make all the selected nodes visible 
                 var link_selected_stat = [];
                 link_selected_stat = nodes_selected(s[0], s[1], links);
+                // clear array for the statistical p-value filter(SNPs)
+                stat_allNodes = []; 
 
                 d3.select("#chart")
                     .selectAll("g circle")
@@ -1284,7 +1294,7 @@ function select_snp_stat_range(if_zoom) {
                         }
                     });
             }
-                    }
+        }
 
         function brushend() { //selected de circles in x cordenate for diferent vizualization
             svg_brush.classed("selecting", !d3.event.target.empty());
