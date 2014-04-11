@@ -34,6 +34,8 @@ for (var i = 0; i < chromLength.length; i++) {
     chrom_acum_length.push(chrom_lenght);
 }
 
+var temp_man = new Array();
+
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 //---------------------------------------read json file --------------------------------------
@@ -58,19 +60,19 @@ function read_file_to_manhattan_plot(file_name) {
                 data_weight_pvalue.push(d[st_chosen]);
                 if (allNodes[d.source].chrom === 1) { //"chr"+d.chrom+':'+d.bp_position
                     data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
-                        allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position]);
+                        allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position, d.source]);
                 } else {
                     data.push([allNodes[d.source].bp_position + chrom_acum_length[allNodes[d.source].chrom - 2],
                         d[st_chosen], allNodes[d.source].degree, "chr" + allNodes[d.source].chrom + ':' +
-                        allNodes[d.source].bp_position]);
+                        allNodes[d.source].bp_position, d.source] );
                 }
                 if (allNodes[d.target].chrom === 1) {
                     data.push([allNodes[d.target].bp_position, d[st_chosen], allNodes[d.target].degree, "chr" +
-                        allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position]);
+                        allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position, d.target]);
                 } else {
                     data.push([allNodes[d.target].bp_position + chrom_acum_length[allNodes[d.target].chrom - 2],
                         d[st_chosen], allNodes[d.target].degree, "chr" + allNodes[d.target].chrom + ':' +
-                        allNodes[d.target].bp_position]);
+                        allNodes[d.target].bp_position, d.target]);
                 }
             });
         //var for maximum and minimum value of p-values from the dataset 
@@ -345,8 +347,16 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     function brushmove() {
         var e = d3.event.target.extent();
-        circle.classed("selected", function(d) {
-            return e[0][0] <= d[0] && d[0] <= e[1][0] && e[0][1] <= d[1] && d[1] <= e[1][1];
+        temp_man = [];
+        zoom_allNodes = []; 
+        circle.classed("selected", function(d, i) {
+            if (e[0][0] <= d[0] && d[0] <= e[1][0] && e[0][1] <= d[1] && d[1] <=
+                e[1][1]) {
+                zoom_allNodes.push(allNodes[d[4]]);
+                return 1;
+            }
+            temp_man.push(1);
+            return 0;
         });
 
         x_1 = e[0][0];
@@ -357,6 +367,8 @@ function manhattan_plot(x1, x2, y1, y2, data) {
 
     function brushend() {
         svg.classed("selecting", !d3.event.target.empty());
+        d3.select("#hds_matrix").selectAll("svg").remove();
+        histogram_degree_SNPs(file_json, 0, 1, 0);
     }
 }
 

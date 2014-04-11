@@ -789,7 +789,7 @@ d3.select("body").select("#butz").on("click", function change() {
 });
 
 /**
- * Do RESET when the button RESET is clicked
+ * Does RESET when the RESET button  is clicked
  */
 d3.select("body").select("#butr").on("click", function change() { //button RESET
 
@@ -825,7 +825,7 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             // create used containers
             drop_stat_cma();
             // start manhattan plot
-            reset_manhattan();
+            start_manhattan_plot(file_json);
             break;
         case "p_mat":
             // remove all unused containers

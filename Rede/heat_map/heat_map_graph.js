@@ -62,14 +62,8 @@ function zoom_heatmap(file_name) {
     // create bar container under the plot
     create_stat_container_mat();
     
-    // load the statistical values of the heat-map
-    load_stat_value_mat(file_json);
-    // list the SNPs
-    // first have to store zoomed SNPs in a array  
-    histogram_degree_SNPs(file_json, 0, 0, 0);
-    // list the links
-    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
-
+        // list the SNPs
+   
 
     if (mx_1) { // if x_1 is not null make ..
         matrix_plot(mx_1, mx_2, my_1, my_2);
