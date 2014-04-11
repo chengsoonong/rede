@@ -10,7 +10,8 @@
  * @param {string} file_name
  * @param {number} probe_group
  */
-function histogram_degree_SNPs(file_name, probe_group, if_zoom) {
+    
+function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
     
     var data = new Array();
     var allNodes_hes = new Array();
@@ -26,7 +27,19 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom) {
                 allNodes_hes.push(d);
                 data.push(d);
             });
+            
 
+        } else if(if_stat_brush) {
+            stat_links.forEach( function(d) {
+                links_hes.push(d);
+            });
+            stat_allNodes.forEach( function(d) {
+                allNodes_hes.push(d);
+                data.push(d);
+            });
+            // clear the variables for the next selection
+            stat_allNodes = [];
+            stat_links = [];
         } else {
             json.links.forEach( function(d) {
                 if (probe_group === 0) {

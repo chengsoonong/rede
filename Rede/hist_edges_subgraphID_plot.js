@@ -159,7 +159,7 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                     d3.select("#hds_matrix").select("svg").remove();
                     sid = data_obj[i].n_probe_group;
 
-                    histogram_degree_SNPs(file_json, sid);
+                    histogram_degree_SNPs(file_json, sid, 0, 0);
 
                     string_html = "{\"directed\": false, \"graph\": [], \"nodes\": [";
 
