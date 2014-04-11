@@ -13,7 +13,7 @@
     
 function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
     
-    var data = new Array();
+    var data_degree_snp = new Array();
     var allNodes_hes = new Array();
     var links_hes = new Array();
 
@@ -25,7 +25,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             });
             zoom_allNodes.forEach( function(d) {
                 allNodes_hes.push(d);
-                data.push(d);
+                data_degree_snp.push(d);
             });
             
 
@@ -35,7 +35,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             });
             stat_allNodes.forEach( function(d) {
                 allNodes_hes.push(d);
-                data.push(d);
+                data_degree_snp.push(d);
             });
             // clear the variables for the next selection
             stat_allNodes = [];
@@ -54,11 +54,11 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             json.nodes.forEach(function(d) {
                 if (probe_group === 0) {
                     allNodes_hes.push(d);
-                    data.push(d);
+                    data_degree_snp.push(d);
                 } else {
                     allNodes_hes.push(d);
                     if (d.probe_group === probe_group) {
-                        data.push(d);
+                        data_degree_snp.push(d);
                     }
                 }
             });
@@ -74,14 +74,14 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
         width = 700 - margin.left - margin.right; 
 
         if (probe_group == 0) {
-            if (data.length > 10) {
+            if (data_degree_snp.length > 10) {
                 var height = 34.1796875 * allNodes_hes.length - margin.top - margin.bottom; //200
             } else {
                 var height = 34.1796875 * 10 - margin.top - margin.bottom;
             }
         } else {
-            if (data.length > 10) {
-                var height = 34.1796875 * data.length - margin.top - margin.bottom; //200
+            if (data_degree_snp.length > 10) {
+                var height = 34.1796875 * data_degree_snp.length - margin.top - margin.bottom; //200
             } else {
                 var height = 34.1796875 * 10 - margin.top - margin.bottom;
             }
@@ -107,12 +107,12 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        y.domain(data.map(function(d, i) {
+        y.domain(data_degree_snp.map(function(d, i) {
             return "id:" + d.id + " chr" + d.chrom + ':' + d.bp_position + " " + d.rs +
                 " probe_group:" + d.probe_group;
         }));
 
-        x.domain([0, d3.max(data, function(d) {
+        x.domain([0, d3.max(data_degree_snp, function(d) {
             return d.degree;
         })]);
 
@@ -135,30 +135,30 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
                 if (person != null) {
                     if ("8" == person) {
                         html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
-                            data[i].chrom + ':' + (data[i].bp_position - 1000) + '-' + (data[i].bp_position + 1000);
+                            data_degree_snp[i].chrom + ':' + (data_degree_snp[i].bp_position - 1000) + '-' + (data_degree_snp[i].bp_position + 1000);
 
                     } else if ("6" == person) {
-                        html = 'http://opensnp.org/snps/' + data[i].rs;
+                        html = 'http://opensnp.org/snps/' + data_degree_snp[i].rs;
 
                     } else if ("2" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + data[i].rs.substring(2);
+                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + data_degree_snp[i].rs.substring(2);
 
                     } else if ("4" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + data[i].rs.substring(2);
+                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + data_degree_snp[i].rs.substring(2);
 
                     } else if ("3" == person) {
-                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + data[i].chrom + ':' +
-                            (data[i].bp_position - 1000) + '-' + (data[i].bp_position + 1000) + ';source=dbSNP;v=rs' +
-                            data[i].rs.substring(2) + ';vdb=variation';
+                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + data_degree_snp[i].chrom + ':' +
+                            (data_degree_snp[i].bp_position - 1000) + '-' + (data_degree_snp[i].bp_position + 1000) + ';source=dbSNP;v=rs' +
+                            data_degree_snp[i].rs.substring(2) + ';vdb=variation';
 
                     } else if ("7" == person) {
-                        html = 'http://www.snpedia.com/index.php/Rs' + data[i].rs.substring(2);
+                        html = 'http://www.snpedia.com/index.php/Rs' + data_degree_snp[i].rs.substring(2);
 
                     } else if ("5" == person) {
-                        html = 'http://omim.org/search?index=entry&search=rs' + data[i].rs.substring(2);
+                        html = 'http://omim.org/search?index=entry&search=rs' + data_degree_snp[i].rs.substring(2);
 
                     } else if ("1" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + data[i].rs.substring(2);
+                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + data_degree_snp[i].rs.substring(2);
                     }
                     window.open(html)
                 }
@@ -176,7 +176,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             .text("Degree");
 
         var bar_hDS = svg.selectAll(".bar")
-            .data(data)
+            .data(data_degree_snp)
             .enter().append("rect")
             .attr("class", "ds bar")
             .attr("y", function(d) {
@@ -215,7 +215,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
                     .style("fill", "red");
 
                 bar_hDS.filter(function(d) {
-                    if (("chr" + d.chrom + ':' + d.bp_position) === ("chr" + data[i].chrom + ':' + data[i].bp_position)) {
+                    if (("chr" + d.chrom + ':' + d.bp_position) === ("chr" + data_degree_snp[i].chrom + ':' + data_degree_snp[i].bp_position)) {
                         return d;
                     }
                 })
@@ -249,7 +249,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
             });
 
         svg.selectAll(".bar") //show degree as tooltip - title
-            .data(data)
+            .data(data_degree_snp)
             .append("title")
             .text(function(d) {
                 return "chr" + d.chrom + ':' + d.bp_position + " ; " + d.degree;
