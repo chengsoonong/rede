@@ -48,7 +48,7 @@ function read_file_to_matrix_plot(file_name) {
                 obj["label_x"] = dic_chr["chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position];
                 obj["label_y"] = dic_chr["chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position];
                 for (var i in d) {
-                    if (i != "assoc_group" && i != "ct_id" && i != "source" && i != "target" && i != "probe_group") {
+                    if (i != "assoc_group" &&  i != "source" && i != "target" && i != "probe_group") {
                         obj[i] = d[i]
                     }
                 }
@@ -302,7 +302,7 @@ function matrix_plot(x1, x2, y1, y2) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.selectAll("path1")
+    var path_matrix1 = svg.selectAll("path1")
         .data(data_obj_m)
         .enter().append("svg:path")
         .style("fill", function(d) {
@@ -313,7 +313,7 @@ function matrix_plot(x1, x2, y1, y2) {
         })
         .attr("d", d3.svg.symbol().type("square").size("30"));
 
-    svg.selectAll("path2")
+     var path_matrix2 = svg.selectAll("path2")
         .data(data_obj_m)
         .enter().append("svg:path")
         .style("fill", function(d) {
@@ -371,7 +371,38 @@ function matrix_plot(x1, x2, y1, y2) {
 
     function brushmove() {
         var e = d3.event.target.extent();
-       
+        zoom_allNodes = [];
+        zoom_links = [];
+
+        path_matrix1.classed("selected", function(d, i) { 
+            if (e[0][0] <= d.label_x && d.label_x <= e[1][0] && e[0][1] <= d.label_y && d.label_y <=
+                e[1][1]) {
+                    // store the zoomed links and the involved SNPs in an array for
+                    // filtering the SNPs list
+                    zoom_allNodes.push(allNodes[d.label_x]); 
+                    zoom_allNodes.push(allNodes[d.label_y]); 
+                    // store the zoomed links in an array for the SNPs pair list 
+                    zoom_links.push(links[d.ct_id]);
+                }
+            });
+
+        path_matrix2.classed("selected", function(d, i) { 
+            if (e[0][0] <= d.label_y && d.label_y <= e[1][0] && e[0][1] <= d.label_x && d.label_x <=
+                e[1][1]) {
+                    // store the zoomed links and the involved SNPs in an array for
+                    // filtering the SNPs list
+                    zoom_allNodes.push(allNodes[d.label_x]); 
+                    zoom_allNodes.push(allNodes[d.label_y]); 
+                    // store the zoomed links in an array for the SNPs pair list and test if
+                    // the SNPs pair is already selected in path_matrix1
+                    var zoom_links_check = zoom_links.map(function (v) {
+                        return v.ct_id;
+                    });
+                    if(!zoom_links_check.some(function (g) { return d.ct_id == g; })) {
+                        zoom_links.push(links[d.ct_id]);
+                    }
+                }
+            });
         mx_1 = e[0][0];
         mx_2 = e[1][0];
         my_1 = e[0][1];
@@ -386,6 +417,12 @@ function matrix_plot(x1, x2, y1, y2) {
 
     function brushend() {
         svg.classed("selecting", !d3.event.target.empty());
+        // call the SNPs list
+        d3.select("#hds_matrix").selectAll("svg").remove();
+        histogram_degree_SNPs(file_json, 0, 1, 0);
+        // call the SNPs pair list 
+        d3.select("#pairs").selectAll("p").remove();
+        show_snp_pairs_list(file_json, 0, 0, 1);
     }
 }
 
