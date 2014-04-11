@@ -4,11 +4,123 @@ Rede
 A visualisation tool based on [d3.js](http://d3js.org/) for probe pairs arising
 in genome wide association studies.  
 
+An online demo is available as a
+ [gist](https://gist.github.com/chengsoonong/9968465)
+ and is viewable [here](http://bl.ocks.org/chengsoonong/raw/9968465/).
+
+
 ------------
 Requirements 
 ------------
 Browser: [Mozilla Firefox](http://www.mozilla.org/en-US/firefox/new/#) (for
 development version 27.0.1 was used).
+
+-----
+Usage
+-----
+
+First you have to open view_graph.html with Mozilla Firefox. After this step you
+can click the "Browse..." button and select a json file with the right
+format(see section file format). After this step a plot will appear. You can
+choose four different types of plots in the "plots" dropbox:
+
+* Circular ideogram
+* Manhattan plot
+* Heat-map
+* Arc plot
+
+Circular ideogram
+-----------------
+Statistical test:
+
+If you selected the Circular plot a dropbox with the available statistical tests
+will appear. The p-values of the SNP interactions will be displayed under the
+statistical test dropbox on an axis. You could select an arbitrary area of
+values through clicking on the axis and moving the mouse. The selected area is
+brushed and you can move it with the mouse afterwards.
+
+Probe groups:
+
+In the section Probe group you will see a histogram of the connected edges of
+the probe groups. If you click on a bar the selected probe group will appear in
+the circular plot. You can collapse the section probe group through clicking on
+the "-" in the header.
+
+SNPs histogram:
+
+In the SNPs section you will find a histogram of all SNPs and the degree of
+connection to other SNPs. If you click on a bar only the direct connections of
+this SNP will be displayed in the plot. The bar of the selected SNP will be
+displayed in green and the connected SNPs will be displayed in red. If you click
+on the text of the SNP a prompt window with common literature sources will open
+where you can search for additional information of the selected SNP. This
+literature window will also appear after clicking on a SNP node in the circular
+plot. You can also collapse the SNPs histogram if you like.
+
+SNPs Pairs list:
+
+The SNPs Pairs section lists all the links of the selected dataset. You can sort
+the links by the selected statistical test in the "Sort by" dropbox. If you
+select a specific area of p-value on the axis or select a probe group only these
+SNP-links will be listed. You can also highlight a link in the SNPs Pairs
+section through clicking on the desired connection in the plot. If you want to
+get more information about a specific link you only have to click on the
+paragraph of the link in the SNPs Pairs section and a ROC plot and a contingency
+table about this connection will appear above the SNPs section. You can also
+collapse the section if you like.
+
+Zoom function:
+
+If you select a chromosome in the top of the page,type a specific start base,
+end base and click on the zoom button you will receive a circular plot with the
+desired area. All described features in the upper section are also available for
+the zoomed plot. If you want to go back to the unzoomed plot press the "Reset"
+button.
+
+Manhattan plot
+--------------
+
+Like in the circular ideogram you can choose the statistical test in the left
+top.
+
+Labeling:
+
+If you push the label button in the right top of the window information to every
+node will appear in the plot. You can remove the labels through clicking the
+"remove_label" button.
+
+Zoom function:
+
+You can select an area with the mouse in the plot and after pushing the zoom
+button in the upper left of the window the selected area will be displayed. The
+labeling function is also available for the zoomed area. Through clicking the
+"Reset" button you go back to the unzoomed manhattan plot.
+
+
+Heat-map
+--------
+
+If you select the heat-map in the "Plots" dropbox two dropboxes will appear
+under the heat-map.  You can select the desired statistical test there. 
+
+Zoom function:
+
+Is working like the zoom function of the manhattan plot. You have also the SNPs
+list included with all the features described in the circular plot, excepted
+that if you click on the degree-bar not only the selected SNPs will appear.
+
+Arc plot
+--------
+
+The arc plot has the same features like the circular plot. Additional to that
+you can select a certain area through brushing with the mouse in the plot as
+well. For this feature you select a chromosome and push the "zoom" button.
+Afterwards you can click on the selected chromosome and mark a desired area.
+After that you click on the "zoom" button and you zoomed in the selected area.
+To get back at the unzoomed plot you only have to click the "Reset" button.
+
+
+
 
 ------------
 File format 
@@ -186,109 +298,21 @@ This is a description of the json file format used to store the epistatic graph.
             "required": ["nodes", "links", "cont_table"]
     }
 
------
-Usage
------
-
-First you have to open view_graph.html with Mozilla Firefox. After this step you
-can click the "Browse..." button and select a json file with the right
-format(see section file format). After this step a plot will appear. You can
-choose four different types of plots in the "plots" dropbox:
-
-* Circular ideogram
-* Manhattan plot
-* Heat-map
-* Arc plot
-
-Circular ideogram
------------------
-Statistical test:
-
-If you selected the Circular plot a dropbox with the available statistical tests
-will appear. The p-values of the SNP interactions will be displayed under the
-statistical test dropbox on an axis. You could select an arbitrary area of
-values through clicking on the axis and moving the mouse. The selected area is
-brushed and you can move it with the mouse afterwards.
-
-Probe groups:
-
-In the section Probe group you will see a histogram of the connected edges of
-the probe groups. If you click on a bar the selected probe group will appear in
-the circular plot. You can collapse the section probe group through clicking on
-the "-" in the header.
-
-SNPs histogram:
-
-In the SNPs section you will find a histogram of all SNPs and the degree of
-connection to other SNPs. If you click on a bar only the direct connections of
-this SNP will be displayed in the plot. The bar of the selected SNP will be
-displayed in green and the connected SNPs will be displayed in red. If you click
-on the text of the SNP a prompt window with common literature sources will open
-where you can search for additional information of the selected SNP. This
-literature window will also appear after clicking on a SNP node in the circular
-plot. You can also collapse the SNPs histogram if you like.
-
-SNPs Pairs list:
-
-The SNPs Pairs section lists all the links of the selected dataset. You can sort
-the links by the selected statistical test in the "Sort by" dropbox. If you
-select a specific area of p-value on the axis or select a probe group only these
-SNP-links will be listed. You can also highlight a link in the SNPs Pairs
-section through clicking on the desired connection in the plot. If you want to
-get more information about a specific link you only have to click on the
-paragraph of the link in the SNPs Pairs section and a ROC plot and a contingency
-table about this connection will appear above the SNPs section. You can also
-collapse the section if you like.
-
-Zoom function:
-
-If you select a chromosome in the top of the page,type a specific start base,
-end base and click on the zoom button you will receive a circular plot with the
-desired area. All described features in the upper section are also available for
-the zoomed plot. If you want to go back to the unzoomed plot press the "Reset"
-button.
-
-Manhattan plot
---------------
-
-Like in the circular ideogram you can choose the statistical test in the left
-top.
-
-Labeling:
-
-If you push the label button in the right top of the window information to every
-node will appear in the plot. You can remove the labels through clicking the
-"remove_label" button.
-
-Zoom function:
-
-You can select an area with the mouse in the plot and after pushing the zoom
-button in the upper left of the window the selected area will be displayed. The
-labeling function is also available for the zoomed area. Through clicking the
-"Reset" button you go back to the unzoomed manhattan plot.
 
 
-Heat-map
+
+
+-------
+About the name
 --------
 
-If you select the heat-map in the "Plots" dropbox two dropboxes will appear
-under the heat-map.  You can select the desired statistical test there. 
+Rede is an archaic word meaning, among other things, "counsel" and
+"advice". It is cognate with Dutch "Rede" and German Rat/raten. It
+also means network in Portugese. Today, the word rede is most often
+used by Neopagans, especially by followers of Wicca and Ásatrú. Some
+use the word to refer to a friend.
 
-Zoom function:
 
-Is working like the zoom function of the manhattan plot. You have also the SNPs
-list included with all the features described in the circular plot, excepted
-that if you click on the degree-bar not only the selected SNPs will appear.
-
-Arc plot
---------
-
-The arc plot has the same features like the circular plot. Additional to that
-you can select a certain area through brushing with the mouse in the plot as
-well. For this feature you select a chromosome and push the "zoom" button.
-Afterwards you can click on the selected chromosome and mark a desired area.
-After that you click on the "zoom" button and you zoomed in the selected area.
-To get back at the unzoomed plot you only have to click the "Reset" button.
 
 -------
 License
