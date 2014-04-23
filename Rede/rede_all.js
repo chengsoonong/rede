@@ -1,4 +1,90 @@
+/*
+ *Global variable for arc plot to check if it is in zoom function
+ */
+var if_zoom;
+/**
+ * Constant only for arc_plot.js to create the SVG
+ * @const
+ * @type {number}
+ */
+var width = 800, 
+    height = 800;       
+/**
+ * Constant only for arc_plot.js to create the colour of the chromosomes
+ * (TODO: change to function reading from ucsc_colour.csv)
+ * @const
+ * @type {array}
+ */
+var chromcolour = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
+        d3.rgb(255, 0, 0), d3.rgb(255, 0, 204), d3.rgb(255, 204, 204), d3.rgb(255, 153, 0),
+        d3.rgb(255, 204, 0), d3.rgb(255, 255, 0), d3.rgb(204, 255, 0), d3.rgb(0, 255, 0),
+        d3.rgb(53, 128, 0), d3.rgb(0, 0, 204), d3.rgb(102, 153, 255), d3.rgb(153, 204, 255),
+        d3.rgb(0, 255, 255), d3.rgb(204, 255, 255), d3.rgb(153, 0, 204), d3.rgb(204, 51, 255),
+        d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
+        d3.rgb(1, 1, 1));
+/**
+ * Global variable for measuring the complete length of all chromosomes together
+ *@type integer
+ */
+var chrom_length = 0;
+/**
+ * Global variable only for arc_plot.js to create the scale in arc plot.
+ * @type {array} chrom_acum_length
+ */
+var chrom_acum_length = new Array();
+/**
+ * Constant only for arc_plot.js to create the scale in arc plot.
+ * @const
+ * @type {array} chromLength
+ */
+var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
+        180915260, 171115067, 159138663, 146364022,
+        141213431, 135534747, 135006516, 133851895,
+        115169878, 107349540, 102531392, 90354753,
+        81195210, 78077248, 59128983, 63025520,
+        48129895, 51304566, 155270560, 59373566);
+
+// Array for the ticks on the chromosomes
+var axis_chrom = new Array();
+var i = 0;
+
+while(i <= 300000000) {
+    axis_chrom.push(i);
+    i += 25000000;
+}
+
+// var for measuring the ticks
+var ticks_chrom = new Array();
+
+// counting the ticks for every chromosome
+for(var i = 0; i < chromLength.length; i++) {
+    ticks_chrom.push((chromLength[i] / 25000000 >> 0) +1 );
+}
+
+// this initialised chrom_length and chrom_acum_length to be used in the arc plot
+for (var i = 0; i < chromLength.length; i++) {
+    chrom_length = chrom_length + chromLength[i];
+    chrom_acum_length.push(chrom_length);
+}
+
+// y coordinate of the chromosome bars
+var height_chrom_bar = 600;
+
+// y coordinate of the SNP-nodes
+var high_nodes = height_chrom_bar - 5;
+
+// file name for zoom function to highlight the selected links
+var file_name_zoom;
+// test for data_weight_pvalue
+var test;
+// array for zoom 
+var zoom_allNodes = [],
+        zoom_links = [];
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+
+
 //--------------- global variables ---------------------------
+var test_test = [];  
 /**
  * Global variable that is used in view_graph.js and circle_plot.js
  * It have information each nodes pairs.
@@ -11,6 +97,127 @@ var links = [];
  * @type {array} allNodes
  */
 var allNodes = [];
+/**
+ * Global variable for circle_plot.js and view_graph.js to save a selected information of a json file
+ * @type {string} string_html
+ */
+var string_html;
+/**
+ * Global variable for manhattan_plot.js and view_graph.js to put label in dots in manhattan plot
+ * @type {svg} label_text
+ */
+var label_text;
+/**
+ * Global variable for manhattan_plot.js and view_graph.js with the all dots to create manhattan plot.
+ * It's used inside read_file_to_manhattan_plot() and here in button zoom, reset, label and remove label.
+ * @type {array} data
+ */
+var data;
+/**
+ * Constant for manhattan_plot.js and view_graph.js decide if it will use the variable "data" or  "data_select_from_HDS".
+ * with the data to create manhattan plot and used inside read_file_to_manhattan_plot()
+ * @type {string} data_from_HDS
+ */
+var data_from_HDS = "no"
+/**
+ * Global variable for hit_degree_snps_plot.js and view_graph.js hindle to create the manhattan plot with specifcs dots.
+ * @type {array} data_select_from_HDS
+ */
+var data_select_from_HDS;
+/**
+ * Global variables for matrix_snp_comm_plot.js, matrix_plot.js and view_graph.js use the initial dots.
+ * when a of this plots is selected it will use this variables.
+ * @type {number} mix_1, mix_2, miy_1, miy_2
+ */
+var mix_1, mix_2, miy_1, miy_2;
+/**
+ * Global variables for matrix_snp_comm_plot.js, matrix_plot.js and view_graph.js to do the zoom.
+ * when a of this plots is selected it will use this variables.
+ * @type {number} mx_1, mx_2, my_1, my_2
+ */
+var mx_1, mx_2, my_1, my_2;
+/**
+ * Global variable that is used in view_graph.js, hist_degree_snps_plot.js and hist_edges_subgraphID_plot.js
+ *  It have information about wich plot was selected.
+ * @type {string} plot_chosen
+ */
+var plot_chosen;
+/**
+ * Global variable that is used in view_graph.js, circle_plot.js,  hist_degree_snps_plot.js and manhattan_plot.js
+ *  It have information about wich statistical test was selected.
+ * @type {string} st_chosen
+ */
+var st_chosen;
+/**
+ * Global variable that is used in circle_plot.js to create the brush and manhattan_plot.js
+ * to create the axis y of the manhattan plot. It has the dots about wich statistical test
+ * was selected to be used.
+ * @type {array} data_weight_pvalue
+ */
+var data_weight_pvalue = [];
+/**
+ * Global variable that contains the JSON file encapsulated as a data URL
+ * @type {srtring} file_json
+ */
+var file_json;
+/**
+ * Global variable that will be used to get the information about of the statistical test choosen.
+ * @type {d3} select_dropbox_sort
+ */
+var select_dropbox_sort;
+/**
+ * Global variable that will be used to get the information about of the statistical test choosen.
+ * @type {d3} select_dropbox
+ */
+var select_dropbox;
+
+/**
+ * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test to
+ * create the dropbox.
+ * @type {object} statOptions
+ */
+var statOptions = {};
+/**
+ * Global variable that is used in view_graph.js. It will be used to check if there is communities in the json file
+ * create the dropbox.
+ * @type {array} list_keys_json
+ */
+var list_keys_json = [];
+/**
+ * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is communities in the json file
+ * create the dropbox.
+ * @type {string} use_communities
+ */
+var use_communities = "no";
+/**
+ * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is cont. table in the json file.
+ * @type {string} use_cont_table
+ */
+var use_cont_table = "no";
+/**
+ * Global variable that is used in view_graph.js. It is save the first statistical test to be visualited
+ * create the dropbox.
+ * @type {string} st_1
+ */
+var st_1 = [];
+/**
+ * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
+ * @type {number} ix_1, ix_2, iy_1, iy_2
+ */
+var brush_value1, brush_value2;
+/**
+ * Constant only for circle_plot.js and arc_plot.js to create the color of the nodes
+ * @const
+ * @type {d3} graphColor
+ */
+var graphColor = d3.scale.category20();
+/*
+ * Global array, which stores the nodes and the links, which are filtered by
+ * their p-value
+ */
+var stat_allNodes = [];
+var stat_links = [];
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 
@@ -24,132 +231,23 @@ function load_data_json (file_name) {
         json.links.forEach(function(d) {
             links.push(d);
         });
+
+        //for loop to get all available statistical test of the dataset
+        for (var i in json.links[0]) {
+            if (i != "assoc_group" && i != "source" && i != "target" && i !=
+                "probe_group" && i != "ct_id") {
+                    statOptions[i] = i;
+                    st_1.push(i);  
+                }
+        }
+
         // function to fill the information of the nodes in allNodes
         json.nodes.forEach(function(d) {
             allNodes.push(d);
         });
+        upload_json()           
 
-        var datact = json.cont_table[idx];
-        x.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-        var l1_1 = 112.5,
-            l1_2 = 0,
-            l2_1 = 112.5 * 2,
-            l2_2 = 112.5,
-            l3_1 = 112.5 * 3,
-            l3_2 = 112.5 * 2,
-            l4_1 = 112.5 * 4 + 30,
-            l4_2 = 112.5 * 3 + 30;
-
-        //first row
-        plot_ct(1, 1, 2, l1_1, l1_2, -10, 122.5, datact["unv1"][0].controls / datact["total"].controls, 
-                datact["unv1"][0].cases / datact["total"].cases)
-        plot_ct(2, 4, 5, l1_1, l1_2, -10, 122.5, datact["biv"][0][0].controls / datact["total"].controls,
-                datact["biv"][0][0].cases / datact["total"].cases)
-        plot_ct(3, 6, 7, l1_1, l1_2, -10, 122.5, datact["biv"][0][1].controls / datact["total"].controls, 
-                datact["biv"][0][1].cases / datact["total"].cases)
-        plot_ct(4, 8, 9, l1_1, l1_2, -10, 122.5, datact["biv"][0][2].controls / datact["total"].controls,
-                datact["biv"][0][2].cases / datact["total"].cases)
-        //second row
-        plot_ct(5, 1, 2, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["unv1"][1].controls / datact["total"].controls,
-                datact["unv1"][1].cases / datact["total"].cases)
-        plot_ct(6, 4, 5, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][0].controls / datact["total"].controls,
-                datact["biv"][1][0].cases / datact["total"].cases)
-        plot_ct(7, 6, 7, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][1].controls / datact["total"].controls,
-                datact["biv"][1][1].cases / datact["total"].cases)
-        plot_ct(8, 8, 9, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][2].controls / datact["total"].controls,
-                datact["biv"][1][2].cases / datact["total"].cases)
-        //third row
-        plot_ct(9, 1, 2, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["unv1"][2].controls / datact["total"].controls,
-                datact["unv1"][2].cases / datact["total"].cases)
-        plot_ct(10, 4, 5, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][0].controls / datact["total"].controls,
-                datact["biv"][2][0].cases / datact["total"].cases)
-        plot_ct(11, 6, 7, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][1].controls / datact["total"].controls,
-                datact["biv"][2][1].cases / datact["total"].cases)
-        plot_ct(12, 8, 9, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][2].controls / datact["total"].controls,
-                datact["biv"][2][2].cases / datact["total"].cases)
-        //fourth row
-        plot_ct(13, 4, 5, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][0].controls / datact["total"].controls,
-                datact["unv2"][0].cases / datact["total"].cases)
-        plot_ct(14, 6, 7, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][1].controls / datact["total"].controls,
-                datact["unv2"][1].cases / datact["total"].cases)
-        plot_ct(15, 8, 9, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][2].controls / datact["total"].controls,
-                datact["unv2"][2].cases / datact["total"].cases)
-
-        function plot_ct(id, pos_x1, pos_x2, pos_y1, pos_y2, pos_y1r, pos_y2r, control, cases) {
-            // Plot a cell of the contingency table
-            var y = d3.scale.linear().domain([0, 1])
-                .range([pos_y1, pos_y2]);
-
-            svg.selectAll("rect" + id)
-                .data([0])
-                .enter()
-                .append("rect")
-                .attr("x", x(pos_x1) - 5)
-                .attr("y", pos_y1r) //y(1)-10 )=-10
-                .attr("width", 150)
-                .attr("height", pos_y2r) //y(1)-10, y(0)+10)=122.5
-                .attr("fill", function(d) {
-                    if (control > cases) {
-                        return "#4ed05f";
-                    } //green
-                    if (control < cases) {
-                        return "#d06057";
-                    } //red
-                    if (control == cases) {
-                        return "white";
-                    }
-                })
-                .attr("stroke", "black")
-                .attr("stroke-width", 1);
-
-            svg.selectAll(".bar" + id)
-                .data([{
-                    letter: pos_x1,
-                    frequency: control
-                }, {
-                    letter: pos_x2,
-                    frequency: cases
-                }])
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function(d) {
-                    return x(d.letter) + 5;
-                })
-                .attr("width", x.rangeBand())
-                .attr("y", function(d) {
-                    return y(d.frequency);
-                }) //fill: steelblue
-                .attr("fill", "steelblue")
-                .attr("height", function(d) {
-                    return pos_y1 - y(d.frequency);
-                });
-
-            svg.selectAll(".text_ct")
-                .data([{
-                    letter: pos_x1,
-                    frequency: control
-                }, {
-                    letter: pos_x2,
-                    frequency: cases
-                }])
-                .enter()
-                .append("text")
-                .attr("class", "text_b")
-                .text(function(d) {
-                    return Math.round(d.frequency * 100) + "%";
-                })
-                .attr("x", function(d) {
-                    return x(d.letter) + 15;
-                })
-                .attr("y", function(d) {
-                    return y(d.frequency);
-                })
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "11px")
-                .attr("fill", "black");
-        }
     });
-
 };
 
 // cont_plot.js
@@ -1071,6 +1169,128 @@ function matrix_comm_plot_minmap(x1, x2, y1, y2, mrect_x1, mrect_y1, mrect_x2, m
  * @param {string} filename
  */
 function ROC_plot(idx, filename) {
+    // ROC plot 
+    d3.json(filename, function (json) {
+    var datact = json.cont_table[idx];
+    x.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    var l1_1 = 112.5,
+        l1_2 = 0,
+        l2_1 = 112.5 * 2,
+        l2_2 = 112.5,
+        l3_1 = 112.5 * 3,
+        l3_2 = 112.5 * 2,
+        l4_1 = 112.5 * 4 + 30,
+        l4_2 = 112.5 * 3 + 30;
+    });
+
+    //first row
+    plot_ct(1, 1, 2, l1_1, l1_2, -10, 122.5, datact["unv1"][0].controls / datact["total"].controls, 
+            datact["unv1"][0].cases / datact["total"].cases)
+        plot_ct(2, 4, 5, l1_1, l1_2, -10, 122.5, datact["biv"][0][0].controls / datact["total"].controls,
+                datact["biv"][0][0].cases / datact["total"].cases)
+        plot_ct(3, 6, 7, l1_1, l1_2, -10, 122.5, datact["biv"][0][1].controls / datact["total"].controls, 
+                datact["biv"][0][1].cases / datact["total"].cases)
+        plot_ct(4, 8, 9, l1_1, l1_2, -10, 122.5, datact["biv"][0][2].controls / datact["total"].controls,
+                datact["biv"][0][2].cases / datact["total"].cases)
+        //second row
+        plot_ct(5, 1, 2, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["unv1"][1].controls / datact["total"].controls,
+                datact["unv1"][1].cases / datact["total"].cases)
+        plot_ct(6, 4, 5, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][0].controls / datact["total"].controls,
+                datact["biv"][1][0].cases / datact["total"].cases)
+        plot_ct(7, 6, 7, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][1].controls / datact["total"].controls,
+                datact["biv"][1][1].cases / datact["total"].cases)
+        plot_ct(8, 8, 9, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][2].controls / datact["total"].controls,
+                datact["biv"][1][2].cases / datact["total"].cases)
+        //third row
+        plot_ct(9, 1, 2, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["unv1"][2].controls / datact["total"].controls,
+                datact["unv1"][2].cases / datact["total"].cases)
+        plot_ct(10, 4, 5, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][0].controls / datact["total"].controls,
+                datact["biv"][2][0].cases / datact["total"].cases)
+        plot_ct(11, 6, 7, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][1].controls / datact["total"].controls,
+                datact["biv"][2][1].cases / datact["total"].cases)
+        plot_ct(12, 8, 9, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][2].controls / datact["total"].controls,
+                datact["biv"][2][2].cases / datact["total"].cases)
+        //fourth row
+        plot_ct(13, 4, 5, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][0].controls / datact["total"].controls,
+                datact["unv2"][0].cases / datact["total"].cases)
+        plot_ct(14, 6, 7, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][1].controls / datact["total"].controls,
+                datact["unv2"][1].cases / datact["total"].cases)
+        plot_ct(15, 8, 9, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][2].controls / datact["total"].controls,
+                datact["unv2"][2].cases / datact["total"].cases)
+
+        function plot_ct(id, pos_x1, pos_x2, pos_y1, pos_y2, pos_y1r, pos_y2r, control, cases) {
+            // Plot a cell of the contingency table
+            var y = d3.scale.linear().domain([0, 1])
+                .range([pos_y1, pos_y2]);
+
+            svg.selectAll("rect" + id)
+                .data([0])
+                .enter()
+                .append("rect")
+                .attr("x", x(pos_x1) - 5)
+                .attr("y", pos_y1r) //y(1)-10 )=-10
+                .attr("width", 150)
+                .attr("height", pos_y2r) //y(1)-10, y(0)+10)=122.5
+                .attr("fill", function(d) {
+                    if (control > cases) {
+                        return "#4ed05f";
+                    } //green
+                    if (control < cases) {
+                        return "#d06057";
+                    } //red
+                    if (control == cases) {
+                        return "white";
+                    }
+                })
+            .attr("stroke", "black")
+                .attr("stroke-width", 1);
+
+            svg.selectAll(".bar" + id)
+                .data([{
+                    letter: pos_x1,
+                    frequency: control
+                }, {
+                    letter: pos_x2,
+                    frequency: cases
+                }])
+            .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) {
+                    return x(d.letter) + 5;
+                })
+            .attr("width", x.rangeBand())
+                .attr("y", function(d) {
+                    return y(d.frequency);
+                }) //fill: steelblue
+            .attr("fill", "steelblue")
+                .attr("height", function(d) {
+                    return pos_y1 - y(d.frequency);
+                });
+
+            svg.selectAll(".text_ct")
+                .data([{
+                    letter: pos_x1,
+                    frequency: control
+                }, {
+                    letter: pos_x2,
+                    frequency: cases
+                }])
+            .enter()
+                .append("text")
+                .attr("class", "text_b")
+                .text(function(d) {
+                    return Math.round(d.frequency * 100) + "%";
+                })
+            .attr("x", function(d) {
+                return x(d.letter) + 15;
+            })
+            .attr("y", function(d) {
+                return y(d.frequency);
+            })
+            .attr("font-family", "sans-serif")
+                .attr("font-size", "11px")
+                .attr("fill", "black");
+        }
     //Width and height
     var padding = 30;
 
@@ -1107,8 +1327,8 @@ function ROC_plot(idx, filename) {
             });
             for (var i in p_sort) {
                 id = p.indexOf(p_sort[i])
-                dat_sort.push(dat[id])
-                p[id] = "s" + p_sort[i]
+                    dat_sort.push(dat[id])
+                    p[id] = "s" + p_sort[i]
             }
             return dat_sort
         }
@@ -1121,7 +1341,7 @@ function ROC_plot(idx, filename) {
             for (var i in [0, 1, 2]) {
                 for (var j in [0, 1, 2]) {
                     dat_list.push(dat[i][j])
-                    p.push(preval_mapping(dat[i][j], t0, t1))
+                        p.push(preval_mapping(dat[i][j], t0, t1))
                 }
             }
 
@@ -1132,45 +1352,45 @@ function ROC_plot(idx, filename) {
             p_sort.sort(function(a, b) {
                 return b - a
             });
-            
+
             for (var i in p_sort) {
 
                 id = p.indexOf(p_sort[i])
-                dat_sort.push(dat_list[id])
-                p[id] = "s" + p_sort[i]
+                    dat_sort.push(dat_list[id])
+                    p[id] = "s" + p_sort[i]
             }
             return dat_sort
         }
 
         function dots_fpr_tpr(dat, t0, t1) {
             var dat_fpr_tpr = []
-            var cas = 0
-            var con = 0
-            for (var i in dat) {
-                con = con + dat[i].controls
-                cas = cas + dat[i].cases
+                var cas = 0
+                var con = 0
+                for (var i in dat) {
+                    con = con + dat[i].controls
+                        cas = cas + dat[i].cases
 
-                var fpr = con / t0
-                var tpr = cas / t1
+                        var fpr = con / t0
+                        var tpr = cas / t1
 
-                dat_fpr_tpr.push({
-                    FPR: fpr,
-                    TPR: tpr
-                })
-            }
+                        dat_fpr_tpr.push({
+                            FPR: fpr,
+                        TPR: tpr
+                        })
+                }
             return dat_fpr_tpr;
         }
 
         unva_data = dots_fpr_tpr(sort_unv(datact2[idx].unv1, datact2[idx].total.controls, datact2[idx].total.cases),
-            datact2[idx].total.controls, datact2[idx].total.cases);
+                datact2[idx].total.controls, datact2[idx].total.cases);
         unvb_data = dots_fpr_tpr(sort_unv(datact2[idx].unv2, datact2[idx].total.controls, datact2[idx].total.cases),
-            datact2[idx].total.controls, datact2[idx].total.cases);
+                datact2[idx].total.controls, datact2[idx].total.cases);
         biv_data = dots_fpr_tpr(sort_biv(datact2[idx].biv, datact2[idx].total.controls, datact2[idx].total.cases), 
-            datact2[idx].total.controls, datact2[idx].total.cases);
+                datact2[idx].total.controls, datact2[idx].total.cases);
 
         var fpr = [d3.max(unva_data, function(d) {
-                return d.FPR;
-            }),
+            return d.FPR;
+        }),
             d3.max(unvb_data, function(d) {
                 return d.FPR;
             }),
@@ -1180,8 +1400,8 @@ function ROC_plot(idx, filename) {
         ];
 
         var tpr = [d3.max(unva_data, function(d) {
-                return d.TPR;
-            }),
+            return d.TPR;
+        }),
             d3.max(unvb_data, function(d) {
                 return d.TPR;
             }),
@@ -1194,13 +1414,13 @@ function ROC_plot(idx, filename) {
             .domain([0, d3.max(fpr, function(d) {
                 return d;
             })])
-            .range([0, width]);
+        .range([0, width]);
 
         var yScale = d3.scale.linear()
             .domain([0, d3.max(tpr, function(d) {
                 return d;
             })])
-            .range([height, 0]);
+        .range([height, 0]);
 
         //Define X axis
         var xAxis = d3.svg.axis()
@@ -1278,7 +1498,7 @@ function ROC_plot(idx, filename) {
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("cross").size("30"));
+        .attr("d", d3.svg.symbol().type("cross").size("30"));
 
         svg.selectAll("path2")
             .data(unva_data)
@@ -1286,7 +1506,7 @@ function ROC_plot(idx, filename) {
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("square").size("30"));
+        .attr("d", d3.svg.symbol().type("square").size("30"));
 
         svg.selectAll("path1")
             .data(unvb_data)
@@ -1294,16 +1514,16 @@ function ROC_plot(idx, filename) {
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
+        .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
 
         /*
-circle - a circle.
-cross - a Greek cross or plus sign.
-diamond - a rhombus.
-square - an axis-aligned square.
-triangle-down - a downward-pointing equilateral triangle.
-triangle-up - an upward-pointing equilateral triangle.
-*/
+           circle - a circle.
+           cross - a Greek cross or plus sign.
+           diamond - a rhombus.
+           square - an axis-aligned square.
+           triangle-down - a downward-pointing equilateral triangle.
+           triangle-up - an upward-pointing equilateral triangle.
+           */
         //----------------------------------------------------label --------------------------------------------			 
         svg.selectAll("path1l")
             .data([{FPR: 0.05,TPR: 0.95}])
@@ -1311,7 +1531,7 @@ triangle-up - an upward-pointing equilateral triangle.
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("square").size("30"));
+        .attr("d", d3.svg.symbol().type("square").size("30"));
 
         svg.selectAll("path2l")
             .data([{FPR: 0.05,TPR: 0.9}])
@@ -1319,7 +1539,7 @@ triangle-up - an upward-pointing equilateral triangle.
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
+        .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
 
         svg.selectAll("path3l")
             .data([{FPR: 0.05,TPR: 0.85}])
@@ -1327,7 +1547,7 @@ triangle-up - an upward-pointing equilateral triangle.
             .attr("transform", function(d) {
                 return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
             })
-            .attr("d", d3.svg.symbol().type("cross").size("30"));
+        .attr("d", d3.svg.symbol().type("cross").size("30"));
 
         svg.selectAll("text")
             .data([{
@@ -1340,7 +1560,7 @@ triangle-up - an upward-pointing equilateral triangle.
                 FPR: 0.0575,
                 TPR: 0.84
             }])
-            .enter()
+        .enter()
             .append("text")
             .text(function(d, i) {
                 if (i == 0) {
@@ -1353,13 +1573,13 @@ triangle-up - an upward-pointing equilateral triangle.
                     return "SNPaSNPb (9 dots)";
                 }
             })
-            .attr("x", function(d) {
-                return xScale(d.FPR);
-            })
-            .attr("y", function(d) {
-                return yScale(d.TPR);
-            })
-            .attr("font-family", "sans-serif")
+        .attr("x", function(d) {
+            return xScale(d.FPR);
+        })
+        .attr("y", function(d) {
+            return yScale(d.TPR);
+        })
+        .attr("font-family", "sans-serif")
             .attr("font-size", "11px")
             .attr("fill", function(d, i) {
                 if (i == 0) {
@@ -1391,8 +1611,8 @@ triangle-up - an upward-pointing equilateral triangle.
             .attr("transform", "translate(" + (height), 0 + ")")
             .call(xAxis2)
 
-        //Create Y axis
-        svg.append("g")
+            //Create Y axis
+            svg.append("g")
             .attr("class", "axis")
             .call(yAxis)
             .append("text")
@@ -1563,127 +1783,6 @@ function create_table_snps(dat) {
 
 //------------------------------------------   Global variable   ---------------------------------------------- 
 
-/**
- * Global variable for circle_plot.js and view_graph.js to save a selected information of a json file
- * @type {string} string_html
- */
-var string_html;
-/**
- * Global variable for manhattan_plot.js and view_graph.js to put label in dots in manhattan plot
- * @type {svg} label_text
- */
-var label_text;
-/**
- * Global variable for manhattan_plot.js and view_graph.js with the all dots to create manhattan plot.
- * It's used inside read_file_to_manhattan_plot() and here in button zoom, reset, label and remove label.
- * @type {array} data
- */
-var data;
-/**
- * Constant for manhattan_plot.js and view_graph.js decide if it will use the variable "data" or  "data_select_from_HDS".
- * with the data to create manhattan plot and used inside read_file_to_manhattan_plot()
- * @type {string} data_from_HDS
- */
-var data_from_HDS = "no"
-/**
- * Global variable for hit_degree_snps_plot.js and view_graph.js hindle to create the manhattan plot with specifcs dots.
- * @type {array} data_select_from_HDS
- */
-var data_select_from_HDS;
-/**
- * Global variables for matrix_snp_comm_plot.js, matrix_plot.js and view_graph.js use the initial dots.
- * when a of this plots is selected it will use this variables.
- * @type {number} mix_1, mix_2, miy_1, miy_2
- */
-var mix_1, mix_2, miy_1, miy_2;
-/**
- * Global variables for matrix_snp_comm_plot.js, matrix_plot.js and view_graph.js to do the zoom.
- * when a of this plots is selected it will use this variables.
- * @type {number} mx_1, mx_2, my_1, my_2
- */
-var mx_1, mx_2, my_1, my_2;
-/**
- * Global variable that is used in view_graph.js, hist_degree_snps_plot.js and hist_edges_subgraphID_plot.js
- *  It have information about wich plot was selected.
- * @type {string} plot_chosen
- */
-var plot_chosen;
-/**
- * Global variable that is used in view_graph.js, circle_plot.js,  hist_degree_snps_plot.js and manhattan_plot.js
- *  It have information about wich statistical test was selected.
- * @type {string} st_chosen
- */
-var st_chosen;
-/**
- * Global variable that is used in circle_plot.js to create the brush and manhattan_plot.js
- * to create the axis y of the manhattan plot. It has the dots about wich statistical test
- * was selected to be used.
- * @type {array} data_weight_pvalue
- */
-var data_weight_pvalue;
-/**
- * Global variable that contains the JSON file encapsulated as a data URL
- * @type {srtring} file_json
- */
-var file_json;
-/**
- * Global variable that will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox_sort
- */
-var select_dropbox_sort;
-/**
- * Global variable that will be used to get the information about of the statistical test choosen.
- * @type {d3} select_dropbox
- */
-var select_dropbox;
-
-/**
- * Global variable that is used in view_graph.js. It will be used to get the information about of the statistical test to
- * create the dropbox.
- * @type {object} statOptions
- */
-var statOptions = {}
-/**
- * Global variable that is used in view_graph.js. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {array} list_keys_json
- */
-var list_keys_json = []
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is communities in the json file
- * create the dropbox.
- * @type {string} use_communities
- */
-var use_communities = "no"
-/**
- * Global variable that is used in view_graph.js and circle_plot. It will be used to check if there is cont. table in the json file.
- * @type {string} use_cont_table
- */
-var use_cont_table = "no"
-/**
- * Global variable that is used in view_graph.js. It is save the first statistical test to be visualited
- * create the dropbox.
- * @type {string} st_1
- */
-var st_1 = []
-/**
- * Global variables for manhattan_plot.js and view_graph.js hindle to create the manhattan plot with the initial dots.
- * @type {number} ix_1, ix_2, iy_1, iy_2
- */
-var brush_value1, brush_value2;
-/**
- * Constant only for circle_plot.js and arc_plot.js to create the color of the nodes
- * @const
- * @type {d3} graphColor
- */
-var graphColor = d3.scale.category20();
-/*
- * Global array, which stores the nodes and the links, which are filtered by
- * their p-value
- */
-var stat_allNodes = [];
-var stat_links = [];
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 
@@ -1706,7 +1805,7 @@ function handleFileSelect(evt) {
         // Closure to capture the file information.
         reader.onload = (function(theFile) {
             return function(e) {
-                upload_json(e.target.result)
+                load_data_json(e.target.result);
             };
         })(f);
         // Read in the image file as a data URL.
@@ -1722,10 +1821,8 @@ plot_chosen = document.getElementById('Plot_select').value;
  * This function make the upload of a json file and create the first vizualization with this selected file.
  * @param {string} data_uri contains the JSON file
  */
-function upload_json(data_uri) {
+function upload_json() {
     // copy the file contents to the global variable
-    file_json = data_uri;
-    load_data_json(file_json);
 
     //------------------ create and change values in statistic test drop box
     switch(plot_chosen) {
@@ -2385,26 +2482,19 @@ function load_stat_value() {
     // remove elements from array
     data_weight_pvalue = [];
     statOptions = [];
-    // load data from json file
-    //for loop to get all available statistical test of the dataset
-        for (var i in links.slice(1,2)) {
-            if (i != "assoc_group" && i != "source" && i != "target" && i != "probe_group" && i != "ct_id") {
-                statOptions[i] = i;
-                st_1.push(i);  
-            }
-        }
+    
 
+    // load data from json file
+    
         //the first element to be visualited
         st_chosen = st_1[0];
         //function located SNP_pairs_list.js to create list of links
         show_snp_pairs_list(file_json, st_chosen, 0, 0);
 
         //load p_values 
-        json.links.forEach(
-            function(d) {
-                data_weight_pvalue.push(d[st_chosen])
-            } 
-        );
+        links.forEach(function(d) {
+            data_weight_pvalue.push(d[st_chosen])
+        });
 
         // to create the available statistical test of the dataset located view_graph.js (l.421)
         creat_drop_box1("st_select2");
@@ -2866,86 +2956,6 @@ function showSnp(d) {
  */
 
 //------------------------------------------   Global variables   ---------------------------------------------- 
-
-/**
- * Constant only for arc_plot.js to create the SVG
- * @const
- * @type {number}
- */
-var width = 800, 
-    height = 800;       
-/**
- * Constant only for arc_plot.js to create the colour of the chromosomes
- * (TODO: change to function reading from ucsc_colour.csv)
- * @const
- * @type {array}
- */
-var chromcolour = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
-        d3.rgb(255, 0, 0), d3.rgb(255, 0, 204), d3.rgb(255, 204, 204), d3.rgb(255, 153, 0),
-        d3.rgb(255, 204, 0), d3.rgb(255, 255, 0), d3.rgb(204, 255, 0), d3.rgb(0, 255, 0),
-        d3.rgb(53, 128, 0), d3.rgb(0, 0, 204), d3.rgb(102, 153, 255), d3.rgb(153, 204, 255),
-        d3.rgb(0, 255, 255), d3.rgb(204, 255, 255), d3.rgb(153, 0, 204), d3.rgb(204, 51, 255),
-        d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
-        d3.rgb(1, 1, 1));
-/**
- * Global variable for measuring the complete length of all chromosomes together
- *@type integer
- */
-var chrom_length = 0;
-/**
- * Global variable only for arc_plot.js to create the scale in arc plot.
- * @type {array} chrom_acum_length
- */
-var chrom_acum_length = new Array();
-/**
- * Constant only for arc_plot.js to create the scale in arc plot.
- * @const
- * @type {array} chromLength
- */
-var chromLength = new Array(249250621, 243199373, 198022430, 191154276,
-        180915260, 171115067, 159138663, 146364022,
-        141213431, 135534747, 135006516, 133851895,
-        115169878, 107349540, 102531392, 90354753,
-        81195210, 78077248, 59128983, 63025520,
-        48129895, 51304566, 155270560, 59373566);
-
-// Array for the ticks on the chromosomes
-var axis_chrom = new Array();
-var i = 0;
-
-while(i <= 300000000) {
-    axis_chrom.push(i);
-    i += 25000000;
-}
-
-// var for measuring the ticks
-var ticks_chrom = new Array();
-
-// counting the ticks for every chromosome
-for(var i = 0; i < chromLength.length; i++) {
-    ticks_chrom.push((chromLength[i] / 25000000 >> 0) +1 );
-}
-
-// this initialised chrom_length and chrom_acum_length to be used in the arc plot
-for (var i = 0; i < chromLength.length; i++) {
-    chrom_length = chrom_length + chromLength[i];
-    chrom_acum_length.push(chrom_length);
-}
-
-// y coordinate of the chromosome bars
-var height_chrom_bar = 600;
-
-// y coordinate of the SNP-nodes
-var high_nodes = height_chrom_bar - 5;
-
-// file name for zoom function to highlight the selected links
-var file_name_zoom;
-// test for data_weight_pvalue
-var test;
-// array for zoom 
-var zoom_allNodes = [],
-        zoom_links = [];
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 
 //---------------------------------------read json file --------------------------------------
@@ -3606,11 +3616,9 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
 /* marks for vim editor
  * "'a" --> change otherwise you always have to click the zoom button again to get the selected p-values
  *  displayed on stat-range even
-
-/*
- *Global variable for arc plot to check if it is in zoom function
  */
-var if_zoom;
+
+
 
 
 // everything needed in arcplot
@@ -3622,16 +3630,16 @@ function start_arc_plot() {
     d3.select("#hds_matrix").selectAll('svg').remove();
         
     // set if_zoom on 0
-    if_zoom = 0;
-   
-    // load statistical values
-    load_stat_value();
+    //if_zoom = 0;
+    //load_stat_value(); 
+    
 
     // functions in arc_plot.js
     read_file_to_arc_plot();
-    graphColor = d3.scale.category10();
+    //select_snp_stat_range(if_zoom);
+    //graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
-    histogram_edges_subgraphId(file_json, if_zoom);
+    //histogram_edges_subgraphId(file_json, if_zoom);
     // function in hist_degree_snps_plot.js to show SNP list
     histogram_degree_SNPs(file_json, 0, 0, 0);
 };
