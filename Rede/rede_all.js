@@ -1,3 +1,53 @@
+//------------------------------------------   Global variables   ---------------------------------------------- 
+/**
+ * Constant only for circle_plot.js to create the SVG
+ * @const
+ * @type {number}
+ */
+var width = 800, 
+    height = 800, 
+    width2 = 800, 
+    height2 = 800, 
+    chromRingOuterRadius = Math.min(width, height) * .42,
+    chromRingInnerRadius = chromRingOuterRadius * 0.95;
+/**
+ * Constant only for circle_plot.js to create the color of the chrommossomos
+ * (TODO: change to function reading from ucsc_colour.csv)
+ * @const
+ * @type {array}
+ */
+var chromColor = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
+    d3.rgb(255, 0, 0), d3.rgb(255, 0, 204), d3.rgb(255, 204, 204), d3.rgb(255, 153, 0),
+    d3.rgb(255, 204, 0), d3.rgb(255, 255, 0), d3.rgb(204, 255, 0), d3.rgb(0, 255, 0),
+    d3.rgb(53, 128, 0), d3.rgb(0, 0, 204), d3.rgb(102, 153, 255), d3.rgb(153, 204, 255),
+    d3.rgb(0, 255, 255), d3.rgb(204, 255, 255), d3.rgb(153, 0, 204), d3.rgb(204, 51, 255),
+    d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
+    d3.rgb(1, 1, 1));
+/**
+ * Global variable only for circle_plot.js to create the circle plot
+ * @type {svg} svg
+ */
+var svg;
+/**
+ * Global variable only for circle_plot.js to create the circle plot
+ * @type {object} all_chrom
+ */
+var all_chrom;
+/**
+ * Global variable only for circle_plot.js to create color bar scale.
+ * @type {d3} colorScaleedges
+ */
+var colorScaleedges;
+/**
+ * Global variable only for circle_plot.js to create color bar scale.
+ * @type {d3} colorScaleedges2
+ */
+var colorScaleedges2;
+
+// file name for zoom function to highlight the selected links
+var file_name_zoom;
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+
 /*
  *Global variable for arc plot to check if it is in zoom function
  */
@@ -85,6 +135,7 @@ var zoom_allNodes = [],
 
 //--------------- global variables ---------------------------
 var test_test = [];  
+// --- data of json files
 /**
  * Global variable that is used in view_graph.js and circle_plot.js
  * It have information each nodes pairs.
@@ -97,6 +148,19 @@ var links = [];
  * @type {array} allNodes
  */
 var allNodes = [];
+/**
+ * Global variable, which stores the infomation about th subgraphs 
+ * @type {array} subgraphs
+ */
+var subgraphs = [];
+/**
+ * Global variable that is used in circle_plot.js. It will be used to get the information about of the communitties in json file.
+ * @type {array[objects]} communities
+ */
+var communities = [];
+// --- data of json files
+
+
 /**
  * Global variable for circle_plot.js and view_graph.js to save a selected information of a json file
  * @type {string} string_html
@@ -226,6 +290,7 @@ var stat_links = [];
 // function to load the data
 function load_data_json (file_name) {
 // load data from json file
+   file_json = file_name;
     d3.json(file_name, function(json) {
         //function to load the the links
         json.links.forEach(function(d) {
@@ -245,8 +310,13 @@ function load_data_json (file_name) {
         json.nodes.forEach(function(d) {
             allNodes.push(d);
         });
-        upload_json()           
+        // load the subgraphs of the json file 
+        subgraphs = json.subgraphs;
+        // load the comunities of the json file
+        communities = json.communities;
 
+        // start the plots
+        upload_json()           
     });
 };
 
@@ -306,7 +376,7 @@ function cont_plot(idx, filename) {
  * @param {number} probe_group
  */
     
-function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
+function histogram_degree_SNPs(probe_group, if_zoom, if_stat_brush) {
     
     var data_degree_snp = new Array();
     var allNodes_hes = new Array();
@@ -563,7 +633,7 @@ function histogram_degree_SNPs(file_name, probe_group, if_zoom, if_stat_brush) {
  *     When a bar is clicked a subgraph is selected.
  * @param {string} file_name
  */
-function histogram_edges_subgraphId(file_name, if_zoom) {
+function histogram_edges_subgraphId(if_zoom) {
     var data_probe_group1 = [];
     //this array will receive the probe_group of the json file, example -> [1,3,2,4,1,1,3,4,4,4,2] .
     //Next it will be sorted,  exemplo -> [1,1,1,2,2,3,3,4,4,4]
@@ -712,12 +782,12 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                     d3.select("#hds_matrix").select("svg").remove();
                     sid = data_obj[i].n_probe_group;
 
-                    histogram_degree_SNPs(file_json, sid, 0, 0);
+                    histogram_degree_SNPs(sid, 0, 0);
 
                     string_html = "{\"directed\": false, \"graph\": [], \"nodes\": [";
 
-                    json_nodes_selected(file_json, sid);
-                    json_links_selected(file_json, sid);
+                    json_nodes_selected(sid);
+                    json_links_selected(sid);
 
                     d3.select("#chart")
                         .selectAll("g circle")
@@ -800,7 +870,7 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                 });
 
         svg.selectAll(".bar") //show degree as tooltip - title
-        .data(data_obj)
+            .data(data_obj)
             .append("title")
             .text(function(d) {
                 return d.n_edgs;
@@ -828,8 +898,8 @@ function histogram_edges_subgraphId(file_name, if_zoom) {
                 d3.select("#hc").select("svg").remove();
                 sid = data_obj[i].n_probe_group;
                 string_html = "{\"directed\": false, \"graph\": [], \"nodes\": [";
-                json_nodes_selected(file_json, sid);
-                json_links_selected(file_json, sid);
+                json_nodes_selected(sid);
+                json_links_selected(sid);
 
                 d3.select("#chart")
                     .selectAll("g circle")
@@ -1848,7 +1918,7 @@ function upload_json() {
             pvalue_range_container();
             create_textzoom_container();
             //start circular plot
-            start_cir_plot(data_uri);
+            start_cir_plot();
             break;
         case "p_man":
             // remove all unused containers
@@ -2280,10 +2350,9 @@ function highlight_snp_pairs (d, i, if_zoom) {
  * @param {string} file_name
  * @param {number} probe_group
  */
-function json_nodes_selected(file_name, probe_group) {
+function json_nodes_selected(probe_group) {
 
-    d3.json(file_name, function(json) {
-        json.nodes.forEach(function(d) {
+        allNodes.forEach(function(d) {
             if (d.probe_group === probe_group) {
                 string_html += "{\"label\": \"" + d.label + "\", \"degree\": " + d.degree + ", \"rs\": \"" + d.rs +
                     "\", \"bp_position\": " + d.bp_position + ", \"chrom\": " + d.chrom + ", \"id\": " + d.id +
@@ -2292,7 +2361,6 @@ function json_nodes_selected(file_name, probe_group) {
         });
         string_html = string_html.substring(0, string_html.lastIndexOf(","));
         string_html += "], \"links\": [";
-    });
 };
 
 /**
@@ -2300,21 +2368,19 @@ function json_nodes_selected(file_name, probe_group) {
  * @param {string} file_name
  * @param {number} probe_group
  */
-function json_links_selected(file_name, probe_group) {
+function json_links_selected(probe_group) {
 
-    d3.json(file_name, function(json) {
-        json.links.forEach(function(d) {
+        links.forEach(function(d) {
             if (d.probe_group === probe_group) {
                 string_html += "{\"source:\" " + d.source + ", \"probe_group\": " + d.probe_group + ", \"weight\": " +
                     d.weight + ", \"target\": " + d.target + ", \"edgs_in_comm\": " + d.edgs_in_comm +
                     ", \"assoc_group\": " + d.assoc_group + "},";
             }
-        });
 
         string_html = string_html.substring(0, string_html.lastIndexOf(",")); // IMP ->remover a ultima virgula<- IMP
         string_html += "], \"multigraph\": false}";
     });
-}
+};
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ show the data selected in json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
@@ -2414,10 +2480,10 @@ function json_links_selected(file_name, probe_group) {
 d3.select("body").select("#butz").on("click", function change() {
     switch(plot_chosen) {
         case "p_arc":
-            zoom_arc(file_json)
+            zoom_arc()
             break;
         case "p_cir":
-            zoom_circular(file_json);
+            zoom_circular();
             break;
         case "p_man":
             zoom_manhattan(file_json);
@@ -2444,7 +2510,7 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             pvalue_range_container();
             create_textzoom_container();
             //start arc plot
-            start_arc_plot(file_json);
+            start_arc_plot();
             break;
         case "p_cir":
             // remove all unused containers
@@ -2456,7 +2522,7 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             pvalue_range_container();
             create_textzoom_container();
             //start circular plot
-            start_cir_plot(file_json);
+            start_cir_plot();
             break;
         case "p_man":
             // remove all unused containers
@@ -2465,14 +2531,14 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             // create used containers
             drop_stat_cma();
             // start manhattan plot
-            start_manhattan_plot(file_json);
+            start_manhattan_plot();
             break;
         case "p_mat":
             // remove all unused containers
             remove_section();
         
             // start plot heat-map
-            start_heat_map(file_json);
+            start_heat_map();
             break;
     }
 });
@@ -2496,7 +2562,7 @@ function load_stat_value() {
             data_weight_pvalue.push(d[st_chosen])
         });
 
-        // to create the available statistical test of the dataset located view_graph.js (l.421)
+        // to create the available statistical test of the dataset located 
         creat_drop_box1("st_select2");
         // to create the dropbox in the SNP pair list
         creat_drop_box1("st_select_snp_pairs");
@@ -3630,24 +3696,25 @@ function start_arc_plot() {
     d3.select("#hds_matrix").selectAll('svg').remove();
         
     // set if_zoom on 0
-    //if_zoom = 0;
-    //load_stat_value(); 
+    if_zoom = 0;
+    // load_stat_values
+    load_stat_value(); 
     
 
     // functions in arc_plot.js
     read_file_to_arc_plot();
-    //select_snp_stat_range(if_zoom);
-    //graphColor = d3.scale.category10();
+    select_snp_stat_range(if_zoom);
+    graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
-    //histogram_edges_subgraphId(file_json, if_zoom);
+    histogram_edges_subgraphId(if_zoom);
     // function in hist_degree_snps_plot.js to show SNP list
-    histogram_degree_SNPs(file_json, 0, 0, 0);
+    histogram_degree_SNPs(0, 0, 0);
+    // shows the snps pair list
+    show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
 };
 
 // function to prepair everything for the zoom function of arc_plot
-function zoom_arc(file_name) {
-    // write file_name in the global variable file_json
-    file_json = file_name;
+function zoom_arc() {
 
     // remove the old containers
     d3.select("#hesid").selectAll('svg').remove();
@@ -3677,8 +3744,8 @@ function zoom_arc(file_name) {
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
-    histogram_degree_SNPs(file_json, 0, 1, 0);
-    histogram_edges_subgraphId(file_json, if_zoom);
+    histogram_degree_SNPs(0, 1, 0);
+    histogram_edges_subgraphId(if_zoom);
 
     show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
 };
@@ -3706,59 +3773,6 @@ function showInteract(d) {
  * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
 
-//------------------------------------------   Global variables   ---------------------------------------------- 
-/**
- * Constant only for circle_plot.js to create the SVG
- * @const
- * @type {number}
- */
-var width = 800, 
-    height = 800, 
-    width2 = 800, 
-    height2 = 800, 
-    chromRingOuterRadius = Math.min(width, height) * .42,
-    chromRingInnerRadius = chromRingOuterRadius * 0.95;
-/**
- * Constant only for circle_plot.js to create the color of the chrommossomos
- * (TODO: change to function reading from ucsc_colour.csv)
- * @const
- * @type {array}
- */
-var chromColor = new Array(d3.rgb(153, 102, 0), d3.rgb(102, 102, 0), d3.rgb(153, 153, 30), d3.rgb(204, 0, 0),
-    d3.rgb(255, 0, 0), d3.rgb(255, 0, 204), d3.rgb(255, 204, 204), d3.rgb(255, 153, 0),
-    d3.rgb(255, 204, 0), d3.rgb(255, 255, 0), d3.rgb(204, 255, 0), d3.rgb(0, 255, 0),
-    d3.rgb(53, 128, 0), d3.rgb(0, 0, 204), d3.rgb(102, 153, 255), d3.rgb(153, 204, 255),
-    d3.rgb(0, 255, 255), d3.rgb(204, 255, 255), d3.rgb(153, 0, 204), d3.rgb(204, 51, 255),
-    d3.rgb(204, 153, 255), d3.rgb(102, 102, 102), d3.rgb(153, 153, 153), d3.rgb(204, 204, 204),
-    d3.rgb(1, 1, 1));
-/**
- * Global variable only for circle_plot.js to create the circle plot
- * @type {svg} svg
- */
-var svg;
-/**
- * Global variable only for circle_plot.js to create the circle plot
- * @type {object} all_chrom
- */
-var all_chrom;
-/**
- * Global variable only for circle_plot.js to create color bar scale.
- * @type {d3} colorScaleedges
- */
-var colorScaleedges;
-/**
- * Global variable only for circle_plot.js to create color bar scale.
- * @type {d3} colorScaleedges2
- */
-var colorScaleedges2;
-/**
- * Global variable that is used in circle_plot.js. It will be used to get the information about of the communitties in json file.
- * @type {array[objects]} communities
- */
-var communities;
-// file name for zoom function to highlight the selected links
-var file_name_zoom;
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 // ---------------------------------- create the circle plot ----------------------------------------
 
@@ -3781,9 +3795,6 @@ function Create_chr_circle(view_chr, view_start, view_end) {
     all_chrom = Genome();
     all_chrom.set_zoom(view_chr, view_start, view_end);
     //create array that will receive objects with information about SNP from .json 
-    allNodes = new Array(); 
-    //create array that will receive the weight value from .json
-    data_weight_pvalue = new Array(); 
 
     //create the vizualization of the chromosomes in circles.
     svg.selectAll("path") 
@@ -3879,18 +3890,9 @@ function Create_chr_circle(view_chr, view_start, view_end) {
 };
 
 /**
- * Create all associations betewen the SNPs
+ * Create all associations between the SNPs
  */
-function Create_SNP_association(file_name) {
-    // Plot nodes and links for the default dataset
-    d3.json(file_name, function(json) { 
-        links = json.links; 
-        var subgraphs = json.subgraphs;
-        communities = json.communities;
-
-        json.nodes.forEach(function(d) {
-            allNodes.push(d)
-        });
+function Create_SNP_association() {
 
         // Draw the marks for each snp   - small marks in chromosome 
         svg.selectAll("path.vertex")
@@ -4112,7 +4114,6 @@ function Create_SNP_association(file_name) {
             .text(function(d) {
                 return showSnp(d);
             });
-    });
 
 };
 
@@ -4245,32 +4246,29 @@ function fade(opacity) {
  */
 
 //everything needed in arcplot
-function start_cir_plot(file_name) {
+function start_cir_plot() {
 
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#pairs").selectAll("p").remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
     d3.select("#load_data").remove();
-    // to store the file_name in the global variable file_json 
-    file_json = file_name;
+    
    
     // load statistical values
-    load_stat_value(file_json);
+    load_stat_value();
     
     // create cricularplot
     Create_chr_circle(0, 0, 0);
-    Create_SNP_association(file_json);
+    Create_SNP_association();
     // create group-histogram
-    histogram_edges_subgraphId(file_json, 0);
+    histogram_edges_subgraphId(0);
     // create SNP list
-    histogram_degree_SNPs(file_json, 0, 0, 0);
-
+    histogram_degree_SNPs(0, 0, 0);
  };
+
 // function zoom for circular plot
-function zoom_circular(file_name) {
-    // to store the file_name in the global variable file_json 
-    file_json = file_name;
+function zoom_circular(){
     // remove old things
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#scale_bar").selectAll('svg').remove();
@@ -4286,14 +4284,14 @@ function zoom_circular(file_name) {
     view_end = document.getElementById("texze").value;
     
     // load statistical values
-    load_stat_value(file_json);
+    load_stat_value();
 
     // draw zoomed circle "+" converts string to int
     Create_chr_circle(+view_chr, +view_start, +view_end);
-    Create_SNP_association(file_json);
-    histogram_edges_subgraphId(file_json);
+    Create_SNP_association();
+    histogram_edges_subgraphId();
     // have to store before zoomed SNPs in a variable 
-    histogram_degree_SNPs(file_json, 0, 0, 0); 
+    histogram_degree_SNPs(0, 0, 0); 
 };
 
 // genome.js
