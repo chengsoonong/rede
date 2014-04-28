@@ -125,8 +125,7 @@ var high_nodes = height_chrom_bar - 5;
 
 // file name for zoom function to highlight the selected links
 var file_name_zoom;
-// test for data_weight_pvalue
-var test;
+
 // array for zoom 
 var zoom_allNodes = [],
         zoom_links = [];
@@ -134,7 +133,6 @@ var zoom_allNodes = [],
 
 
 //--------------- global variables ---------------------------
-var test_test = [];  
 // --- data of json files
 /**
  * Global variable that is used in view_graph.js and circle_plot.js
@@ -289,8 +287,19 @@ var stat_links = [];
 // load_data_json.js
 // function to load the data
 function load_data_json (file_name) {
-// load data from json file
-   file_json = file_name;
+    // load data from json file
+    file_json = file_name;
+
+    // empty the arrays of the json files
+    allNodes = [];
+    links = [];
+    subgraphs = [];
+    comunities = [];
+    
+    // empty array of optional statixtical tests
+    st_1 = [];
+    statOptions = {};
+
     d3.json(file_name, function(json) {
         //function to load the the links
         json.links.forEach(function(d) {
@@ -314,6 +323,9 @@ function load_data_json (file_name) {
         subgraphs = json.subgraphs;
         // load the comunities of the json file
         communities = json.communities;
+        
+        
+       
 
         // start the plots
         upload_json()           
@@ -634,6 +646,11 @@ function histogram_degree_SNPs(probe_group, if_zoom, if_stat_brush) {
  * @param {string} file_name
  */
 function histogram_edges_subgraphId(if_zoom) {
+
+    var data_probe_group1 = [];
+    var data_probe_group2 = [];
+    var data_obj = []; //array with obj. with the couple egds and probe_group
+
     var data_probe_group1 = [];
     //this array will receive the probe_group of the json file, example -> [1,3,2,4,1,1,3,4,4,4,2] .
     //Next it will be sorted,  exemplo -> [1,1,1,2,2,3,3,4,4,4]
@@ -654,33 +671,27 @@ function histogram_edges_subgraphId(if_zoom) {
             return a > b ? 1 : 0;
         });
 
-        create_data_probe_group2()
+        //this function will create the array data_probe_group2 from data_probe_group1,
+        //exemplo: [1,1,1,2,2,3,3,4,4,4] -> [[1,1,1],[2,2],[3,3],[4,4,4]].
+        var max = d3.max(data_probe_group1, function(d) {
+            return d;
+        });
+        var min = d3.min(data_probe_group1, function(d) {
+            return d;
+        });
+        var li, ary;
 
-        function create_data_probe_group2() {
-            //this function will create the array data_probe_group2 from data_probe_group1,
-            //exemplo: [1,1,1,2,2,3,3,4,4,4] -> [[1,1,1],[2,2],[3,3],[4,4,4]].
-            var max = d3.max(data_probe_group1, function(d) {
-                return d;
-            });
-            var min = d3.min(data_probe_group1, function(d) {
-                return d;
-            });
-            var li, ary;
-
-            while (min < max) {
-                li = data_probe_group1.lastIndexOf(min);
-                ary = data_probe_group1.splice(0, li + 1);
-                data_probe_group2.push(ary);
-                min = d3.min(data_probe_group1, function(d) {
+        while (min < max) {
+            li = data_probe_group1.lastIndexOf(min);
+            ary = data_probe_group1.splice(0, li + 1);
+            data_probe_group2.push(ary);
+            min = d3.min(data_probe_group1, function(d) {
                     return d;
-                })
-            }
-            data_probe_group2.push(data_probe_group1);
+            })            
         }
 
-        var data_obj = []; //array with obj. with the couple egds and probe_group
 
-        function creat_obj(probe_group, edgs) {
+        function creat_obj_probe(probe_group, edgs) {
             //function to create the obj. with the couple egds and probe_group
             var obj = {};
             obj.n_probe_group = probe_group;
@@ -690,7 +701,7 @@ function histogram_edges_subgraphId(if_zoom) {
 
         for (var i = 0; i < data_probe_group2.length; i++) {
             // from data_probe_group2 we will create a array with obj. with the couple egds and probe_group
-            data_obj.push(creat_obj(data_probe_group2[i][0], data_probe_group2[i].length));
+            data_obj.push(creat_obj_probe(data_probe_group2[i][0], data_probe_group2[i].length));
         }
 
         var margin = {
@@ -773,7 +784,8 @@ function histogram_edges_subgraphId(if_zoom) {
             })
             .attr("height", y.rangeBand())
             .attr("fill", function(d) {
-                return graphColor(d.n_probe_group);
+         
+    return graphColor(d.n_probe_group);
             })
             .attr("fill-opacity", .5).style("font-size", "14px")
                 .on("mousedown", function(g, i) {
@@ -1901,10 +1913,18 @@ function upload_json() {
             remove_section();
 
             //create used containers
+            
             create_container_probegroup();
             drop_stat_cma();
             pvalue_range_container();
             create_textzoom_container();
+            //the first element to be visualited
+            st_chosen = st_1[0];
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+            // to create the dropbox in the SNP pair list
+            creat_drop_box1("st_select_snp_pairs");
+
             //start arc plot
             start_arc_plot();
             break;
@@ -1917,6 +1937,13 @@ function upload_json() {
             drop_stat_cma();
             pvalue_range_container();
             create_textzoom_container();
+            //the first element to be visualited
+            st_chosen = st_1[0];
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+            // to create the dropbox in the SNP pair list
+            creat_drop_box1("st_select_snp_pairs");
+
             //start circular plot
             start_cir_plot();
             break;
@@ -1963,57 +1990,13 @@ function remove_section() {
     d3.select("#two_weight_value").remove();
     d3.select("#st_select").remove();
     d3.select("#hesid_text").remove();
-    d3.select("#hesid_text").remove();
 };
 /**
  * Allows us choose one plot to vizualization
  */
 d3.select("#Plot_select").on("change", function change() {
     plot_chosen = this.value;
-
-    if (this.value === "p_cir") {
-        // Circular plot
-    
-        // remove container
-        remove_section();
-        
-        // create container
-        create_container_probegroup();
-        drop_stat_cma();
-        create_textzoom_container();
-        pvalue_range_container();
-        // start circular plot
-        start_cir_plot(file_json);
-    } else if (this.value === "p_man") {
-        // Manhattan plot
-        // remove container
-        remove_section();
-    
-        // create container
-        drop_stat_cma();
-        //start circular plot
-        start_manhattan_plot(file_json);
-    } else if (this.value === "p_mat") {
-        // Heat map of association matrix
-        //removing
-        remove_section();
-        d3.select("#st_select2").remove();
-
-        // start heat-map plot
-        start_heat_map(file_json);
-    } else if (this.value === "p_arc") {
-        // arc diagram interaction plot
-        // remove container
-        remove_section();
-
-        // create container
-        create_container_probegroup();
-        drop_stat_cma();
-        create_textzoom_container();
-        pvalue_range_container();
-        //start arc plot
-        start_arc_plot(file_json);
-    }
+    upload_json();
 });
 
 
@@ -2427,48 +2410,8 @@ function nodes_selected(s1, s2, link_selected) {
 
     return l;
 }
-/**
- * This function selected the elementes inside nodes with a subgraph_id chosen and put in the string string_html
- * @param {string} file_name
- * @param {number} probe_group
- */
-function json_nodes_selected(file_name, probe_group) {
 
-    d3.json(file_name, function(json) {
-        json.nodes.forEach(function(d) {
-
-            if (d.probe_group === probe_group) {
-
-                string_html += "{\"label\": \"" + d.label + "\", \"degree\": " + d.degree + ", \"rs\": \"" + d.rs +
-                    "\", \"bp_position\": " + d.bp_position + ", \"chrom\": " + d.chrom + ", \"id\": " + d.id +
-                    ", \"probe_group\": " + d.probe_group + "},";
-
-            }
-        });
-        string_html = string_html.substring(0, string_html.lastIndexOf(","));
-        string_html += "], \"links\": [";
-    });
-}
-/**
- * This function selected the elementes inside nodes with a subgraph_id chosen and put in the string string_html
- * @param {string} file_name
- * @param {number} probe_group
- */
-function json_links_selected(file_name, probe_group) {
-
-    d3.json(file_name, function(json) {
-        json.links.forEach(function(d) {
-            if (d.probe_group === probe_group) {
-                string_html += "{\"source:\" " + d.source + ", \"probe_group\": " + d.probe_group + ", \"weight\": " +
-                    d.weight + ", \"target\": " + d.target + ", \"edgs_in_comm\": " + d.edgs_in_comm +
-                    ", \"assoc_group\": " + d.assoc_group + "},";
-            }
-        });
-
-        string_html = string_html.substring(0, string_html.lastIndexOf(",")); // IMP -> 		remover a ultima virgula 	   <- IMP
-        string_html += "], \"multigraph\": false}";
-    });
-}//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ operational functions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ operational functions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -2480,9 +2423,11 @@ function json_links_selected(file_name, probe_group) {
 d3.select("body").select("#butz").on("click", function change() {
     switch(plot_chosen) {
         case "p_arc":
+            d3.select("#hesid").selectAll('svg').remove();
             zoom_arc()
             break;
         case "p_cir":
+            zoom_arc()
             zoom_circular();
             break;
         case "p_man":
@@ -2547,27 +2492,16 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
 function load_stat_value() {
     // remove elements from array
     data_weight_pvalue = [];
-    statOptions = [];
-    
+    //function located SNP_pairs_list.js to create list of links
+    show_snp_pairs_list(file_json, st_chosen, 0, 0);
 
-    // load data from json file
-    
-        //the first element to be visualited
-        st_chosen = st_1[0];
-        //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_json, st_chosen, 0, 0);
-
-        //load p_values 
-        links.forEach(function(d) {
-            data_weight_pvalue.push(d[st_chosen])
-        });
-
-        // to create the available statistical test of the dataset located 
-        creat_drop_box1("st_select2");
-        // to create the dropbox in the SNP pair list
-        creat_drop_box1("st_select_snp_pairs");
-        //brushweight function for the p_values of the snps
-        select_snp_stat_range(0);
+    //load p_values 
+    links.forEach(function(d) {
+        data_weight_pvalue.push(d[st_chosen])
+    });
+    //brushweight function for the p_values of the snps
+    select_snp_stat_range(0);
+        
 };
 
 /**
@@ -2632,13 +2566,11 @@ function creat_drop_box1(classinput) {
                     histogram_degree_SNPs(file_json, 0, 0, 0);
                 } else {
                     data_weight_pvalue = [];
-                    d3.json(file_json, function(json) {
-                        json.links.forEach(
-                            function(d) {
+                    links.forEach(
+                        function(d) {
                             data_weight_pvalue.push(d[st_chosen])
                         });
-                        select_snp_stat_range(0);
-                    })
+                    select_snp_stat_range(0);
                 }
             });
             break;
@@ -2995,7 +2927,7 @@ function select_snp_stat_range(if_zoom) {
             svg_brush.classed("selecting", !d3.event.target.empty());
             // filter for SNPs list
             d3.select("#hds_matrix").selectAll("svg").remove();
-            histogram_degree_SNPs(file_json, 0, 0, 1);
+            histogram_degree_SNPs(0, 0, 1);
 
         }
 
@@ -4516,7 +4448,7 @@ function start_heat_map(file_name) {
     // start plot matrix_plot.js
     read_file_to_matrix_plot(file_json);
     // list the SNPs
-    histogram_degree_SNPs(file_json, 0, 0, 0);
+    histogram_degree_SNPs(0, 0, 0);
     // list the links
     show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
 }
@@ -5106,7 +5038,7 @@ function matrix_plot(x1, x2, y1, y2) {
         svg.classed("selecting", !d3.event.target.empty());
         // call the SNPs list
         d3.select("#hds_matrix").selectAll("svg").remove();
-        histogram_degree_SNPs(file_json, 0, 1, 0);
+        histogram_degree_SNPs(0, 1, 0);
         // call the SNPs pair list 
         d3.select("#pairs").selectAll("p").remove();
         show_snp_pairs_list(file_json, 0, 0, 1);
@@ -5802,7 +5734,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     function brushend() {
         svg.classed("selecting", !d3.event.target.empty());
         d3.select("#hds_matrix").selectAll("svg").remove();
-        histogram_degree_SNPs(file_json, 0, 1, 0);
+        histogram_degree_SNPs(0, 1, 0);
     }
 }
 
