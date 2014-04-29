@@ -681,7 +681,7 @@ function histogram_edges_subgraphId(if_zoom) {
         });
         var li, ary;
 
-        while (min < max) {
+        while (min <= max) {
             li = data_probe_group1.lastIndexOf(min);
             ary = data_probe_group1.splice(0, li + 1);
             data_probe_group2.push(ary);
@@ -710,14 +710,11 @@ function histogram_edges_subgraphId(if_zoom) {
             bottom: 50,
             left: 150
         },
+
         width = 700 - margin.left - margin.right; 
 
-        if (d3.max(data_obj, function(d) {
-            return d.n_probe_group;
-            }) > 10) {
-                var height = 34.1796875 * d3.max(data_obj, function(d) {
-                    return d.n_probe_group;
-                }) - margin.top - margin.bottom; 
+        if ( data_obj.length  > 5) {
+            var height = 34.1796875 * data_obj.length - margin.top - margin.bottom; 
         } else {
             var height = 34.1796875 * 10 - margin.top - margin.bottom;
         }
@@ -3639,7 +3636,7 @@ function start_arc_plot() {
     graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
     histogram_edges_subgraphId(if_zoom);
-    // function in hist_degree_snps_plot.js to show SNP list
+    // function in histogram_degree_snps_plot.js to show SNP list
     histogram_degree_SNPs(0, 0, 0);
     // shows the snps pair list
     show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
@@ -3676,7 +3673,7 @@ function zoom_arc() {
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
-    histogram_degree_SNPs(0, 1, 0);
+    histogram_degree_SNPs(0, if_zoom, 0);
     histogram_edges_subgraphId(if_zoom);
 
     show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
