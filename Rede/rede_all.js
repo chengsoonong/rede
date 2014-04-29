@@ -49,9 +49,13 @@ var file_name_zoom;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 /*
- *Global variable for arc plot to check if it is in zoom function
+ *Global variable for to check if the user is in zoom function
  */
-var if_zoom;
+var if_zoom = 0;
+/*
+ *Global variable for to check if the user selected a specific stat range
+ */
+var if_stat_brush = 0;
 /**
  * Constant only for arc_plot.js to create the SVG
  * @const
@@ -156,6 +160,12 @@ var subgraphs = [];
  * @type {array[objects]} communities
  */
 var communities = [];
+/**
+ * Global variable that is used to store the information about the contingency
+ * tables of json file
+ * @type {array[objects]} cont_table 
+ */
+var cont_table = [];
 // --- data of json files
 
 
@@ -295,6 +305,7 @@ function load_data_json (file_name) {
     links = [];
     subgraphs = [];
     comunities = [];
+    cont_table = [];
     
     // empty array of optional statixtical tests
     st_1 = [];
@@ -323,6 +334,8 @@ function load_data_json (file_name) {
         subgraphs = json.subgraphs;
         // load the comunities of the json file
         communities = json.communities;
+        // load the information about the contingency table 
+        cont_table = json.cont_table;
         
         
        
@@ -346,7 +359,7 @@ function load_data_json (file_name) {
  * @param {number} idx
  * @param {string} filename
  */
-function cont_plot(idx, filename) {
+function cont_plot(idx) {
 
     var margin = {
         top: 20,
@@ -373,7 +386,126 @@ function cont_plot(idx, filename) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    }
+        var datact = cont_table[idx];
+        x.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        var l1_1 = 112.5,
+            l1_2 = 0,
+            l2_1 = 112.5 * 2,
+            l2_2 = 112.5,
+            l3_1 = 112.5 * 3,
+            l3_2 = 112.5 * 2,
+            l4_1 = 112.5 * 4 + 30,
+            l4_2 = 112.5 * 3 + 30;
+
+        //first row
+        plot_ct(1, 1, 2, l1_1, l1_2, -10, 122.5, datact["unv1"][0].controls / datact["total"].controls, 
+                datact["unv1"][0].cases / datact["total"].cases)
+        plot_ct(2, 4, 5, l1_1, l1_2, -10, 122.5, datact["biv"][0][0].controls / datact["total"].controls,
+                datact["biv"][0][0].cases / datact["total"].cases)
+        plot_ct(3, 6, 7, l1_1, l1_2, -10, 122.5, datact["biv"][0][1].controls / datact["total"].controls, 
+                datact["biv"][0][1].cases / datact["total"].cases)
+        plot_ct(4, 8, 9, l1_1, l1_2, -10, 122.5, datact["biv"][0][2].controls / datact["total"].controls,
+                datact["biv"][0][2].cases / datact["total"].cases)
+        //second row
+        plot_ct(5, 1, 2, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["unv1"][1].controls / datact["total"].controls,
+                datact["unv1"][1].cases / datact["total"].cases)
+        plot_ct(6, 4, 5, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][0].controls / datact["total"].controls,
+                datact["biv"][1][0].cases / datact["total"].cases)
+        plot_ct(7, 6, 7, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][1].controls / datact["total"].controls,
+                datact["biv"][1][1].cases / datact["total"].cases)
+        plot_ct(8, 8, 9, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][2].controls / datact["total"].controls,
+                datact["biv"][1][2].cases / datact["total"].cases)
+        //third row
+        plot_ct(9, 1, 2, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["unv1"][2].controls / datact["total"].controls,
+                datact["unv1"][2].cases / datact["total"].cases)
+        plot_ct(10, 4, 5, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][0].controls / datact["total"].controls,
+                datact["biv"][2][0].cases / datact["total"].cases)
+        plot_ct(11, 6, 7, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][1].controls / datact["total"].controls,
+                datact["biv"][2][1].cases / datact["total"].cases)
+        plot_ct(12, 8, 9, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][2].controls / datact["total"].controls,
+                datact["biv"][2][2].cases / datact["total"].cases)
+        //fourth row
+        plot_ct(13, 4, 5, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][0].controls / datact["total"].controls,
+                datact["unv2"][0].cases / datact["total"].cases)
+        plot_ct(14, 6, 7, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][1].controls / datact["total"].controls,
+                datact["unv2"][1].cases / datact["total"].cases)
+        plot_ct(15, 8, 9, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][2].controls / datact["total"].controls,
+                datact["unv2"][2].cases / datact["total"].cases)
+
+        function plot_ct(id, pos_x1, pos_x2, pos_y1, pos_y2, pos_y1r, pos_y2r, control, cases) {
+            // Plot a cell of the contingency table
+            var y = d3.scale.linear().domain([0, 1])
+                .range([pos_y1, pos_y2]);
+
+            svg.selectAll("rect" + id)
+                .data([0])
+                .enter()
+                .append("rect")
+                .attr("x", x(pos_x1) - 5)
+                .attr("y", pos_y1r) //y(1)-10 )=-10
+                .attr("width", 150)
+                .attr("height", pos_y2r) //y(1)-10, y(0)+10)=122.5
+                .attr("fill", function(d) {
+                    if (control > cases) {
+                        return "#4ed05f";
+                    } //green
+                    if (control < cases) {
+                        return "#d06057";
+                    } //red
+                    if (control == cases) {
+                        return "white";
+                    }
+                })
+                .attr("stroke", "black")
+                .attr("stroke-width", 1);
+
+            svg.selectAll(".bar" + id)
+                .data([{
+                    letter: pos_x1,
+                    frequency: control
+                }, {
+                    letter: pos_x2,
+                    frequency: cases
+                }])
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) {
+                    return x(d.letter) + 5;
+                })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) {
+                    return y(d.frequency);
+                }) //fill: steelblue
+                .attr("fill", "steelblue")
+                .attr("height", function(d) {
+                    return pos_y1 - y(d.frequency);
+                });
+
+            svg.selectAll(".text_ct")
+                .data([{
+                    letter: pos_x1,
+                    frequency: control
+                }, {
+                    letter: pos_x2,
+                    frequency: cases
+                }])
+                .enter()
+                .append("text")
+                .attr("class", "text_b")
+                .text(function(d) {
+                    return Math.round(d.frequency * 100) + "%";
+                })
+                .attr("x", function(d) {
+                    return x(d.letter) + 15;
+                })
+                .attr("y", function(d) {
+                    return y(d.frequency);
+                })
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "11px")
+                .attr("fill", "black");
+        }
+}
 // hist_degree_snps_plot.js
 /**
  * @fileoverview All functions to create the histogram Degree x SNPs plot
@@ -413,9 +545,7 @@ function histogram_degree_SNPs(probe_group, if_zoom, if_stat_brush) {
             allNodes_hes.push(d);
             data_degree_snp.push(d);
         });
-        // clear the variables for the next selection
-        stat_allNodes = [];
-        stat_links = [];
+        
     } else {
         links.forEach( function(d) {
             if (probe_group === 0) {
@@ -1247,129 +1377,7 @@ function matrix_comm_plot_minmap(x1, x2, y1, y2, mrect_x1, mrect_y1, mrect_x2, m
  * @param {number} idx
  * @param {string} filename
  */
-function ROC_plot(idx, filename) {
-    // ROC plot 
-    d3.json(filename, function (json) {
-    var datact = json.cont_table[idx];
-    x.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    var l1_1 = 112.5,
-        l1_2 = 0,
-        l2_1 = 112.5 * 2,
-        l2_2 = 112.5,
-        l3_1 = 112.5 * 3,
-        l3_2 = 112.5 * 2,
-        l4_1 = 112.5 * 4 + 30,
-        l4_2 = 112.5 * 3 + 30;
-    });
-
-    //first row
-    plot_ct(1, 1, 2, l1_1, l1_2, -10, 122.5, datact["unv1"][0].controls / datact["total"].controls, 
-            datact["unv1"][0].cases / datact["total"].cases)
-        plot_ct(2, 4, 5, l1_1, l1_2, -10, 122.5, datact["biv"][0][0].controls / datact["total"].controls,
-                datact["biv"][0][0].cases / datact["total"].cases)
-        plot_ct(3, 6, 7, l1_1, l1_2, -10, 122.5, datact["biv"][0][1].controls / datact["total"].controls, 
-                datact["biv"][0][1].cases / datact["total"].cases)
-        plot_ct(4, 8, 9, l1_1, l1_2, -10, 122.5, datact["biv"][0][2].controls / datact["total"].controls,
-                datact["biv"][0][2].cases / datact["total"].cases)
-        //second row
-        plot_ct(5, 1, 2, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["unv1"][1].controls / datact["total"].controls,
-                datact["unv1"][1].cases / datact["total"].cases)
-        plot_ct(6, 4, 5, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][0].controls / datact["total"].controls,
-                datact["biv"][1][0].cases / datact["total"].cases)
-        plot_ct(7, 6, 7, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][1].controls / datact["total"].controls,
-                datact["biv"][1][1].cases / datact["total"].cases)
-        plot_ct(8, 8, 9, l2_1, l2_2, 122.5 - 10, 122.5 - 10, datact["biv"][1][2].controls / datact["total"].controls,
-                datact["biv"][1][2].cases / datact["total"].cases)
-        //third row
-        plot_ct(9, 1, 2, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["unv1"][2].controls / datact["total"].controls,
-                datact["unv1"][2].cases / datact["total"].cases)
-        plot_ct(10, 4, 5, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][0].controls / datact["total"].controls,
-                datact["biv"][2][0].cases / datact["total"].cases)
-        plot_ct(11, 6, 7, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][1].controls / datact["total"].controls,
-                datact["biv"][2][1].cases / datact["total"].cases)
-        plot_ct(12, 8, 9, l3_1, l3_2, 122.5 * 2 - 20, 122.5 - 10, datact["biv"][2][2].controls / datact["total"].controls,
-                datact["biv"][2][2].cases / datact["total"].cases)
-        //fourth row
-        plot_ct(13, 4, 5, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][0].controls / datact["total"].controls,
-                datact["unv2"][0].cases / datact["total"].cases)
-        plot_ct(14, 6, 7, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][1].controls / datact["total"].controls,
-                datact["unv2"][1].cases / datact["total"].cases)
-        plot_ct(15, 8, 9, l4_1, l4_2, 122.5 * 3 - 30 + 30, 122.5 - 10, datact["unv2"][2].controls / datact["total"].controls,
-                datact["unv2"][2].cases / datact["total"].cases)
-
-        function plot_ct(id, pos_x1, pos_x2, pos_y1, pos_y2, pos_y1r, pos_y2r, control, cases) {
-            // Plot a cell of the contingency table
-            var y = d3.scale.linear().domain([0, 1])
-                .range([pos_y1, pos_y2]);
-
-            svg.selectAll("rect" + id)
-                .data([0])
-                .enter()
-                .append("rect")
-                .attr("x", x(pos_x1) - 5)
-                .attr("y", pos_y1r) //y(1)-10 )=-10
-                .attr("width", 150)
-                .attr("height", pos_y2r) //y(1)-10, y(0)+10)=122.5
-                .attr("fill", function(d) {
-                    if (control > cases) {
-                        return "#4ed05f";
-                    } //green
-                    if (control < cases) {
-                        return "#d06057";
-                    } //red
-                    if (control == cases) {
-                        return "white";
-                    }
-                })
-            .attr("stroke", "black")
-                .attr("stroke-width", 1);
-
-            svg.selectAll(".bar" + id)
-                .data([{
-                    letter: pos_x1,
-                    frequency: control
-                }, {
-                    letter: pos_x2,
-                    frequency: cases
-                }])
-            .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function(d) {
-                    return x(d.letter) + 5;
-                })
-            .attr("width", x.rangeBand())
-                .attr("y", function(d) {
-                    return y(d.frequency);
-                }) //fill: steelblue
-            .attr("fill", "steelblue")
-                .attr("height", function(d) {
-                    return pos_y1 - y(d.frequency);
-                });
-
-            svg.selectAll(".text_ct")
-                .data([{
-                    letter: pos_x1,
-                    frequency: control
-                }, {
-                    letter: pos_x2,
-                    frequency: cases
-                }])
-            .enter()
-                .append("text")
-                .attr("class", "text_b")
-                .text(function(d) {
-                    return Math.round(d.frequency * 100) + "%";
-                })
-            .attr("x", function(d) {
-                return x(d.letter) + 15;
-            })
-            .attr("y", function(d) {
-                return y(d.frequency);
-            })
-            .attr("font-family", "sans-serif")
-                .attr("font-size", "11px")
-                .attr("fill", "black");
-        }
+function ROC_plot(idx) {
     //Width and height
     var padding = 30;
 
@@ -1383,331 +1391,327 @@ function ROC_plot(idx, filename) {
     var width = 500 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
-    d3.json(filename, function(json) {
-        var datact2 = json.cont_table; 
+    function preval_mapping(dat, t0, t1) {
+        E = 0.0001;
+        return (dat.cases / t1) * (t0 / (dat.controls + E));
+    }
 
-        function preval_mapping(dat, t0, t1) {
-            E = 0.0001;
-            return (dat.cases / t1) * (t0 / (dat.controls + E));
+    function sort_unv(dat, t0, t1) {
+        var p = [];
+        var p_sort = [];
+        var dat_sort = [];
+        for (var i in dat) {
+            p.push(preval_mapping(dat[i], t0, t1))
+        }
+        for (var i in p) {
+            p_sort.push(p[i])
+        }
+        p_sort.sort(function(a, b) {
+            return b - a
+        });
+        for (var i in p_sort) {
+            id = p.indexOf(p_sort[i])
+                dat_sort.push(dat[id])
+                p[id] = "s" + p_sort[i]
+        }
+        return dat_sort
+    }
+
+    function sort_biv(dat, t0, t1) {
+        var dat_list = [];
+        var p = [];
+        var p_sort = [];
+        var dat_sort = [];
+        for (var i in [0, 1, 2]) {
+            for (var j in [0, 1, 2]) {
+                dat_list.push(dat[i][j])
+                    p.push(preval_mapping(dat[i][j], t0, t1))
+            }
         }
 
-        function sort_unv(dat, t0, t1) {
-            var p = [];
-            var p_sort = [];
-            var dat_sort = [];
+        for (var i in p) {
+            p_sort.push(p[i])
+        }
+
+        p_sort.sort(function(a, b) {
+            return b - a
+        });
+
+        for (var i in p_sort) {
+
+            id = p.indexOf(p_sort[i])
+                dat_sort.push(dat_list[id])
+                p[id] = "s" + p_sort[i]
+        }
+        return dat_sort
+    }
+
+    function dots_fpr_tpr(dat, t0, t1) {
+        var dat_fpr_tpr = []
+            var cas = 0
+            var con = 0
             for (var i in dat) {
-                p.push(preval_mapping(dat[i], t0, t1))
+                con = con + dat[i].controls
+                    cas = cas + dat[i].cases
+
+                    var fpr = con / t0
+                    var tpr = cas / t1
+
+                    dat_fpr_tpr.push({
+                        FPR: fpr,
+                    TPR: tpr
+                    })
             }
-            for (var i in p) {
-                p_sort.push(p[i])
-            }
-            p_sort.sort(function(a, b) {
-                return b - a
-            });
-            for (var i in p_sort) {
-                id = p.indexOf(p_sort[i])
-                    dat_sort.push(dat[id])
-                    p[id] = "s" + p_sort[i]
-            }
-            return dat_sort
-        }
+        return dat_fpr_tpr;
+    }
 
-        function sort_biv(dat, t0, t1) {
-            var dat_list = [];
-            var p = [];
-            var p_sort = [];
-            var dat_sort = [];
-            for (var i in [0, 1, 2]) {
-                for (var j in [0, 1, 2]) {
-                    dat_list.push(dat[i][j])
-                        p.push(preval_mapping(dat[i][j], t0, t1))
-                }
-            }
+    unva_data = dots_fpr_tpr(sort_unv(cont_table[idx].unv1, cont_table[idx].total.controls, cont_table[idx].total.cases),
+            cont_table[idx].total.controls, cont_table[idx].total.cases);
+    unvb_data = dots_fpr_tpr(sort_unv(cont_table[idx].unv2, cont_table[idx].total.controls, cont_table[idx].total.cases),
+            cont_table[idx].total.controls, cont_table[idx].total.cases);
+    biv_data = dots_fpr_tpr(sort_biv(cont_table[idx].biv, cont_table[idx].total.controls, cont_table[idx].total.cases), 
+            cont_table[idx].total.controls, cont_table[idx].total.cases);
 
-            for (var i in p) {
-                p_sort.push(p[i])
-            }
-
-            p_sort.sort(function(a, b) {
-                return b - a
-            });
-
-            for (var i in p_sort) {
-
-                id = p.indexOf(p_sort[i])
-                    dat_sort.push(dat_list[id])
-                    p[id] = "s" + p_sort[i]
-            }
-            return dat_sort
-        }
-
-        function dots_fpr_tpr(dat, t0, t1) {
-            var dat_fpr_tpr = []
-                var cas = 0
-                var con = 0
-                for (var i in dat) {
-                    con = con + dat[i].controls
-                        cas = cas + dat[i].cases
-
-                        var fpr = con / t0
-                        var tpr = cas / t1
-
-                        dat_fpr_tpr.push({
-                            FPR: fpr,
-                        TPR: tpr
-                        })
-                }
-            return dat_fpr_tpr;
-        }
-
-        unva_data = dots_fpr_tpr(sort_unv(datact2[idx].unv1, datact2[idx].total.controls, datact2[idx].total.cases),
-                datact2[idx].total.controls, datact2[idx].total.cases);
-        unvb_data = dots_fpr_tpr(sort_unv(datact2[idx].unv2, datact2[idx].total.controls, datact2[idx].total.cases),
-                datact2[idx].total.controls, datact2[idx].total.cases);
-        biv_data = dots_fpr_tpr(sort_biv(datact2[idx].biv, datact2[idx].total.controls, datact2[idx].total.cases), 
-                datact2[idx].total.controls, datact2[idx].total.cases);
-
-        var fpr = [d3.max(unva_data, function(d) {
+    var fpr = [d3.max(unva_data, function(d) {
+        return d.FPR;
+    }),
+        d3.max(unvb_data, function(d) {
             return d.FPR;
         }),
-            d3.max(unvb_data, function(d) {
-                return d.FPR;
-            }),
-            d3.max(biv_data, function(d) {
-                return d.FPR;
-            })
-        ];
+        d3.max(biv_data, function(d) {
+            return d.FPR;
+        })
+    ];
 
-        var tpr = [d3.max(unva_data, function(d) {
+    var tpr = [d3.max(unva_data, function(d) {
+        return d.TPR;
+    }),
+        d3.max(unvb_data, function(d) {
             return d.TPR;
         }),
-            d3.max(unvb_data, function(d) {
-                return d.TPR;
-            }),
-            d3.max(biv_data, function(d) {
-                return d.TPR;
-            })
-        ];
+        d3.max(biv_data, function(d) {
+            return d.TPR;
+        })
+    ];
 
-        var xScale = d3.scale.linear()
-            .domain([0, d3.max(fpr, function(d) {
-                return d;
-            })])
-        .range([0, width]);
+    var xScale = d3.scale.linear()
+        .domain([0, d3.max(fpr, function(d) {
+            return d;
+        })])
+    .range([0, width]);
 
-        var yScale = d3.scale.linear()
-            .domain([0, d3.max(tpr, function(d) {
-                return d;
-            })])
-        .range([height, 0]);
+    var yScale = d3.scale.linear()
+        .domain([0, d3.max(tpr, function(d) {
+            return d;
+        })])
+    .range([height, 0]);
 
-        //Define X axis
-        var xAxis = d3.svg.axis()
-            .scale(xScale)
-            .orient("bottom")
-            .ticks(5);
+    //Define X axis
+    var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient("bottom")
+        .ticks(5);
 
-        //Define Y axis
-        var yAxis = d3.svg.axis()
-            .scale(yScale)
-            .orient("left")
-            .ticks(5);
+    //Define Y axis
+    var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient("left")
+        .ticks(5);
 
-        //Define X axis
-        var xAxis2 = d3.svg.axis()
-            .scale(xScale)
-            .orient("top")
-            .ticks(5);
+    //Define X axis
+    var xAxis2 = d3.svg.axis()
+        .scale(xScale)
+        .orient("top")
+        .ticks(5);
 
-        //Define Y axis
-        var yAxis2 = d3.svg.axis()
-            .scale(yScale)
-            .orient("right")
-            .ticks(5);
+    //Define Y axis
+    var yAxis2 = d3.svg.axis()
+        .scale(yScale)
+        .orient("right")
+        .ticks(5);
 
-        var svg = d3.select("#rp").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select("#rp").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        function data2line(dat) {
-            str = "M " + xScale(0) + " " + yScale(0) + " L ";
-            for (var i in dat) {
-                str = str + xScale(dat[i].FPR) + " " + yScale(dat[i].TPR) + " L ";
-            }
-            return str.slice(0, -3)
-        };
+    function data2line(dat) {
+        str = "M " + xScale(0) + " " + yScale(0) + " L ";
+        for (var i in dat) {
+            str = str + xScale(dat[i].FPR) + " " + yScale(dat[i].TPR) + " L ";
+        }
+        return str.slice(0, -3)
+    };
 
-        svg.selectAll("line")
-            .data([1])
-            .enter()
-            .append("line")
-            .attr("class", "linechrom")
-            .attr("x1", xScale(0))
-            .attr("y1", yScale(0))
-            .attr("x2", xScale(1))
-            .attr("y2", yScale(1))
-            .attr("stroke-width", 1)
-            .attr("stroke-dasharray", 5)
-            .style("stroke", "black") 
-            .style("opacity", 0.2);
-
-        svg.append("svg:path")
-            .attr("d", data2line(biv_data))
-            .style("stroke-width", 2)
-            .style("stroke", "#ee1500")
-            .style("fill", "none");
-
-        svg.append("svg:path")
-            .attr("d", data2line(unva_data))
-            .style("stroke-width", 2)
-            .style("stroke", "#0d1dee")
-            .style("fill", "none");
-
-        svg.append("svg:path")
-            .attr("d", data2line(unvb_data))
-            .style("stroke-width", 2)
-            .style("stroke", "#00d70b")
-            .style("fill", "none");
-
-        svg.selectAll("path3")
-            .data(biv_data)
-            .enter().append("svg:path").style("fill", '#ee1500') //red
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("cross").size("30"));
-
-        svg.selectAll("path2")
-            .data(unva_data)
-            .enter().append("svg:path").style("fill", '#0d1dee') //blue
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("square").size("30"));
-
-        svg.selectAll("path1")
-            .data(unvb_data)
-            .enter().append("svg:path").style("fill", '#00d70b') //green
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
-
-        /*
-           circle - a circle.
-           cross - a Greek cross or plus sign.
-           diamond - a rhombus.
-           square - an axis-aligned square.
-           triangle-down - a downward-pointing equilateral triangle.
-           triangle-up - an upward-pointing equilateral triangle.
-           */
-        //----------------------------------------------------label --------------------------------------------			 
-        svg.selectAll("path1l")
-            .data([{FPR: 0.05,TPR: 0.95}])
-            .enter().append("svg:path").style("fill", '#0d1dee') //blue
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("square").size("30"));
-
-        svg.selectAll("path2l")
-            .data([{FPR: 0.05,TPR: 0.9}])
-            .enter().append("svg:path").style("fill", '#00d70b') //green
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
-
-        svg.selectAll("path3l")
-            .data([{FPR: 0.05,TPR: 0.85}])
-            .enter().append("svg:path").style("fill", '#ee1500') //red
-            .attr("transform", function(d) {
-                return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
-            })
-        .attr("d", d3.svg.symbol().type("cross").size("30"));
-
-        svg.selectAll("text")
-            .data([{
-                FPR: 0.0575,
-                TPR: 0.94
-            }, {
-                FPR: 0.0575,
-                TPR: 0.89
-            }, {
-                FPR: 0.0575,
-                TPR: 0.84
-            }])
+    svg.selectAll("line")
+        .data([1])
         .enter()
-            .append("text")
-            .text(function(d, i) {
-                if (i == 0) {
-                    return "SNPa (3 dots)";
-                }
-                if (i == 1) {
-                    return "SNPb (3 dots)";
-                }
-                if (i == 2) {
-                    return "SNPaSNPb (9 dots)";
-                }
-            })
-        .attr("x", function(d) {
-            return xScale(d.FPR);
+        .append("line")
+        .attr("class", "linechrom")
+        .attr("x1", xScale(0))
+        .attr("y1", yScale(0))
+        .attr("x2", xScale(1))
+        .attr("y2", yScale(1))
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", 5)
+        .style("stroke", "black") 
+        .style("opacity", 0.2);
+
+    svg.append("svg:path")
+        .attr("d", data2line(biv_data))
+        .style("stroke-width", 2)
+        .style("stroke", "#ee1500")
+        .style("fill", "none");
+
+    svg.append("svg:path")
+        .attr("d", data2line(unva_data))
+        .style("stroke-width", 2)
+        .style("stroke", "#0d1dee")
+        .style("fill", "none");
+
+    svg.append("svg:path")
+        .attr("d", data2line(unvb_data))
+        .style("stroke-width", 2)
+        .style("stroke", "#00d70b")
+        .style("fill", "none");
+
+    svg.selectAll("path3")
+        .data(biv_data)
+        .enter().append("svg:path").style("fill", '#ee1500') //red
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
         })
-        .attr("y", function(d) {
-            return yScale(d.TPR);
+    .attr("d", d3.svg.symbol().type("cross").size("30"));
+
+    svg.selectAll("path2")
+        .data(unva_data)
+        .enter().append("svg:path").style("fill", '#0d1dee') //blue
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
         })
-        .attr("font-family", "sans-serif")
-            .attr("font-size", "11px")
-            .attr("fill", function(d, i) {
-                if (i == 0) {
-                    return "#0d1dee";
-                }
-                if (i == 1) {
-                    return "#00d70b";
-                }
-                if (i == 2) {
-                    return "#ee1500";
-                }
-            });
+    .attr("d", d3.svg.symbol().type("square").size("30"));
 
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ label ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 			
-        //Create X axis
+    svg.selectAll("path1")
+        .data(unvb_data)
+        .enter().append("svg:path").style("fill", '#00d70b') //green
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+        })
+    .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
+
+    /*
+       circle - a circle.
+       cross - a Greek cross or plus sign.
+       diamond - a rhombus.
+       square - an axis-aligned square.
+       triangle-down - a downward-pointing equilateral triangle.
+       triangle-up - an upward-pointing equilateral triangle.
+       */
+    //----------------------------------------------------label --------------------------------------------			 
+    svg.selectAll("path1l")
+        .data([{FPR: 0.05,TPR: 0.95}])
+        .enter().append("svg:path").style("fill", '#0d1dee') //blue
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+        })
+    .attr("d", d3.svg.symbol().type("square").size("30"));
+
+    svg.selectAll("path2l")
+        .data([{FPR: 0.05,TPR: 0.9}])
+        .enter().append("svg:path").style("fill", '#00d70b') //green
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+        })
+    .attr("d", d3.svg.symbol().type("triangle-up").size("30"));
+
+    svg.selectAll("path3l")
+        .data([{FPR: 0.05,TPR: 0.85}])
+        .enter().append("svg:path").style("fill", '#ee1500') //red
+        .attr("transform", function(d) {
+            return "translate(" + xScale(d.FPR) + "," + yScale(d.TPR) + ")";
+        })
+    .attr("d", d3.svg.symbol().type("cross").size("30"));
+
+    svg.selectAll("text")
+        .data([{
+            FPR: 0.0575,
+            TPR: 0.94
+        }, {
+            FPR: 0.0575,
+            TPR: 0.89
+        }, {
+            FPR: 0.0575,
+            TPR: 0.84
+        }])
+    .enter()
+        .append("text")
+        .text(function(d, i) {
+            if (i == 0) {
+                return "SNPa (3 dots)";
+            }
+            if (i == 1) {
+                return "SNPb (3 dots)";
+            }
+            if (i == 2) {
+                return "SNPaSNPb (9 dots)";
+            }
+        })
+    .attr("x", function(d) {
+        return xScale(d.FPR);
+    })
+    .attr("y", function(d) {
+        return yScale(d.TPR);
+    })
+    .attr("font-family", "sans-serif")
+        .attr("font-size", "11px")
+        .attr("fill", function(d, i) {
+            if (i == 0) {
+                return "#0d1dee";
+            }
+            if (i == 1) {
+                return "#00d70b";
+            }
+            if (i == 2) {
+                return "#ee1500";
+            }
+        });
+
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ label ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 			
+    //Create X axis
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (height) + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width / 2)
+        .attr("y", 30)
+        .style("text-anchor", "end")
+        .text("FPR");
+
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + (height), 0 + ")")
+        .call(xAxis2)
+
+        //Create Y axis
         svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + (height) + ")")
-            .call(xAxis)
-            .append("text")
-            .attr("class", "label")
-            .attr("x", width / 2)
-            .attr("y", 30)
-            .style("text-anchor", "end")
-            .text("FPR");
+        .attr("class", "axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -100)
+        .attr("y", -30)
+        .style("text-anchor", "end")
+        .text("TPR");
 
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + (height), 0 + ")")
-            .call(xAxis2)
-
-            //Create Y axis
-            svg.append("g")
-            .attr("class", "axis")
-            .call(yAxis)
-            .append("text")
-            .attr("class", "label")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -100)
-            .attr("y", -30)
-            .style("text-anchor", "end")
-            .text("TPR");
-
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + width + ",0)")
-            .call(yAxis2)
-    });
-}
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + width + ",0)")
+        .call(yAxis2)
+};
 // SNP_pairs_list.js
 /**
  * @fileoverview All functions and variables to create the Manhattan plot
@@ -1717,15 +1721,17 @@ function ROC_plot(idx, filename) {
 // global array to store the highlighted links
 var highlighting_links = new Array();
 
-function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected_links) {
+function show_snp_pairs_list(file_name, stat_value, if_selected_stat, if_zoom, if_selected, selected_links) {
     // Plot nodes and SNPs_links for the default dataset
-    d3.json(file_name, function(json) { 
         var SNPs_links = [];
-        if(if_zoom) {
-            SNPs_links = zoom_links;
+        if(!if_zoom && !if_selected_stat) {
+            SNPs_links = links;
+        } else if(if_zoom && !if_selected_stat){
+            SNPs_links = zoom_links ; 
         } else {
-            SNPs_links = json.links; 
+            SNPs_links = stat_links; 
         }
+
         // check if link is already selected
         var temp = false;
         temp = highlighting_links.some(function (d) {
@@ -1767,13 +1773,12 @@ function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected
 
                 //"roc_id":0 file_json "bd.json"
                 d3.select("#rp").selectAll('svg').remove();
-                //ROC_plot (SNPs_links[i].roc_id,file_json)
-                ROC_plot(SNPs_links[i].ct_id, file_json)
+                // creates the ROC_plot 
+                ROC_plot(SNPs_links[i].ct_id)
 
                 d3.select("#contp").selectAll('svg').remove();
-                cont_plot(SNPs_links[i].ct_id, file_json)
+                cont_plot(SNPs_links[i].ct_id)
             });
-    });
     // remove all highlighted links if you use an other dataset
     check_file_name = file_name;
 }
@@ -2046,9 +2051,9 @@ function show_roc_ct() {
         d3.select("#table_snps").selectAll('table').remove();
         create_table_snps(links[idx_snps])
         d3.select("#rp").selectAll('svg').remove();
-        ROC_plot(links[idx_snps].ct_id, file_json)
+        ROC_plot(links[idx_snps].ct_id)
         d3.select("#contp").selectAll('svg').remove();
-        cont_plot(links[idx_snps].ct_id, file_json);
+        cont_plot(links[idx_snps].ct_id);
 
         if (plot_chosen === "p_cir") { 
 
@@ -2318,10 +2323,10 @@ function showInteract(d) {
 }; 
 
 // function to highlight the link
-function highlight_snp_pairs (d, i, if_zoom) {
+function highlight_snp_pairs (d, i) {
     // var to store the id of the link
     d3.select("#pairs").selectAll("p").remove() 
-    show_snp_pairs_list(file_json, select_dropbox_sort, 1 ,if_zoom , d.ct_id);
+    show_snp_pairs_list(file_json, select_dropbox_sort, if_stat_brush, if_zoom , 1, d.ct_id);
     var scrollpair = $("#pairs");
     $('html,body').animate({scrollTop: scrollpair.offset().top});
 }
@@ -2418,6 +2423,10 @@ function nodes_selected(s1, s2, link_selected) {
 /**
  * Do zoom when the button ZOOM is clicked */
 d3.select("body").select("#butz").on("click", function change() {
+    // set if_stat_brush to zero because it was not a specific stat region
+    // selected
+    if_stat_brush = 0;
+
     switch(plot_chosen) {
         case "p_arc":
             d3.select("#hesid").selectAll('svg').remove();
@@ -2440,6 +2449,9 @@ d3.select("body").select("#butz").on("click", function change() {
  * Does RESET when the RESET button  is clicked
  */
 d3.select("body").select("#butr").on("click", function change() { //button RESET
+    // set if_stat_brush to zero because it was not a specific stat region
+    // selected
+    if_stat_brush = 0;
 
     switch(plot_chosen) {
         case "p_arc":
@@ -2451,6 +2463,9 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             drop_stat_cma();
             pvalue_range_container();
             create_textzoom_container();
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+
             //start arc plot
             start_arc_plot();
             break;
@@ -2463,6 +2478,9 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
             drop_stat_cma();
             pvalue_range_container();
             create_textzoom_container();
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+
             //start circular plot
             start_cir_plot();
             break;
@@ -2485,12 +2503,12 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
     }
 });
 
-//function to load the stattistical values of the links
+//function to load the statistical values of the links
 function load_stat_value() {
     // remove elements from array
     data_weight_pvalue = [];
     //function located SNP_pairs_list.js to create list of links
-    show_snp_pairs_list(file_json, st_chosen, 0, 0);
+    show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
 
     //load p_values 
     links.forEach(function(d) {
@@ -2529,7 +2547,7 @@ function creat_drop_box1(classinput) {
             d3.select("#drop_sort").on("change",  function() {
                 st_chosen = this.value;
                 d3.select("#pairs").selectAll("p").remove();
-                show_snp_pairs_list(file_json, st_chosen, 0, 0 );
+                show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
             });             
             break;
 
@@ -2751,6 +2769,14 @@ function select_snp_stat_range(if_zoom) {
 
         function brushmove() {
             var s = d3.event.target.extent(); //return 2 value that are the 1ª and 2ª position the brush on x coordenate
+
+            if_stat_brush = 1;
+            // clear statistical array for filtering  the links
+            // (stat-p-value filter)
+            stat_links = [];
+            // clear array for the statistical p-value filter(SNPs)
+            stat_allNodes = []; 
+
             circle.classed("selected", function(d) {
                 return s[0] <= d && d <= s[1];
             }); //selected de circles in x cordenate for diferent vizualization
@@ -2763,13 +2789,9 @@ function select_snp_stat_range(if_zoom) {
 
             brush_value1 = s[0];
 
-            
-
             if (if_zoom) {
                 d3.select("#chart").selectAll(".link").transition().style("opacity", 0.3);
-                // clear statistical array for filtering  the links
-                // (stat-p-value filter)
-                stat_links = [];
+            
    
                 d3.select("#mainplot").selectAll(".link") 
                     .filter(function(d) {
@@ -2790,8 +2812,6 @@ function select_snp_stat_range(if_zoom) {
                 //to make all the selected nodes visible 
                 var link_selected_stat = [];
                 link_selected_stat = nodes_selected(s[0], s[1], zoom_links);
-                // clear array for the statistical p-value filter(SNPs)
-                stat_allNodes = []; 
 
                 d3.select("#chart")
                     .selectAll("g .circle_zoom")
@@ -3193,7 +3213,7 @@ function create_arc_plot(x1, x2) {
             return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                 end_position_x + "," + end_position_y ; 
         })
-    .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 0);});
+    .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
 };
 // ---------------------------------- create arc plot ----------------------------------------
 
@@ -3596,7 +3616,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                 end_position_x + "," + end_position_y ; 
         })
-        .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 1);});
+        .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
    };
  
 // arc_view.js
@@ -3639,7 +3659,7 @@ function start_arc_plot() {
     // function in histogram_degree_snps_plot.js to show SNP list
     histogram_degree_SNPs(0, 0, 0);
     // shows the snps pair list
-    show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
+    show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
 };
 
 // function to prepair everything for the zoom function of arc_plot
@@ -3676,7 +3696,7 @@ function zoom_arc() {
     histogram_degree_SNPs(0, if_zoom, 0);
     histogram_edges_subgraphId(if_zoom);
 
-    show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
+    show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
 };
 
 //function to display the all informaiton of the interaction of SNP
@@ -4026,7 +4046,7 @@ function Create_SNP_association() {
             .style("opacity", 0.7)
             .style("fill", "none")
             .attr("d", link()) 
-            .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 0);});
+            .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
         //  use_communities="no"	//check if there is communities in the json file 
 
         // Write out the data in text
@@ -4447,7 +4467,7 @@ function start_heat_map(file_name) {
     // list the SNPs
     histogram_degree_SNPs(0, 0, 0);
     // list the links
-    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
+    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, if_zoom, 0);
 }
 function zoom_heatmap(file_name) {
     // write file name in the global var file_json
@@ -4492,7 +4512,7 @@ function load_stat_value_mat(file_json) {
         st_chosen_colourscale1 = st_1[0];
         st_chosen_colourscale2 = st_1[0];
         //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, 0);
+        show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, 0, 0);
         
         // to create the available statistical test of the dataset located view_graph.js (l.421)
         creat_drop_box_man("drop_sort");
@@ -4531,7 +4551,7 @@ function creat_drop_box_man(classinput) {
             d3.select("#drop_sort").on("change",  function() {
                 st_chosen = this.value;
                 d3.select("#pairs").selectAll("p").remove();
-                show_snp_pairs_list(file_json, st_chosen, 0, 0 );
+                show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
             });             
             break;
 
@@ -5038,7 +5058,7 @@ function matrix_plot(x1, x2, y1, y2) {
         histogram_degree_SNPs(0, 1, 0);
         // call the SNPs pair list 
         d3.select("#pairs").selectAll("p").remove();
-        show_snp_pairs_list(file_json, 0, 0, 1);
+        show_snp_pairs_list(file_json, 0, if_stat_brush, if_zoom, 0);
     }
 }
 
@@ -5240,7 +5260,7 @@ function start_manhattan_plot(file_name) {
     // SNP list
     histogram_degree_SNPs(file_json, 0, 0, 0);
     // SNP links
-    show_snp_pairs_list(file_json, st_chosen, 0);
+    show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
 }
  
 // function for the zoom of the manhattan plot
