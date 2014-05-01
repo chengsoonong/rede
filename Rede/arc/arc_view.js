@@ -17,35 +17,33 @@ var if_zoom;
 
 
 // everything needed in arcplot
-function start_arc_plot(file_name) {
+function start_arc_plot() {
 
     // remove the old plot the probe-groups and SNP list
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
-    
-    // write file_name in the global var file_json
-    file_json = file_name;
-    
+        
     // set if_zoom on 0
     if_zoom = 0;
-   
-    // load statistical values
-    load_stat_value(file_json);
+    // load_stat_values
+    load_stat_value(); 
+    
 
     // functions in arc_plot.js
-    read_file_to_arc_plot(file_json);
+    read_file_to_arc_plot();
+    select_snp_stat_range(if_zoom);
     graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
-    histogram_edges_subgraphId(file_json, if_zoom);
-    // function in hist_degree_snps_plot.js to show SNP list
-    histogram_degree_SNPs(file_json, 0, 0, 0);
+    histogram_edges_subgraphId(if_zoom);
+    // function in histogram_degree_snps_plot.js to show SNP list
+    histogram_degree_SNPs(0, 0, 0);
+    // shows the snps pair list
+    show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
 };
 
 // function to prepair everything for the zoom function of arc_plot
-function zoom_arc(file_name) {
-    // write file_name in the global variable file_json
-    file_json = file_name;
+function zoom_arc() {
 
     // remove the old containers
     d3.select("#hesid").selectAll('svg').remove();
@@ -75,10 +73,10 @@ function zoom_arc(file_name) {
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
-    histogram_degree_SNPs(file_json, 0, 1, 0);
-    histogram_edges_subgraphId(file_json, if_zoom);
+    histogram_degree_SNPs(0, if_zoom, 0);
+    histogram_edges_subgraphId(if_zoom);
 
-    show_snp_pairs_list(file_json, st_chosen, 0, if_zoom);
+    show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
 };
 
 //function to display the all informaiton of the interaction of SNP
@@ -95,4 +93,4 @@ function showInteract(d) {
         }
     }
     return str;
-}; 
+};  
