@@ -1955,8 +1955,14 @@ function upload_json() {
 
             // create used containers
             drop_stat_cma();
+            //the first element to be visualited
+            st_chosen = st_1[0];
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+            // to create the dropbox in the SNP pair list
+            creat_drop_box1("st_select_snp_pairs");
             // start manhattan plot
-            start_manhattan_plot(data_uri);
+            start_manhattan_plot();
             break;
         case "p_mat":
             // remove all unused containers
@@ -2433,11 +2439,10 @@ d3.select("body").select("#butz").on("click", function change() {
             zoom_arc()
             break;
         case "p_cir":
-            zoom_arc()
             zoom_circular();
             break;
         case "p_man":
-            zoom_manhattan(file_json);
+            zoom_manhattan();
             break;
         case "p_mat":
             zoom_heatmap(file_json);
@@ -2487,9 +2492,7 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
         case "p_man":
             // remove all unused containers
             remove_section();
-
-            // create used containers
-            drop_stat_cma();
+            
             // start manhattan plot
             start_manhattan_plot();
             break;
@@ -2508,7 +2511,7 @@ function load_stat_value() {
     // remove elements from array
     data_weight_pvalue = [];
     //function located SNP_pairs_list.js to create list of links
-    show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
+    show_snp_pairs_list(st_chosen, 0, 0, 0);
 
     //load p_values 
     links.forEach(function(d) {
@@ -2572,13 +2575,7 @@ function creat_drop_box1(classinput) {
                 st_chosen = this.value;
                 //load p 
                 if(plot_chosen == "p_man") {
-                    d3.select("#chart").selectAll('svg').remove();
-                    d3.select("#scale_bar").selectAll('svg').remove();
-                    d3.select("#minmap_mp").selectAll('svg').remove();
-                    d3.select("#hds_matrix").selectAll('svg').remove();
-                    read_file_to_manhattan_plot(file_json);
-
-                    histogram_degree_SNPs(file_json, 0, 0, 0);
+                    start_manhattan_plot(); 
                 } else {
                     data_weight_pvalue = [];
                     links.forEach(
@@ -5214,7 +5211,7 @@ function matrix_plot_minmap(x1, x2, y1, y2, mrect_x1, mrect_y1, mrect_x2, mrect_
         .attr("class", "ymataxis")
         .attr("transform", "translate(" + width + ",0)")
         .call(yAxis2)
-}
+};
 // mangraph.js
 /**
  * @fileoverview Ruling file for the manhattan plot
@@ -5242,10 +5239,10 @@ var x_1, x_2, y_1, y_2;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 //------------------------------------------ load -  first vizualization   ---------------------------------------------- 
-function start_manhattan_plot(file_name) {
-    // store the file name in the global var file_json
-    file_json = file_name; 
+function start_manhattan_plot() {
 
+    d3.select("#chart").selectAll("svg").remove();
+    d3.select("#minmap_mp").selectAll("svg").remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
     d3.select("#table_snps").selectAll('table').remove();
     d3.select("#load_data").remove();
@@ -5254,17 +5251,17 @@ function start_manhattan_plot(file_name) {
     create_container_manhattan();
     create_label_button();
     // load statistical values
-    load_stat_value(file_json);
+    load_stat_value();
     // start manhattan plot
-    read_file_to_manhattan_plot(file_json);
+    read_file_to_manhattan_plot();
     // SNP list
-    histogram_degree_SNPs(file_json, 0, 0, 0);
+    histogram_degree_SNPs(0, 0, 0);
     // SNP links
-    show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
+    show_snp_pairs_list(st_chosen, 0, 0, 0);
 }
  
 // function for the zoom of the manhattan plot
-function zoom_manhattan(file_name) {
+function zoom_manhattan() {
     
     if (data_from_HDS === "no") {
         d3.select("#chart").selectAll('svg').remove();
@@ -5431,16 +5428,11 @@ var temp_man = new Array();
  * Read a .json to inicialaze the variables and call the function manhattan_plot() to craete the manhattan plot
  * @param {string} file_name
  */
-function read_file_to_manhattan_plot(file_name) {
+function read_file_to_manhattan_plot() {
     data = new Array();
-    allNodes = new Array();
-    var data_weight_pvalue = new Array();
 
-    d3.json(file_name, function(json) {
-
-        links.forEach(
+    links.forEach(
             function(d) { //this will fill with data the array
-                data_weight_pvalue.push(d[st_chosen]);
                 if (allNodes[d.source].chrom === 1) { //"chr"+d.chrom+':'+d.bp_position
                     data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
                         allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position, d.source]);
@@ -5458,25 +5450,25 @@ function read_file_to_manhattan_plot(file_name) {
                         allNodes[d.target].bp_position, d.target]);
                 }
             });
-        //var for maximum and minimum value of p-values from the dataset 
-        var min_pvalue = d3.min(data_weight_pvalue, function(d) {
-            return d;
-        });
-        var max_pvalue = d3.max(data_weight_pvalue, function(d) {
-            return d;
-        });
-        // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
-        var extend_scale = (max_pvalue - min_pvalue) *0.05;
-        
-        ix_1 = 0;
-        ix_2 = chrom_lenght;
-        iy_1 = min_pvalue - extend_scale;
-        iy_2 = max_pvalue + extend_scale;
 
-        data_from_HDS = "no"
-        manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
-        manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
+    //var for maximum and minimum value of p-values from the dataset 
+    var min_pvalue = d3.min(data_weight_pvalue, function(d) {
+        return d;
     });
+    var max_pvalue = d3.max(data_weight_pvalue, function(d) {
+        return d;
+    });
+    // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
+    var extend_scale = (max_pvalue - min_pvalue) *0.05;
+
+    ix_1 = 0;
+    ix_2 = chrom_lenght;
+    iy_1 = min_pvalue - extend_scale;
+    iy_2 = max_pvalue + extend_scale;
+
+    data_from_HDS = "no"
+    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
+    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
 }
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ read json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
