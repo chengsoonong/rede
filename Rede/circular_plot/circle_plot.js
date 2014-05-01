@@ -80,9 +80,6 @@ function Create_chr_circle(view_chr, view_start, view_end) {
     all_chrom = Genome();
     all_chrom.set_zoom(view_chr, view_start, view_end);
     //create array that will receive objects with information about SNP from .json 
-    allNodes = new Array(); 
-    //create array that will receive the weight value from .json
-    data_weight_pvalue = new Array(); 
 
     //create the vizualization of the chromosomes in circles.
     svg.selectAll("path") 
@@ -178,18 +175,9 @@ function Create_chr_circle(view_chr, view_start, view_end) {
 };
 
 /**
- * Create all associations betewen the SNPs
+ * Create all associations between the SNPs
  */
-function Create_SNP_association(file_name) {
-    // Plot nodes and links for the default dataset
-    d3.json(file_name, function(json) { 
-        links = json.links; 
-        var subgraphs = json.subgraphs;
-        communities = json.communities;
-
-        json.nodes.forEach(function(d) {
-            allNodes.push(d)
-        });
+function Create_SNP_association() {
 
         // Draw the marks for each snp   - small marks in chromosome 
         svg.selectAll("path.vertex")
@@ -394,7 +382,7 @@ function Create_SNP_association(file_name) {
             .style("opacity", 0.7)
             .style("fill", "none")
             .attr("d", link()) 
-            .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 0);});
+            .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
         //  use_communities="no"	//check if there is communities in the json file 
 
         // Write out the data in text
@@ -411,7 +399,6 @@ function Create_SNP_association(file_name) {
             .text(function(d) {
                 return showSnp(d);
             });
-    });
 
 };
 
@@ -534,4 +521,3 @@ function fade(opacity) {
             });
     };
 };
-
