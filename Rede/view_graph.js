@@ -259,9 +259,7 @@ function upload_json() {
             remove_section();
             //the first element to be visualited
             st_chosen = st_1[0];
-            // to create the dropbox in the SNP pair list
-            creat_drop_box1("st_select_snp_pairs");
-
+            
             // start plot heat-map
             start_heat_map();
             break;
@@ -786,7 +784,15 @@ d3.select("body").select("#butr").on("click", function change() { //button RESET
         case "p_man":
             // remove all unused containers
             remove_section();
-            
+
+            // create used containers
+            drop_stat_cma();
+            //the first element to be visualited
+            st_chosen = st_1[0];
+            // to create the available statistical test of the dataset located 
+            creat_drop_box1("st_select2");
+            // to create the dropbox in the SNP pair list
+            creat_drop_box1("st_select_snp_pairs");
             // start manhattan plot
             start_manhattan_plot();
             break;
