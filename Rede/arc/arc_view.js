@@ -20,7 +20,6 @@ var if_zoom;
 function start_arc_plot() {
 
     // remove the old plot the probe-groups and SNP list
-    d3.select("#chart").selectAll('svg').remove();
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
         
