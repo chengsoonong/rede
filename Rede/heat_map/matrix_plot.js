@@ -18,58 +18,53 @@ var array_SNPs = [];
  * Read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
  * @param {string} file_name
  */
-function read_file_to_matrix_plot(file_name) {
-    //this function read a .json to inicialaze the variables and call the function matrix_plot() to craete the matrix plot
-    allNodes = new Array(); 
+//this function read a .json to inicialaze the variables and call the
+//function matrix_plot() to craete the matrix plot
+function read_file_to_matrix_plot() {
     var dic_chr = {};
     var n_idx = 0;
     data_obj_m = [];
     array_SNPs = [];
-    d3.json(file_name, function(json) {
-        var links = json.links;
-        json.nodes.forEach(
-            function(d) {
-                allNodes.push(d)
-                array_SNPs.push("chr" + d.chrom + ':' + d.bp_position)
-                dic_chr["chr" + d.chrom + ':' + d.bp_position] = n_idx
-                n_idx++
-            });
-        json.links.forEach(
-            function(d) {
-                var obj = {};
-                // temporary variable
-                var temp;
-                // check to place the points on the correct side of the diagonal  
-                if(d.source > d.target) {
-                    temp = d.target;
-                    d.target = d.source;
-                    d.source = temp;
-                }
-                obj["label_x"] = dic_chr["chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position];
-                obj["label_y"] = dic_chr["chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position];
-                for (var i in d) {
-                    if (i != "assoc_group" &&  i != "source" && i != "target" && i != "probe_group") {
-                        obj[i] = d[i]
-                    }
-                }
-                data_obj_m.push(obj);
-            });
-
-        function creat_obj(labelx, labely) { //não preciso mais disso
-            var obj = {};
-            obj.label_x = labelx;
-            obj.label_y = labely;
-            return obj;
-        }
-
-        mix_1 = 0;
-        mix_2 = array_SNPs.length - 1;
-        miy_1 = 0;
-        miy_2 = array_SNPs.length - 1;
-
-        matrix_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0, 0, 0, 0)
-        matrix_plot(mix_1, mix_2, miy_1, miy_2)
+    allNodes.forEach(function(d) {
+        array_SNPs.push("chr" + d.chrom + ':' + d.bp_position)
+        dic_chr["chr" + d.chrom + ':' + d.bp_position] = n_idx
+        n_idx++
     });
+
+    links.forEach( function(d) {
+        var obj = {};
+        // temporary variable
+        var temp;
+        // check to place the points on the correct side of the diagonal  
+        if(d.source > d.target) {
+            temp = d.target;
+            d.target = d.source;
+            d.source = temp;
+        }
+        obj["label_x"] = dic_chr["chr" + allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position];
+        obj["label_y"] = dic_chr["chr" + allNodes[d.target].chrom + ':' + allNodes[d.target].bp_position];
+        for (var i in d) {
+            if (i != "assoc_group" &&  i != "source" && i != "target" && i != "probe_group") {
+                obj[i] = d[i]
+            }
+        }
+        data_obj_m.push(obj);
+    });
+
+    function creat_obj(labelx, labely) { //não preciso mais disso
+        var obj = {};
+        obj.label_x = labelx;
+        obj.label_y = labely;
+        return obj;
+    }
+
+    mix_1 = 0;
+    mix_2 = array_SNPs.length - 1;
+    miy_1 = 0;
+    miy_2 = array_SNPs.length - 1;
+
+    matrix_plot_minmap(mix_1, mix_2, miy_1, miy_2, 0, 0, 0, 0)
+        matrix_plot(mix_1, mix_2, miy_1, miy_2)
 }
 
 /**
@@ -416,13 +411,14 @@ function matrix_plot(x1, x2, y1, y2) {
     }
 
     function brushend() {
+        if_zoom = 1;
         svg.classed("selecting", !d3.event.target.empty());
         // call the SNPs list
         d3.select("#hds_matrix").selectAll("svg").remove();
-        histogram_degree_SNPs(file_json, 0, 1, 0);
+        histogram_degree_SNPs(0, 1, 0);
         // call the SNPs pair list 
         d3.select("#pairs").selectAll("p").remove();
-        show_snp_pairs_list(file_json, 0, 0, 1);
+        show_snp_pairs_list(file_json, st_chosen, 0, if_zoom, 0);
     }
 }
 
@@ -578,4 +574,4 @@ function matrix_plot_minmap(x1, x2, y1, y2, mrect_x1, mrect_y1, mrect_x2, mrect_
         .attr("class", "ymataxis")
         .attr("transform", "translate(" + width + ",0)")
         .call(yAxis2)
-}
+};

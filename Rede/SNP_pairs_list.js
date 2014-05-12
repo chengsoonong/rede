@@ -6,15 +6,17 @@
 // global array to store the highlighted links
 var highlighting_links = new Array();
 
-function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected_links) {
+function show_snp_pairs_list(file_name, stat_test, if_selected_stat, if_zoom, if_selected, selected_links) {
     // Plot nodes and SNPs_links for the default dataset
-    d3.json(file_name, function(json) { 
         var SNPs_links = [];
-        if(if_zoom) {
-            SNPs_links = zoom_links;
+        if(!if_zoom && !if_selected_stat) {
+            SNPs_links = links;
+        } else if(if_zoom && !if_selected_stat){
+            SNPs_links = zoom_links ; 
         } else {
-            SNPs_links = json.links; 
+            SNPs_links = stat_links; 
         }
+
         // check if link is already selected
         var temp = false;
         temp = highlighting_links.some(function (d) {
@@ -30,7 +32,7 @@ function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected
 
         d3.select("#pairs").selectAll("p")
             .data(SNPs_links.sort(function(a, b) {
-                return b[stat_value] - a[stat_value];
+                return b[stat_test] - a[stat_test];
             }))
             .enter().append("p")
             .attr("id", function (d) {
@@ -56,13 +58,12 @@ function show_snp_pairs_list(file_name, stat_value,if_selected, if_zoom,selected
 
                 //"roc_id":0 file_json "bd.json"
                 d3.select("#rp").selectAll('svg').remove();
-                //ROC_plot (SNPs_links[i].roc_id,file_json)
-                ROC_plot(SNPs_links[i].ct_id, file_json)
+                // creates the ROC_plot 
+                ROC_plot(SNPs_links[i].ct_id)
 
                 d3.select("#contp").selectAll('svg').remove();
-                cont_plot(SNPs_links[i].ct_id, file_json)
+                cont_plot(SNPs_links[i].ct_id)
             });
-    });
     // remove all highlighted links if you use an other dataset
     check_file_name = file_name;
 }

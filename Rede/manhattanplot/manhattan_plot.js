@@ -44,20 +44,11 @@ var temp_man = new Array();
  * Read a .json to inicialaze the variables and call the function manhattan_plot() to craete the manhattan plot
  * @param {string} file_name
  */
-function read_file_to_manhattan_plot(file_name) {
+function read_file_to_manhattan_plot() {
     data = new Array();
-    allNodes = new Array();
-    var data_weight_pvalue = new Array();
 
-    d3.json(file_name, function(json) {
-        var links = json.links; 
-        json.nodes.forEach(function(d) {
-            allNodes.push(d)
-        });
-
-        json.links.forEach(
+    links.forEach(
             function(d) { //this will fill with data the array
-                data_weight_pvalue.push(d[st_chosen]);
                 if (allNodes[d.source].chrom === 1) { //"chr"+d.chrom+':'+d.bp_position
                     data.push([allNodes[d.source].bp_position, d[st_chosen], allNodes[d.source].degree, "chr" +
                         allNodes[d.source].chrom + ':' + allNodes[d.source].bp_position, d.source]);
@@ -75,25 +66,25 @@ function read_file_to_manhattan_plot(file_name) {
                         allNodes[d.target].bp_position, d.target]);
                 }
             });
-        //var for maximum and minimum value of p-values from the dataset 
-        var min_pvalue = d3.min(data_weight_pvalue, function(d) {
-            return d;
-        });
-        var max_pvalue = d3.max(data_weight_pvalue, function(d) {
-            return d;
-        });
-        // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
-        var extend_scale = (max_pvalue - min_pvalue) *0.05;
-        
-        ix_1 = 0;
-        ix_2 = chrom_lenght;
-        iy_1 = min_pvalue - extend_scale;
-        iy_2 = max_pvalue + extend_scale;
 
-        data_from_HDS = "no"
-        manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
-        manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
+    //var for maximum and minimum value of p-values from the dataset 
+    var min_pvalue = d3.min(data_weight_pvalue, function(d) {
+        return d;
     });
+    var max_pvalue = d3.max(data_weight_pvalue, function(d) {
+        return d;
+    });
+    // var which defined the extra space in the bottom and the top of the -log(p-value) axis dynamically to the dataset
+    var extend_scale = (max_pvalue - min_pvalue) *0.05;
+
+    ix_1 = 0;
+    ix_2 = chrom_lenght;
+    iy_1 = min_pvalue - extend_scale;
+    iy_2 = max_pvalue + extend_scale;
+
+    data_from_HDS = "no"
+    manhattan_plot_minmap(ix_1, ix_2, iy_1, iy_2, 0, 0, 0, 0, data);
+    manhattan_plot(ix_1, ix_2, iy_1, iy_2, data);
 }
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ read json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -368,7 +359,7 @@ function manhattan_plot(x1, x2, y1, y2, data) {
     function brushend() {
         svg.classed("selecting", !d3.event.target.empty());
         d3.select("#hds_matrix").selectAll("svg").remove();
-        histogram_degree_SNPs(file_json, 0, 1, 0);
+        histogram_degree_SNPs(0, 1, 0);
     }
 }
 

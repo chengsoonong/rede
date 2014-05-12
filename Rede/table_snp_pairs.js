@@ -71,4 +71,4 @@ function create_table_snps(dat) {
             return d;
         })
         .style("font-size", "12px");
-}
+};

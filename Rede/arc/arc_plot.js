@@ -96,26 +96,14 @@ var zoom_allNodes = [],
  * Read a .json to initialize the variables and call the function arc_plot() to create the arc plot
  * @param {string} file_name
  */
-function read_file_to_arc_plot(file_name) {
+function read_file_to_arc_plot() {
     //everything needed in arcplot
-    file_name_zoom = file_name;
-
-    // load data from json file
-    d3.json(file_name, function(json) {
-        //function to load the the links
-        json.links.forEach(function(d) {
-            links.push(d);
-        });
-        // function to fill the information of the nodes in allNodes
-        json.nodes.forEach(function(d) {
-            allNodes.push(d);
-        });
+    file_name_zoom = file_json;
 
         ix_1 = 0;
         ix_2 = chrom_length;
         // function for plotting the arc SNP interaction plot 
         create_arc_plot(ix_1, ix_2);
-    });
 };
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ read json file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -342,7 +330,7 @@ function create_arc_plot(x1, x2) {
             return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                 end_position_x + "," + end_position_y ; 
         })
-    .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 0);});
+    .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
 };
 // ---------------------------------- create arc plot ----------------------------------------
 
@@ -745,6 +733,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             return "M" + start_position_x + "," + start_position_y +  " C" + c1x + "," + c1y + "," + c2x + "," + c2y + " " + 
                 end_position_x + "," + end_position_y ; 
         })
-        .on("click" , function(d,i) { return highlight_snp_pairs(d, i, 1);});
+        .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
    };
  
+

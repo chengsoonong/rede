@@ -27,9 +27,7 @@ var select_dropbox_scale2;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Global variable ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 // start heat map plot
-function start_heat_map(file_name) {
-    // write file name in the global var file_json
-    file_json = file_name; 
+function start_heat_map() {
     // Heat map of association matrix
     d3.select("#load_data").remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
@@ -38,22 +36,23 @@ function start_heat_map(file_name) {
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#minmap_matrixp").selectAll('svg').remove();
     d3.select("#container_matrix").remove();
+
+    if_zoom = 0;
     
     // create the container for the statistical bars under the plot
     create_stat_container_mat();
 
     // load the statistical values of the heat-map
-    load_stat_value_mat(file_json);
+    load_stat_value_mat();
     // start plot matrix_plot.js
     read_file_to_matrix_plot(file_json);
     // list the SNPs
-    histogram_degree_SNPs(file_json, 0, 0, 0);
+    histogram_degree_SNPs(0, 0, 0);
     // list the links
-    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0);
+    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, if_zoom, 0);
 }
-function zoom_heatmap(file_name) {
-    // write file name in the global var file_json
-    file_json = file_name;
+function zoom_heatmap() {
+    if_zoom = 1;
     // Heat map of association matrix
     d3.select("#chart").selectAll('svg').remove();
     d3.select("#minmap_matrixp").selectAll('svg').remove();
@@ -74,36 +73,26 @@ function zoom_heatmap(file_name) {
 }; 
 
 // function to load the stattistical values of the links
-function load_stat_value_mat(file_json) {
+function load_stat_value_mat() {
     // remove old statistical values
     data_weight_pvalue = [];
-    
-    // remove the optional statistical test if you select a new plot
-    statOptions = [];
-    // load data from json file
-    d3.json(file_json, function(json) {
-        links = json.links;
-        //for loop to get all available statistical test of the dataset
-        for (var i in json.links[0]) {
-            if (i != "assoc_group" && i != "source" && i != "target" && i != "probe_group" && i != "ct_id") {
-                statOptions[i] = i;
-                st_1.push(i);  
-            }
-        }
-        //the first element to be visualited
-        st_chosen_colourscale1 = st_1[0];
-        st_chosen_colourscale2 = st_1[0];
-        //function located SNP_pairs_list.js to create list of links
-        show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, 0);
-        
-        // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box_man("drop_sort");
 
-        // to create the available statistical test of the dataset located view_graph.js (l.421)
-        creat_drop_box_man("scalecolor1_dropbox");
-        // to create the dropbox in the SNP pair list
-        creat_drop_box_man("scalecolor2_dropbox");
-    });
+    // remove the optional statistical test if you select a new plot
+    // load data from json file
+    //for loop to get all available statistical test of the dataset
+    //the first element to be visualited
+    st_chosen_colourscale1 = st_1[0];
+    st_chosen_colourscale2 = st_1[0];
+    //function located SNP_pairs_list.js to create list of links
+    show_snp_pairs_list(file_json, st_chosen_colourscale1, 0, 0, 0);
+
+    // to create the available statistical test of the dataset located view_graph.js (l.421)
+    creat_drop_box_man("drop_sort");
+
+    // to create the available statistical test of the dataset located view_graph.js (l.421)
+    creat_drop_box_man("scalecolor1_dropbox");
+    // to create the dropbox in the SNP pair list
+    creat_drop_box_man("scalecolor2_dropbox");
 }
 /**
  * Create the dropbox statistical test to circle plot and manhattan plot
@@ -133,7 +122,7 @@ function creat_drop_box_man(classinput) {
             d3.select("#drop_sort").on("change",  function() {
                 st_chosen = this.value;
                 d3.select("#pairs").selectAll("p").remove();
-                show_snp_pairs_list(file_json, st_chosen, 0, 0 );
+                show_snp_pairs_list(file_json, st_chosen, 0, 0, 0);
             });             
             break;
 
@@ -158,7 +147,7 @@ function creat_drop_box_man(classinput) {
                 d3.select("#scalecolor_matrix2").selectAll('svg').remove();
                 d3.select("#minmap_matrixp").selectAll('svg').remove();
                 d3.select("#chart").selectAll('svg').remove();
-                read_file_to_matrix_plot(file_json);
+                read_file_to_matrix_plot();
             });             
             break;
 
@@ -182,7 +171,7 @@ function creat_drop_box_man(classinput) {
                 d3.select("#scalecolor_matrix2").selectAll('svg').remove();
                 d3.select("#minmap_matrixp").selectAll('svg').remove();
                 d3.select("#chart").selectAll('svg').remove();
-                read_file_to_matrix_plot(file_json);
+                read_file_to_matrix_plot();
             });             
             break;
         }

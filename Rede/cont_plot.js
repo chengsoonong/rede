@@ -11,7 +11,7 @@
  * @param {number} idx
  * @param {string} filename
  */
-function cont_plot(idx, filename) {
+function cont_plot(idx) {
 
     var margin = {
         top: 20,
@@ -38,8 +38,7 @@ function cont_plot(idx, filename) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json(filename, function(json) {
-        var datact = json.cont_table[idx];
+        var datact = cont_table[idx];
         x.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
         var l1_1 = 112.5,
             l1_2 = 0,
@@ -158,5 +157,4 @@ function cont_plot(idx, filename) {
                 .attr("font-size", "11px")
                 .attr("fill", "black");
         }
-    });
 }
