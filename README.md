@@ -6,7 +6,17 @@ in genome wide association studies.
 
 An online demo is available as a
  [gist](https://gist.github.com/chengsoonong/9968465)
- and is viewable [here](http://bl.ocks.org/chengsoonong/raw/9968465/).
+ and is viewable on Mike Bostock's [bl.ocks.org](http://bl.ocks.org/chengsoonong/raw/9968465/).
+
+
+------------
+Contributors
+------------
+
+* Cheng Soon Ong
+* Justin Bedo
+* Cristovao Freitas Iglesias Junior
+* Stefan Sevelda
 
 
 ------------
@@ -19,15 +29,16 @@ development version 27.0.1 was used).
 Usage
 -----
 
-First you have to open view_graph.html with Mozilla Firefox. After this step you
-can click the "Browse..." button and select a json file with the right
-format(see section file format). After this step a plot will appear. You can
-choose four different types of plots in the "plots" dropbox:
+Open view_graph.html with Mozilla Firefox.
+Click the "Browse..." button and select a json file with the right
+format(see section file format).
+There are four different types of plots in the "plots" dropbox:
 
 * Circular ideogram
 * Manhattan plot
 * Heat-map
 * Arc plot
+
 
 Circular ideogram
 -----------------
