@@ -75,7 +75,7 @@ for (var i = 0; i < chromLength.length; i++) {
 }
 
 // y coordinate of the chromosome bars
-var height_chrom_bar = 600;
+var height_chrom_bar = 300;
 
 // y coordinate of the SNP-nodes
 var high_nodes = height_chrom_bar - 5;

@@ -217,12 +217,10 @@ function upload_json() {
             // to create the dropbox in the SNP pair list
             creat_drop_box1("st_select_snp_pairs");
 
-            
+                        
             //start arc plot
             start_arc_plot();
 
-            // create ld plot
-            create_ld_plot();
             break;
         case "p_cir":
             // remove all unused containers
