@@ -5,9 +5,11 @@
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  */
 
+var ld_nodes = [];
 // function to create ld plot
 function create_ld_plot() {
 
+    ld_nodes = [];
     d3.select("#ld_container").selectAll("svg").remove();
 
     // var for height and width
@@ -22,20 +24,13 @@ function create_ld_plot() {
         bottom: 20,
         left: 1
     };    
-
-    var ld_nodes = [];
-    var ld_links = [];
      
-    if (if_zoom) {
-        ld_links = zoom_links;
-
-        ld_nodes = zoom_allNodes.sort(function(a,b){
-            return a.id - b.id; 
-        });
-    } else {
-        ld_links = links;
-        ld_nodes = allNodes;
+    for (var i = 0; i < allNodes.length; i++) {
+        if(allNodes[i].chrom == 1) {
+            ld_nodes.push(allNodes[i]);
+        }
     }
+    
 
     // scale for the x axis of the ld plot
     var xscale_ld = d3.scale.linear()
@@ -44,10 +39,10 @@ function create_ld_plot() {
     
     // colour scale for the pvalues
     var colorScale_ldplot = d3.scale.linear() //yellow - red
-        .domain([d3.min(data_weight_pvalue, function(d) {
-            return d;
-        }), d3.max(data_weight_pvalue, function(d) {
-            return d;
+        .domain([d3.min(ldvar, function(d) {
+            return d.R2;
+        }), d3.max(ldvar, function(d) {
+            return d.R2;
         })])
         .interpolate(d3.interpolateHsl)
         .range(["#FF6600", "#660000"]);
@@ -91,7 +86,7 @@ function create_ld_plot() {
         .attr("stroke-width", 1);
 
     svg_ldplot.selectAll()
-        .data(ld_links)
+        .data(ldvar)
         .enter().append("rect")
         .attr("class", "ld_links")
         .attr("transform", function (d) {
@@ -102,10 +97,10 @@ function create_ld_plot() {
         .attr("width", function (d) { return (xscale_ld(1) / Math.sqrt(2)); })
         .attr("height", function (d) { return (xscale_ld(1) / Math.sqrt(2)); })
         .style("fill", function (d) {
-            return colorScale_ldplot(d[st_chosen]);
+            return colorScale_ldplot(d.R2);
         })
         .style("stroke", function (d) {
-            return colorScale_ldplot(d[st_chosen]);
+            return colorScale_ldplot(d.R2);
         });
         
         function x_location_ld(x,y) {
@@ -115,8 +110,8 @@ function create_ld_plot() {
                 x = y;
                 y = temp;
             }
-            x = x - ld_links[0].source;
-            y = y - ld_links[0].source;
+            x = x - ldvar[0].source;
+            y = y - ldvar[0].source;
             return ((x +(y + 1))/2);
         };
 
@@ -126,8 +121,8 @@ function create_ld_plot() {
                 x = y;
                 y = temp;
             }
-            x = x - ld_links[0].source;
-            y = y - ld_links[0].source;
+            x = x - ldvar[0].source;
+            y = y - ldvar[0].source;
             return ((y - (x + 1))/2); 
         };
 };
