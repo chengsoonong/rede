@@ -42,8 +42,6 @@ function start_arc_plot() {
     
     select_snp_stat_range(if_zoom);
     graphColor = d3.scale.category10();
-    // create ld plot
-    create_ld_plot();
     // function in hist_edges_subgraphID_plot.js to start probe-group
     histogram_edges_subgraphId(if_zoom);
     // function in histogram_degree_snps_plot.js to show SNP list

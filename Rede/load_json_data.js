@@ -6,8 +6,7 @@
  *
  */
 
-var ldvar = [];
-var file_ld = "testld.json";
+var ldvar = {};
 
 
 // function to load the data
@@ -28,19 +27,18 @@ function load_data_json (file_name) {
     statOptions = {};
 
     // load data for ld plot
-    d3.json(file_ld, function(ldjson) {
-        ldjson.ld.forEach(function(d) {
-            ldvar.push(d);
-        });
-    });
+
 
     d3.json(file_name, function(json) {
-        //function to load the the links
+        // function to load the the links
         json.links.forEach(function(d) {
             links.push(d);
         });
 
-        //for loop to get all available statistical test of the dataset
+        // function to the information for the ld plot 
+        ldvar = json.ld_plot;
+
+        // for loop to get all available statistical test of the dataset
         for (var i in json.links[0]) {
             if (i != "assoc_group" && i != "source" && i != "target" && i !=
                 "probe_group" && i != "ct_id") {

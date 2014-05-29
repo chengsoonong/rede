@@ -6,27 +6,37 @@
  */
 
 var ld_nodes = [];
-// function to create ld plot
-function create_ld_plot() {
 
+
+// function to create ld plot
+function create_ld_plot(ld_chrom, chromrange, chromposition, padding) {
+
+    if(ld_chrom == 1 && if_zoom == 1) {
+        var padding_start = 10; 
+    } else {
+        var padding_start = 0;
+    }
+
+    var temp = 'local_links' + ld_chrom
+    var ld_plot_data = [];
+    ld_plot_data = ldvar[0][temp];
     ld_nodes = [];
-    d3.select("#ld_container").selectAll("svg").remove();
 
     // var for height and width
-    var width = 800,
-        height = 800;
+    var width = chromrange + padding + padding_start,
+        height = 400;
         paddingtop = 0;
 
     // general margin for the plot
     var margin = {
-        top: 380,
+        top: 0,
         right: 1,
         bottom: 20,
         left: 1
     };    
      
     for (var i = 0; i < allNodes.length; i++) {
-        if(allNodes[i].chrom == 1) {
+        if(allNodes[i].chrom == ld_chrom) {
             ld_nodes.push(allNodes[i]);
         }
     }
@@ -35,44 +45,46 @@ function create_ld_plot() {
     // scale for the x axis of the ld plot
     var xscale_ld = d3.scale.linear()
         .domain([0, ld_nodes.length])
-        .range([0, width]);
+        .range([0, chromrange]);
     
     // colour scale for the pvalues
     var colorScale_ldplot = d3.scale.linear() //yellow - red
-        .domain([d3.min(ldvar, function(d) {
+        .domain([d3.min(ld_plot_data, function(d) {
             return d.R2;
-        }), d3.max(ldvar, function(d) {
+        }), d3.max(ld_plot_data, function(d) {
             return d.R2;
         })])
         .interpolate(d3.interpolateHsl)
-        .range(["#FF6600", "#660000"]);
-
-    // create SVG for the plot
-    var svg_ldplot = d3.select("#ld_container")
-        .append("svg")
-        .attr("id", "ldplot")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", "translate(" + margin.left  + "," + margin.top + ")");
+        .range(["#F1F73A", "#660000"]);
 
     
+    
     // create rectangle in the g container
-    var lineData = [{"x": 0, "y": paddingtop}, {"x": (width / 2), "y": ((width / 2) + paddingtop)}, 
-                    {"x": width, "y": paddingtop}];
+    var lineData = [{"x": 0 , "y": paddingtop}, 
+                    {"x": (chromrange / 2), "y": ((chromrange / 2) + paddingtop)}, 
+                    {"x": (chromrange), "y": paddingtop}];
 
     var linefunction = d3.svg.line()
         .x( function(d) {return d.x; })
         .y( function(d) {return d.y; })
         .interpolate("linear"); 
 
-    var ld_triangle = svg_ldplot.append("path")
+    var ld_g = d3.select("#ld_container")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + padding_start + "," +
+                 margin.top + ")")
+        .attr("width", width);
+
+    var ld_triangle = ld_g.append("path")
         .attr("d", linefunction(lineData))
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .attr("fill", "none");
 
-    svg_ldplot.selectAll()
+    ld_g.selectAll()
         .data(ld_nodes)
         .enter().append("path")
         .attr("class", "ld_nodes")
@@ -85,12 +97,12 @@ function create_ld_plot() {
         .attr("stroke", "blue")
         .attr("stroke-width", 1);
 
-    svg_ldplot.selectAll()
-        .data(ldvar)
+    ld_g.selectAll()
+        .data(ld_plot_data)
         .enter().append("rect")
         .attr("class", "ld_links")
         .attr("transform", function (d) {
-            return "translate(" + xscale_ld(x_location_ld(d.source, d.target))
+            return "translate(" + ( xscale_ld(x_location_ld(d.source, d.target)))
                     + "," + (xscale_ld(y_location_ld(d.source, d.target)) + paddingtop)
                     + ") rotate(45)";
         })
@@ -110,8 +122,8 @@ function create_ld_plot() {
                 x = y;
                 y = temp;
             }
-            x = x - ldvar[0].source;
-            y = y - ldvar[0].source;
+            x = x - ld_plot_data[0].source;
+            y = y - ld_plot_data[0].source;
             return ((x +(y + 1))/2);
         };
 
@@ -121,8 +133,8 @@ function create_ld_plot() {
                 x = y;
                 y = temp;
             }
-            x = x - ldvar[0].source;
-            y = y - ldvar[0].source;
+            x = x - ld_plot_data[0].source;
+            y = y - ld_plot_data[0].source;
             return ((y - (x + 1))/2); 
         };
 };

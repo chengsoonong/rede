@@ -168,6 +168,7 @@ function create_arc_plot(x1, x2) {
         .attr("class", "rect")
         // scales the width of chromosomes
         .attr("width", function(d, i) {
+            create_ld_plot(i+1, xScale(chromLength[i]), chr_scale[i] + i * padding, 5);    
             return  xScale(chromLength[i]); 
         })
         .attr("height", 20)
@@ -417,6 +418,8 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    d3.select('#ld_container').selectAll('svg').remove();
+
     var group_chrom = svg.selectAll("g.group")
         .data(chromLength)
         .enter().append("svg:g")
@@ -425,6 +428,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         })
         // scales the width of chromosomes
         .attr("width", function(d, i) {
+            create_ld_plot(i+1, chromLength_scaled[i], chrom_x_position[i], 2);    
             return chromLength_scaled[i]; 
         })
         .attr("height", 40)

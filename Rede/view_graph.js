@@ -217,7 +217,6 @@ function upload_json() {
             // to create the dropbox in the SNP pair list
             creat_drop_box1("st_select_snp_pairs");
 
-            create_ld_plot(); 
                         
             //start arc plot
             start_arc_plot();
