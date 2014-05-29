@@ -14,24 +14,32 @@
  *Global variable for arc plot to check if it is in zoom function
  */
 var if_zoom;
+/*
+ *Global variable for arc plot and ld plot 
+ */
+var svg_arc;
+
 
 
 // everything needed in arcplot
 function start_arc_plot() {
 
     // remove the old plot the probe-groups and SNP list
-    d3.select("#chart").selectAll('svg').remove();
     d3.select("#hesid").selectAll('svg').remove();
     d3.select("#hds_matrix").selectAll('svg').remove();
+    d3.select("#mainplot").selectAll('svg').remove();
         
     // set if_zoom on 0
     if_zoom = 0;
+    // set if_stat_brush on 0
+    if_stat_brush = 0;
     // load_stat_values
     load_stat_value(); 
     
 
     // functions in arc_plot.js
     read_file_to_arc_plot();
+    
     select_snp_stat_range(if_zoom);
     graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
@@ -40,6 +48,7 @@ function start_arc_plot() {
     histogram_degree_SNPs(0, 0, 0);
     // shows the snps pair list
     show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
+
 };
 
 // function to prepair everything for the zoom function of arc_plot
@@ -72,6 +81,8 @@ function zoom_arc() {
 
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
+
+    
 
     histogram_degree_SNPs(0, if_zoom, 0);
     histogram_edges_subgraphId(if_zoom);

@@ -3,13 +3,18 @@
  * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
+ *
  */
+
+var ldvar = {};
+
 
 // function to load the data
 function load_data_json (file_name) {
     // load data from json file
     file_json = file_name;
 
+    
     // empty the arrays of the json files
     allNodes = [];
     links = [];
@@ -21,13 +26,19 @@ function load_data_json (file_name) {
     st_1 = [];
     statOptions = {};
 
+    // load data for ld plot
+
+
     d3.json(file_name, function(json) {
-        //function to load the the links
+        // function to load the the links
         json.links.forEach(function(d) {
             links.push(d);
         });
 
-        //for loop to get all available statistical test of the dataset
+        // function to the information for the ld plot 
+        ldvar = json.ld_plot;
+
+        // for loop to get all available statistical test of the dataset
         for (var i in json.links[0]) {
             if (i != "assoc_group" && i != "source" && i != "target" && i !=
                 "probe_group" && i != "ct_id") {
@@ -50,6 +61,7 @@ function load_data_json (file_name) {
         // start the plots
         upload_json()           
     });
+
 };
 
 
