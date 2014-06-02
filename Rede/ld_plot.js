@@ -9,7 +9,7 @@ var ld_nodes = [];
 
 
 // function to create ld plot
-function create_ld_plot(ld_chrom, chromrange, chromposition, padding) {
+function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chrom ) {
 
     if(ld_chrom == 1 && if_zoom == 1) {
         var padding_start = 10; 
@@ -34,13 +34,19 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding) {
         bottom: 20,
         left: 1
     };    
-     
-    for (var i = 0; i < allNodes.length; i++) {
-        if(allNodes[i].chrom == ld_chrom) {
-            ld_nodes.push(allNodes[i]);
+    if(if_zoom && zoomed_chrom == ld_chrom ) {
+        for (var i = 0; i < zoom_allNodes.length; i++) {
+            if(zoom_allNodes[i].chrom == ld_chrom) {
+                ld_nodes.push(zoom_allNodes[i]);
+            }
+        }   
+    } else {
+        for (var i = 0; i < allNodes.length; i++) {
+            if(allNodes[i].chrom == ld_chrom) {
+                ld_nodes.push(allNodes[i]);
+            }
         }
     }
-    
 
     // scale for the x axis of the ld plot
     var xscale_ld = d3.scale.linear()

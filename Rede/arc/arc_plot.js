@@ -409,6 +409,52 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         ticks_chrom_chosen.push(obj);
     }
 
+    // array to store all nodes and all links which should not be displayed in the zoom function
+    zoom_allNodes = [];
+    zoom_links = [];
+    links.forEach( function(d) {
+        if((allNodes[d.source].chrom == v_chr  
+            && allNodes[d.source].bp_position >= v_start 
+            && allNodes[d.source].bp_position <= v_end) ||
+            (allNodes[d.source].chrom == v_chr && chosenLength == 0) ||
+            (allNodes[d.target].chrom == v_chr && 
+             allNodes[d.target].bp_position >= v_start && 
+             allNodes[d.target].bp_position <= v_end) ||
+            (allNodes[d.target].chrom == v_chr && chosenLength == 0)) {
+
+                zoom_allNodes.push(allNodes[d.source]);
+                zoom_allNodes.push(allNodes[d.target]);
+                zoom_links.push(d);
+            }
+    });
+
+    // sort and make the zoom_allnodes function unique
+    var temp_zoomnodes = [];
+
+    zoom_allNodes.forEach( function (d) {
+        temp_zoomnodes.push(d.id);
+    });
+
+    temp_zoomnodes = sort_unique(temp_zoomnodes);
+
+    zoom_allNodes = [];
+
+    temp_zoomnodes.forEach( function (d) {
+        zoom_allNodes.push(allNodes[d]);
+    });
+    
+    // function to sort and make array unique
+    function sort_unique(arr) {
+        arr = arr.sort( function (a, b) { return a*1 - b*1; });
+        var ret = [arr[0]];
+        for (var i = 1; i < arr.length; i++) {
+            if (arr[i-1] !== arr[i]) {
+                ret.push(arr[i]);
+            }
+        }
+        return ret;
+    };
+
     // create SVG for the plot
     var svg = d3.select("#chart")
         .append("svg")
@@ -428,7 +474,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         })
         // scales the width of chromosomes
         .attr("width", function(d, i) {
-            create_ld_plot(i+1, chromLength_scaled[i], chrom_x_position[i], 2);    
+            create_ld_plot(i+1, chromLength_scaled[i], chrom_x_position[i], 2, v_chr);    
             return chromLength_scaled[i]; 
         })
         .attr("height", 40)
@@ -559,24 +605,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             }
         });
 
-    // array to store all nodes and all links which should not be displayed in the zoom function
-    zoom_allNodes = [];
-    zoom_links = [];
-    links.forEach( function(d) {
-        if((allNodes[d.source].chrom == v_chr  
-            && allNodes[d.source].bp_position >= v_start 
-            && allNodes[d.source].bp_position <= v_end) ||
-            (allNodes[d.source].chrom == v_chr && chosenLength == 0) ||
-            (allNodes[d.target].chrom == v_chr && 
-             allNodes[d.target].bp_position >= v_start && 
-             allNodes[d.target].bp_position <= v_end) ||
-            (allNodes[d.target].chrom == v_chr && chosenLength == 0)) {
-
-                zoom_allNodes.push(allNodes[d.source]);
-                zoom_allNodes.push(allNodes[d.target]);
-                zoom_links.push(d);
-            }
-    });
+    
 
     // object to store the position of the zoomed chromosomes
     var id_chosen = [];
