@@ -20,7 +20,7 @@ var ld_nodes = [];
 var colourScale_ldplot;
 
 // function to create ld plot
-function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chrom ) {
+function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chrom, zoom_start, zoom_end ) {
 
     // set padding for the ld_plot
     if(ld_chrom == 1 && if_zoom == 1) {
@@ -36,6 +36,21 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
     ld_plot_data = ldvar[0][temp];
     ld_nodes = [];
 
+    // dyes lds
+    ld_colour_dyed();
+
+    // this function calculate the colour range for the ldvalues of the ld plot
+    function ld_colour_dyed () {
+        colourScale_ldplot = d3.scale.linear() //yellow - red
+            .domain([d3.min(ld_plot_data, function(d) {
+                return d.R2;
+            }), d3.max(ld_plot_data, function(d) {
+                return d.R2;
+            })])
+            .interpolate(d3.interpolateHsl)
+            .range(["darkred", "yellow"]);
+    };
+
     // var for height and width
     var width = chromrange + padding + padding_start,
         height = 400;
@@ -50,37 +65,47 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
     };    
 
     // filter for the zoom function
-    if(if_zoom && zoomed_chrom == ld_chrom ) {
-        for (var i = 0; i < zoom_allNodes.length; i++) {
-            if(zoom_allNodes[i].chrom == ld_chrom) {
-                ld_nodes.push(zoom_allNodes[i]);
-            }
+    if(if_zoom && zoomed_chrom == ld_chrom && zoom_allNodes != 0) {
+        var zoom_nodes_max = d3.max(zoom_allNodes, function(d) { 
+            if(d.chrom == ld_chrom && (d.bp_position > zoom_start &&
+                d.bp_position < zoom_end || zoom_start == 0 && zoom_end == 0)) {
+                    return d.id;
+                }
+        });
+        var zoom_nodes_min = d3.min(zoom_allNodes, function(d) { 
+            if(d.chrom == ld_chrom && (d.bp_position > zoom_start &&
+                d.bp_position < zoom_end || zoom_start == 0 && zoom_end == 0)) {
+                    return d.id;
+                }
+        });
+        // pushes all nodes in the array even the nodes with degree zero
+        for (var i = zoom_nodes_min ; i < zoom_nodes_max + 1; i++) {
+            ld_nodes.push(allNodes[i]);
         }   
-        if(ld_chrom == 1) {
-            // dyes the lds in the first chromosome if zoomed
-            ld_colour_dyed();
-        }
+
+        
+        var temp_ld_info = [];
+        var temp_max = d3.max(ld_nodes, function(d) { return d.id; });
+        var temp_min = d3.min(ld_nodes, function(d) { return d.id; });
+        
+        // filters the lds of the zoomed reagon
+        ld_plot_data.forEach( function (d) {
+            if(d.source > temp_min && d.target > temp_min && d.source < temp_max 
+                && d.target < temp_max && d.source < d.target) {
+                temp_ld_info.push(d);
+            }
+        })
+        ld_plot_data = [];
+        ld_plot_data = temp_ld_info;
+        
     } else {
+        // unzoomed ld plot
         for (var i = 0; i < allNodes.length; i++) {
             if(allNodes[i].chrom == ld_chrom) {
                 ld_nodes.push(allNodes[i]);
             }
         }
-        // dyes lds
-        ld_colour_dyed();
     }
-
-    // this function calculate the colour range for the ldvalues of the ld plot
-    function ld_colour_dyed () {
-        colourScale_ldplot = d3.scale.linear() //yellow - red
-            .domain([d3.min(ld_plot_data, function(d) {
-                return d.R2;
-            }), d3.max(ld_plot_data, function(d) {
-                return d.R2;
-            })])
-            .interpolate(d3.interpolateHsl)
-            .range(["#F1F73A", "#660000"]);
-    };
 
     // scale for the x axis of the ld plot
     var xscale_ld = d3.scale.linear()
@@ -176,7 +201,7 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
         .text(function (d) {
             // labeling function for mouseover
             return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
-                "\nposition: " + d.bp_position;
+                "\nposition: " + d.bp_position + "\nid: " + d.id;
         })
 
     // create the lds as rectangular
@@ -208,26 +233,15 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
         
         // calculates the x position of the lds
         function x_location_ld(x,y) {
-            var temp;
-            if(y < x) {
-                temp = x;
-                x = y;
-                y = temp;
-            }
-            x = x - ld_plot_data[0].source;
-            y = y - ld_plot_data[0].source;
+            x = x - ld_nodes[0].id;
+            y = y - ld_nodes[0].id;
             return ((x +(y + 1))/2);
         };
 
         // calculates the y position of the lds
         function y_location_ld(x,y) {
-            if(y < x) {
-                temp = x;
-                x = y;
-                y = temp;
-            }
-            x = x - ld_plot_data[0].source;
-            y = y - ld_plot_data[0].source;
+            x = x - ld_nodes[0].id;
+            y = y - ld_nodes[0].id;
             return ((y - (x + 1))/2); 
         };
 };

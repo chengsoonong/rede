@@ -168,7 +168,7 @@ function create_arc_plot(x1, x2) {
         .attr("class", "rect")
         // scales the width of chromosomes
         .attr("width", function(d, i) {
-            create_ld_plot(i+1, xScale(chromLength[i]), chr_scale[i] + i * padding, 5);    
+            create_ld_plot(i+1, xScale(chromLength[i]), chr_scale[i] + i * padding, padding, 0 , 0, 0);    
             return  xScale(chromLength[i]); 
         })
         .attr("height", 20)
@@ -281,7 +281,7 @@ function create_arc_plot(x1, x2) {
     svg.selectAll("g circle") 
         .append("title")
         .text(function(d) {
-            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
+            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nid: " + d.id + 
             "\nposition: " + d.bp_position
         });
 
@@ -474,7 +474,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         })
         // scales the width of chromosomes
         .attr("width", function(d, i) {
-            create_ld_plot(i+1, chromLength_scaled[i], chrom_x_position[i], 2, v_chr);    
+            create_ld_plot(i+1, chromLength_scaled[i], chrom_x_position[i], padding, v_chr, v_start, v_end);    
             return chromLength_scaled[i]; 
         })
         .attr("height", 40)
@@ -708,7 +708,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
     svg.selectAll("g .circle_zoom") 
         .append("title")
         .text(function(d) {
-            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nprobe_group: " + d.probe_group + 
+            return "degree: " + two_dec(d.degree) + "\nSNP: " + d.rs + "\nid: " + d.id + 
                 "\nposition: " + d.bp_position
         });
 
