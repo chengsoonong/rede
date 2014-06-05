@@ -1,25 +1,19 @@
 /**
+ * @title the ruling file for the arc plot
  * @fileoverview The ruling file which start the arc plot, and the zoom function located in the arc_plot.js
  * and the preparation.
- * @author cristovao.casagrande@gmail.com (Cristovao Iglesias)
  * @author chengsoon.ong@unimelb.edu.au (Cheng Ong)
  * @author stefan.sevelda@hotmail.com (Stefan Sevelda)
  */
 
-/* marks for vim editor
- * "'a" --> change otherwise you always have to click the zoom button again to get the selected p-values
- *  displayed on stat-range even
 
-/*
- *Global variable for arc plot to check if it is in zoom function
+/**
+ * Global variable, which indicates if user is currently in the zoom function of
+ * the arc plot
+ * @variable
+ * @type {integer}
  */
 var if_zoom;
-/*
- *Global variable for arc plot and ld plot 
- */
-var svg_arc;
-
-
 
 // everything needed in arcplot
 function start_arc_plot() {
@@ -36,10 +30,10 @@ function start_arc_plot() {
     // load_stat_values
     load_stat_value(); 
     
-
     // functions in arc_plot.js
     read_file_to_arc_plot();
     
+    // select the nodes on the statistical axis
     select_snp_stat_range(if_zoom);
     graphColor = d3.scale.category10();
     // function in hist_edges_subgraphID_plot.js to start probe-group
@@ -82,11 +76,11 @@ function zoom_arc() {
     // brushweight function for the p_values of the snps
     select_snp_stat_range(if_zoom);
 
-    
-
+    // generates the SNPs and the porbe group histogram
     histogram_degree_SNPs(0, if_zoom, 0);
     histogram_edges_subgraphId(if_zoom);
 
+    // generate the SNPs Pairs list
     show_snp_pairs_list(file_json, st_chosen, if_stat_brush, if_zoom, 0);
 };
 
