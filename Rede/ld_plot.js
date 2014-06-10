@@ -54,7 +54,7 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
     // var for height and width
     var width = chromrange + padding + padding_start,
         height = 400;
-        paddingtop = 0;
+        paddingtop = 80;
 
     // general margin for the ld plot
     var margin = {
@@ -139,6 +139,48 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .attr("fill", "none");
+
+    // create a chromosome scale bar
+    // scale function for the bar
+    if(zoom_start == 0 && zoom_end == 0 || ld_chrom != zoomed_chrom) {
+        var x_scale_chrom_ld = d3.scale.linear()
+            .domain([0, chromLength[(ld_chrom - 1)]])
+            .range([0, chromrange]);
+    } else {
+        var x_scale_chrom_ld = d3.scale.linear()
+            .domain([zoom_start, zoom_end])
+            .range([0, chromrange]);
+    }
+
+    // create scale bar 
+    var chrom_bar_ld = ld_g.append("rect")
+        .attr("transform", "translate(0,0)")
+        .attr("class", "rect")
+        .attr("width", chromrange)
+        .attr("height", 10)
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
+
+    ld_g.selectAll()
+        .data(ld_nodes)
+        .enter().append("path")
+        .attr("d", function (d, i) {
+            return linefunction([{"x": x_scale_chrom_ld(d.bp_position), "y": 0},
+                                    {"x": x_scale_chrom_ld(d.bp_position), "y": 10}]);
+        })
+        .attr("stroke", "black")
+        .attr("stroke-width", 0.5);
+
+    ld_g.selectAll()
+        .data(ld_nodes)
+        .enter().append("path")
+        .attr("d", function (d, i) {
+            return linefunction([{"x": x_scale_chrom_ld(d.bp_position), "y": 10},
+                                    {"x": xscale_ld(i + (1/2)), "y": paddingtop}]);
+        })
+        .attr("stroke", "black")
+        .attr("stroke-width", 0.5);
 
     // creates the SNPs as triangular
     ld_g.selectAll()
