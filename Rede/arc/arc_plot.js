@@ -427,7 +427,17 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
                 zoom_links.push(d);
             }
     });
+    
+    // add nodes with degree zero
+    allNodes.forEach( function (d) {
+        var in_zoomed_chrom = (d.chrom == v_chr && d.degree == 0);
+        var in_zoomed_region = (d.bp_position >= v_start && d.bp_position <= v_end);
 
+        if(in_zoomed_chrom && in_zoomed_region) {
+            zoom_allNodes.push(d);
+        }
+    });
+    
     // sort and make the zoom_allnodes function unique
     var temp_zoomnodes = [];
 
