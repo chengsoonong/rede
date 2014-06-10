@@ -90,8 +90,8 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
         
         // filters the lds of the zoomed reagon
         ld_plot_data.forEach( function (d) {
-            if(d.source > temp_min && d.target > temp_min && d.source < temp_max 
-                && d.target < temp_max && d.source < d.target) {
+            if(d.source >= temp_min && d.target >= temp_min && d.source <= temp_max 
+                && d.target <= temp_max && d.source <= d.target) {
                 temp_ld_info.push(d);
             }
         })
