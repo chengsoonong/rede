@@ -486,18 +486,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
         zoom_allNodes.push(allNodes[d]);
     });
     
-    // function to sort and make array unique
-    function sort_unique(arr) {
-        arr = arr.sort( function (a, b) { return a*1 - b*1; });
-        var ret = [arr[0]];
-        for (var i = 1; i < arr.length; i++) {
-            if (arr[i-1] !== arr[i]) {
-                ret.push(arr[i]);
-            }
-        }
-        return ret;
-    };
-
+   
     // create SVG for the plot
     var svg = d3.select("#chart")
         .append("svg")
