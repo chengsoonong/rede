@@ -204,6 +204,23 @@ function create_arc_plot(x1, x2) {
         return chromcolour[i];
         });
 
+    // create the label for the chromosomes
+    chromosome_container.append("svg:text")
+        .attr("class", "chromosome_number")
+        // 2* padding for double digits chromosome numbers
+        .attr("transform", "translate(" + (2 * padding) + "," + 35 + ")")
+        .append("svg:textPath")
+        .text(function(d, i) {
+            return i + 1;
+        })
+        .attr("font-size", "9px") 
+        .attr("text-anchor", "end") 
+        .style("fill", function(d, i) {
+            return chromcolour[i];
+        })
+        .style("stroke", function(d, i) {
+            return chromcolour[i];
+        });
     
     // create the ticks of the chromosomes   
     chromosome_container.selectAll("line")
@@ -729,12 +746,20 @@ function createColourScale_ldplot() {
     var svgLdColourScale = d3.select("#chart")
         .append("svg")
         .attr("id", "ldcolourscale")
-        .attr("width", 80)
+        .attr("width", 120)
         .attr("height", height)
         .append("g")
         .attr("class", "axisldcolour")
         .attr("transform", "translate(50, 380)")
         .call(colour_yAxis);
+
+    svgLdColourScale.append("text")
+        .attr("x", 0)
+        .attr("y",(ldColourbar_h + 10))
+        .text("R-square")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "30px")
+        .attr("fill", "grey");
 
     svgLdColourScale.selectAll("rect")
         .data(ldRange)
