@@ -12,15 +12,19 @@
  */
 var ld_nodes = [];
 
-/**
- * Constant for ld plot for storing the colour range of the ld values 
- * @function scale()
- * @type d3 scale function {}
- */
-var colourScale_ldplot;
+
 
 // function to create ld plot
 function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chrom, zoom_start, zoom_end ) {
+    /**
+    * Constant for ld plot for storing the colour range of the ld values 
+    * @function scale()
+    * @type d3 scale function {}
+    */
+    var colourScale_ldplot;
+    var labelScale_ldplot;
+    var colourGradient = [];
+    var colourGradientWidth;
 
     // set padding for the ld_plot
     if(ld_chrom == 1 && if_zoom == 1) {
@@ -35,26 +39,19 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
     var ld_plot_data = [];
     ld_plot_data = ldvar[0][temp];
     ld_nodes = [];
+    
 
     // dyes lds
-    ld_colour_dyed();
+    colourScale_ldplot = ld_colour_dyed();
 
-    // this function calculate the colour range for the ldvalues of the ld plot
-    function ld_colour_dyed () {
-        colourScale_ldplot = d3.scale.linear() //yellow - red
-            .domain([d3.min(ld_plot_data, function(d) {
-                return d.R2;
-            }), d3.max(ld_plot_data, function(d) {
-                return d.R2;
-            })])
-            .interpolate(d3.interpolateHsl)
-            .range(["darkred", "yellow"]);
-    };
+    
 
     // var for height and width
     var width = chromrange + padding + padding_start,
         height = 400;
         paddingtop = 80;
+    // height of the colour bar
+    var heightColourBar = (chromrange / 2) +  paddingtop + 10;
 
     // general margin for the ld plot
     var margin = {
@@ -108,6 +105,7 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
         })
         ld_plot_data = [];
         ld_plot_data = tempLdStore;
+        
         
     } else {
         // unzoomed ld plot
@@ -229,9 +227,9 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
                                     {"x": xscale_ld(i + (1/2)), "y": (xscale_ld(1/2) + paddingtop)},
                                     {"x": xscale_ld(i + 1), "y": paddingtop}]);
             })
-            .attr("fill", "blue")
-            .attr("stroke", "blue")
-            .attr("stroke-width", 1)
+            .attr("fill", "#525252")
+            .attr("stroke", "#252525")
+            .attr("stroke-width", 0.2)
             .on("click", function(d, i) {
                 // connection to external databases
                 var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
@@ -298,9 +296,8 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
             .style("fill", function (d) {
                 return colourScale_ldplot(d.R2);
             })
-            .style("stroke", function (d) {
-                return colourScale_ldplot(d.R2);
-            })
+            .style("stroke", "#252525")
+            .style("stroke-width", 0.2)
             .append("title")
             .text(function (d) {
                 // information about the lds through mouseover
@@ -321,4 +318,12 @@ function create_ld_plot(ld_chrom, chromrange, chromposition, padding, zoomed_chr
             return ((y - (x + 1))/2); 
         };
 
+};
+
+// this function calculate the colour range for the ldvalues of the ld plot
+function ld_colour_dyed () {
+    return d3.scale.linear() //yellow - red
+        .domain([0, 0.5, 1])
+        .interpolate(d3.interpolateHsl)
+        .range(["#ffffff", "#fff5eb", "#7f2704"]);
 };

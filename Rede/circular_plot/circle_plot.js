@@ -214,32 +214,7 @@ function Create_SNP_association() {
             })
             .attr("cx", chromRingInnerRadius - 20)
             .attr("r", 3)
-            .on("click", function(d, i) {
-                var person = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n6) openSNP\n7) SNPedia\n8) UCSC");
-                if (person != null) {
-                    if ("8" == person) {
-                        html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' +
-                            allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000);
-                    } else if ("6" == person) {
-                        html = 'http://opensnp.org/snps/' + allNodes[i].rs;
-                    } else if ("2" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + allNodes[i].rs.substring(2);
-                    } else if ("4" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + allNodes[i].rs.substring(2);
-                    } else if ("3" == person) {
-                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + allNodes[i].chrom + 
-                            ':' + (allNodes[i].bp_position - 1000) + '-' + (allNodes[i].bp_position + 1000) +
-                            ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) + ';vdb=variation';
-                    } else if ("7" == person) {
-                        html = 'http://www.snpedia.com/index.php/Rs' + allNodes[i].rs.substring(2);
-                    } else if ("5" == person) {
-                        html = 'http://omim.org/search?index=entry&search=rs' + allNodes[i].rs.substring(2);
-                    } else if ("1" == person) {
-                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + allNodes[i].rs.substring(2);
-                    }
-                    window.open(html);
-                }
-            })
+            .on("click", function(d,i) {externalLink(d,i);}) 
             .attr("transform", function(d) {
                 return "rotate(" + degrees(all_chrom.getAngle(d.chrom, d.bp_position)) + ")";
             });

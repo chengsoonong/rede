@@ -204,24 +204,7 @@ function create_arc_plot(x1, x2) {
         return chromcolour[i];
         });
 
-    // create the label for the chromosomes
-    chromosome_container.append("svg:text")
-        .attr("class", "chromosom_number")
-        // 2* padding for double digits chromosome numbers
-        .attr("transform", "translate(" + (2 * padding)  + "," + 35 + ")")  
-        .append("svg:textPath")
-        .text(function(d, i) {
-            return i + 1;
-        })
-        .attr("font-size", "9px")
-        .attr("text-anchor", "end")
-        .style("fill", function(d, i) {
-            return chromcolour[i];
-        })
-        .style("stroke", function(d, i) {
-            return chromcolour[i];
-        });
-
+    
     // create the ticks of the chromosomes   
     chromosome_container.selectAll("line")
         .data(function (d,i) {
@@ -258,49 +241,7 @@ function create_arc_plot(x1, x2) {
         .attr("cy", height_nodes)
         .attr("r", 2)
         // to get information about the SNPs from different sources, if you click on a circle
-        .on("click", function(d, i) {
-            var external_source = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
-                "6) openSNP\n7) SNPedia\n8) UCSC");
-
-            if (external_source != null) {
-                switch(external_source) {
-                    case "1":
-                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + allNodes[i].rs.substring(2);
-                        break;
-                    case "2": 
-                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
-                            allNodes[i].rs.substring(2);
-                        break;
-                    case "3":
-                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
-                            allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + 
-                            (allNodes[i].bp_position + 1000) + ';source=dbSNP;v=rs' + allNodes[i].rs.substring(2) 
-                            + ';vdb=variation';
-                        break;
-                    case "4": 
-                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
-                            allNodes[i].rs.substring(2);
-                        break;
-                    case "5":
-                        html = 'http://omim.org/search?index=entry&search=rs' + allNodes[i].rs.substring(2);
-                        break;
-                    case "6": 
-                        html = 'http://opensnp.org/snps/' + allNodes[i].rs;
-                        break;
-                    case "7":
-                        html = 'http://www.snpedia.com/index.php/Rs' + allNodes[i].rs.substring(2);
-                        break;
-                    case "8":
-                        html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + 
-                            allNodes[i].chrom + ':' + (allNodes[i].bp_position - 1000) + '-' + 
-                            (allNodes[i].bp_position + 1000);
-                        break;
-                    default: 
-                        alert("You have not selected a source");         
-                }               
-                window.open(html)
-            }
-        })
+        .on("click", function (d,i) { externalLink(d, i);});
 
     // show degree as tooltip - title
     svg.selectAll("g circle") 
@@ -360,6 +301,9 @@ function create_arc_plot(x1, x2) {
                 end_position_x + "," + end_position_y ; 
         })
         .on("click" , function(d,i) { return highlight_snp_pairs(d, i); });
+
+    // creates the colour scale indicator for the ld plot
+    createColourScale_ldplot();
 };
 // ---------------------------------- create arc plot ----------------------------------------
 
@@ -689,50 +633,7 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             }
         })
         // to get information about the SNPs from different sources, if you click on a circle
-        .on("click", function(d, i) {
-
-            var external_source = prompt("\n1) ClinVar\n2) dbSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
-                "6) openSNP\n7) SNPedia\n8) UCSC");
-
-            if (external_source != null) {
-                switch(external_source) {
-                    case "1":
-                        html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + d.rs.substring(2);
-                        break;
-                    case "2": 
-                        html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
-                            d.rs.substring(2);
-                        break;
-                    case "3":
-                        html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
-                            d.chrom + ':' + (d.bp_position - 1000) + '-' + 
-                            (d.bp_position + 1000) + ';source=dbSNP;v=rs' + d.rs.substring(2) 
-                            + ';vdb=variation';
-                        break;
-                    case "4": 
-                        html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
-                            d.rs.substring(2);
-                        break;
-                    case "5":
-                        html = 'http://omim.org/search?index=entry&search=rs' + d.rs.substring(2);
-                        break;
-                    case "6": 
-                        html = 'http://opensnp.org/snps/' + d.rs;
-                        break;
-                    case "7":
-                        html = 'http://www.snpedia.com/index.php/Rs' + d.rs.substring(2);
-                        break;
-                    case "8":
-                        html = 'http://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg19&position=' + 'chr' + 
-                            d.chrom + ':' + (d.bp_position - 1000) + '-' + 
-                            (d.bp_position + 1000);
-                        break;
-                    default: 
-                        alert("You have not chosen a source");         
-                }               
-                window.open(html)
-            }
-        })
+        .on("click", function (d,i) { externalLink(d, i); });
 
     // show degree as tooltip - title
     svg.selectAll("g .circle_zoom") 
@@ -798,6 +699,58 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
                 end_position_x + "," + end_position_y ; 
         })
         .on("click" , function(d,i) { return highlight_snp_pairs(d, i);});
-   };
- 
 
+    // creates the colour scale indicator for the ld plot
+    createColourScale_ldplot();
+};
+ 
+function createColourScale_ldplot() {
+    
+   
+    var ldColourRange = ld_colour_dyed();
+    var ldRange = [];
+    var ldColourbar_w = 20;
+    var ldColourbar_h = 230;
+
+    for (var i=0; i < 100; i++) {
+        ldRange.push((1/100) * i);   
+    }
+
+    var ld_xRange = d3.scale.linear()
+        .domain([0, 1])
+        .range([0, ldColourbar_h]);
+
+    var colour_yAxis = d3.svg.axis()
+        .scale(ld_xRange)
+        .orient("left")
+        .ticks(10);
+
+    // create SVG for the plot
+    var svgLdColourScale = d3.select("#chart")
+        .append("svg")
+        .attr("id", "ldcolourscale")
+        .attr("width", 80)
+        .attr("height", height)
+        .append("g")
+        .attr("class", "axisldcolour")
+        .attr("transform", "translate(50, 380)")
+        .call(colour_yAxis);
+
+    svgLdColourScale.selectAll("rect")
+        .data(ldRange)
+        .enter().append("rect")
+        .attr("transform", function (d) {
+            return "translate(0," + ld_xRange(d) + ")";
+        })
+        // scales the width of chromosomes
+        .attr("width", ldColourbar_w)
+        .attr("height", ld_xRange(1/100))
+        .style("fill", function (d) {
+            return ldColourRange(d);
+        })
+        .style("stroke",  function (d) {
+            return ldColourRange(d);
+        });
+
+    
+}

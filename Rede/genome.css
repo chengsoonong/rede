@@ -19,7 +19,20 @@ circle {
   fill-opacity: .125;
   shape-rendering: crispEdges;
 }
+
+
+.axisldcolour path, .axisldcolour line {
+    fill: none;
+    stroke: gray;
+    shape-rendering: crispEdges;
+}
 	
+.axisldcolour text {
+    color: grey;
+    font-family: sans-serif;
+    font-size: 10px;
+}
+
 .manaxis path, .manaxis line,
 .manlabel path, .manlabel line,
 .xmattext path, .xmattext line,

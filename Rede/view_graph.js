@@ -1271,3 +1271,48 @@ function sort_unique(arr) {
     return ret;
 };
 
+// this function brings you to the external sources
+function externalLink(snpInfo, snpisnpInfo) {
+
+    var external_source = prompt("\n1) ClinVar\n2) snpInfobSNP\n3) Ensembl\n4) PheGenI\n5) OMIM\n" +
+        "6) openSNP\n7) SNPesnpInfoia\n8) UCSC");
+
+    if (external_source != null) {
+        switch(external_source) {
+            case "1":
+                html = 'http://www.ncbi.nlm.nih.gov/clinvar?term=rs' + snpInfo.rs.substring(2);
+                break;
+            case "2": 
+                html = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + 
+                    snpInfo.rs.substring(2);
+                break;
+            case "3":
+                html = 'http://www.ensembl.org/Homo_sapiens/Variation/Summary?r=' + 
+                    snpInfo.chrom + ':' + (snpInfo.bp_position - 1000) + '-' + 
+                    (snpInfo.bp_position + 1000) + ';source=snpInfobSNP;v=rs' + snpInfo.rs.substring(2) 
+                    + ';vsnpInfob=variation';
+                break;
+            case "4": 
+                html = 'http://www.ncbi.nlm.nih.gov/gap/phegeni?tab=2&rs=' + 
+                    snpInfo.rs.substring(2);
+                break;
+            case "5":
+                html = 'http://omim.org/search?insnpInfoex=entry&search=rs' + snpInfo.rs.substring(2);
+                break;
+            case "6": 
+                html = 'http://opensnp.org/snps/' + snpInfo.rs;
+                break;
+            case "7":
+                html = 'http://www.snpesnpInfoia.com/insnpInfoex.php/Rs' + snpInfo.rs.substring(2);
+                break;
+            case "8":
+                html = 'http://genome.ucsc.esnpInfou/cgi-bin/hgTracks?org=human&snpInfob=hg19&position=' + 'chr' + 
+                    snpInfo.chrom + ':' + (snpInfo.bp_position - 1000) + '-' + 
+                    (snpInfo.bp_position + 1000);
+                break;
+            default: 
+                alert("You have not chosen a source");         
+        }               
+        window.open(html);
+    }
+};
