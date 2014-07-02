@@ -142,171 +142,284 @@ The visualised data has to be a .json file
 This is a description of the json file format used to store the epistatic graph.
 
     {
-        "type": "object",
-        "properties": {
-            "type": "array",
-            "items": {
-                "type": [
-                    "nodes": { 
-                        "description": "Information about single SNPs",
-                        "type": "objects"
+        "type":"object",
+        "title": "rede_json_schema",
+        "name": "rede",
+        "description": "json file schema of rede",
+        "properties":{
+            "nodes": {
+                "description": "Information about single SNPs",
+                "type":"array",
+                "items":
+                    {
+                        "type":"object",
                         "properties": {
-                            "prbCode": {
-                                "description": "Id for the probe",
-                                "type": "string"
-                            }, 
-                            "degree": {
-                                "description": "Number of interactions",
-                                "type": "number"
-                            },
-                            "prb": {
-                                "description": "Index of probe",
-                                "type": "number"
-                            },
-                            "rs": {
-                                "description": "The rs number",
-                                "type": "string"    
-                            },
-                            "probe_group": {
-                                "description": "Id of the connected subgraph",
-                                "type": "number"    
-                            },
-                            "bp_position": {
-                                "description": "position on the chromosome",
-                                "type": "number"    
-                            },
-                            "chrom": {
-                                "description": "The chromosome",
-                                "type": "number"    
-                            },
-                            "id": {
-                                "description": "Unique id of SNP",
-                                "type": "number"    
-                            }
+                                "prbCode": {
+                                    "description": "Id for the probe",
+                                    "type": "string"
+                                }, 
+                                "degree": {
+                                    "description": "Number of interactions",
+                                    "type": "number"
+                                },
+                                "prb": {
+                                    "description": "Index of probe",
+                                    "type": "number"
+                                },
+                                "rs": {
+                                    "description": "The rs number",
+                                    "type": "string"    
+                                },
+                                "probe_group": {
+                                    "description": "Id of the connected subgraph",
+                                    "type": "number"    
+                                },
+                                "bp_position": {
+                                    "description": "position on the chromosome",
+                                    "type": "number"    
+                                },
+                                "chrom": {
+                                    "description": "The chromosome",
+                                    "type": "number"    
+                                },
+                                "id": {
+                                    "description": "Unique id of SNP",
+                                    "type": "number"    
+                                }
                         },
-                        "required": ["prbCode", "degree", "prb", "rs",
-                            "probe_group", "bp_position", "chrom", "id"]
+                        "required": ["prbCode", "degree", "prb", "rs", "probe_group", "bp_position", "chrom", "id"]
                     }
-                ]
             },
-            "type": "array",
-            "items": {
-                "type": [
-                    "links": {
-                        "type": "object",
-                        "properties": {
+            "links": {
+                "description": "snp-snp interactions",
+                "type":"array",
+                "items":
+                    {
+                        "type":"object",
+                        "properties":{
                             "source": {
-                                "description": "Id of the source SNP",
-                                "type": "number"    
+                                    "description": "Id of the source SNP",
+                                    "type": "number"    
+                                },
+                                "target": {
+                                    "description": "Id of the target SNP",
+                                    "type": "number"    
+                                },
+                                "probe_group": {
+                                    "description": "The subgraph of the link",
+                                    "type": "number"    
+                                },
+                                "<statistical testsname>": {
+                                    "description": "Statistical test(there can be
+                                        multiple tests)",
+                                    "type": "number"    
+                                },
+                                "ct_id": {
+                                    "description": "Unique id of link",
+                                    "type": "number"    
+                                }
                             },
-                            "target": {
-                                "description": "Id of the target SNP",
-                                "type": "number"    
-                            },
-                            "probe_group": {
-                                "description": "The subgraph of the link",
-                                "type": "number"    
-                            },
-                            "<statistical testsname>": {
-                                "description": "Statistical test(there can be
-                                    multiple tests)",
-                                "type": "number"    
-                            },
-                            "ct_id": {
-                                "description": "Unique id of link",
-                                "type": "number"    
-                            }
-                        },
-                        "required"["source", "target", "probe_group",
-                            "<statistical testsname>", "ct_id"]
+                            "required"["source", "target", "probe_group", "<statistical testsname>", "ct_id"]
                     }
-                ]
             },
-            "type": "array",
-            "items": {
-                "type": [
-                    "cont_table": {
-                        "description": "Information about contigency table",
-                        "type": "object",
-                        "properties": {
-                            "unv1": {
-                                "description": "univariate table for source
-                                    (could appear multiple times)",
-                                "type": "object",
-                                "properties": {
-                                    "controls": {
-                                        "description": "control group number",
-                                        "type": "number"
-                                    },
-                                    "cases": {
-                                        "description": "case group number",
-                                        "type": "number"
-                                    }
-                                },
-                                "required": ["controls", "cases"]
-                            },
-                            "unv2": {
-                                "description": "univariate table for
-                                    target(could appear multiple times)",
-                                "type": "object",
-                                "properties": {
-                                    "controls": {
-                                        "description": "control group number",
-                                        "type": "number"
-                                    },
-                                    "cases": {
-                                        "description": "case group number",
-                                        "type": "number"
-                                    }
-                                },
-                                "required": ["controls", "cases"]
-                            },
+            "cont_table": {
+                "description": "Information about contigency table",
+                "type":"array",
+                "items":
+                    {
+                        "type":"object",
+                        "properties":{
                             "biv": {
-                                "description": "bivariate table(could appear
-                                    multiple times)",
-                                "type": "object",
-                                "properties": {
-                                    "controls": {
-                                        "description": "control group number",
-                                        "type": "number"
-                                    },
-                                    "cases": {
-                                        "description": "case group number",
-                                        "type": "number"
+                                "description": "bivariate table(could appear multiple times)",
+                                "type":"array",
+                                "items":
+                                    {
+                                        "type":"object",
+                                        "properties":{
+                                            "cases": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            },
+                                            "controls": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            }
+                                        },
+                                        "required"["case", "controls"]
                                     }
-                                },
-                                "required": ["controls", "cases"]
                             },
                             "total": {
                                 "description": "total amount of individuals",
-                                "type": "object",
-                                "properties": {
-                                    "controls": {
-                                        "description": "control group number",
-                                        "type": "number"
-                                    },
+                                "type":"object",
+                                "properties":{
                                     "cases": {
                                         "description": "case group number",
-                                        "type": "number"
-                                    }    
+                                        "type":"number",
+                                    },
+                                    "controls": {
+                                        "description": "case group number",
+                                        "type":"number",
+                                    }
                                 },
-                                "required": ["controls", "cases"]
+                                "required"["case", "controls"]
+                            },
+                            "unv1": {
+                                "description": "univariate table for source
+                                "type":"array",
+                                "items":
+                                    {
+                                        "type":"object",
+                                        "properties":{
+                                            "cases": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            },
+                                            "controls": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            }
+                                        },
+                                        "required"["case", "controls"]
+                                    }
+                            },
+                            "unv2": {
+                                "description": "univariate table for
+                                "type":"array",
+                                "items":
+                                    {
+                                        "type":"object",
+                                        "properties":{
+                                            "cases": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            },
+                                            "controls": {
+                                                "description": "case group number",
+                                                "type":"number",
+                                            }
+                                        },
+                                        "required"["case", "controls"]
+                                    }
+                            }
+                        }
+                    }, 
+                    "required"["biv", "total", "unv1", "unv2"]
+            },
+            "ld_plot": {
+                "description": "stores the ld plots for all 24 chromosomes",
+                "type":"array",
+                "items":
+                    {
+                        "type":"object",
+                        "properties":{
+                            "local_links1": {
+                                "description": "ld values of the first chromosome",
+                                "type":"array",
+                                "items":
+                                    {
+                                        "type":"object",
+                                        "properties":{
+                                            "R2": {
+                                                "description": "R-square value",
+                                                "type":"number",
+                                            },
+                                            "chrom": {
+                                                "description": "chromosome",
+                                                "type":"number",
+                                            },
+                                            "distance": {
+                                                "description": "distance between the
+                                                snps",
+                                                "type":"number",
+                                            },
+                                            "source": {
+                                                "description": "source snp",
+                                                "type":"number",
+                                            },
+                                            "target": {
+                                                "description": "target snp",
+                                                "type":"number",
+                                            }
+                                        },
+                                        "required["R2", "chrom", "distance", "source", "target"]
+                                    }
+
+                            },
+                            "local_links10": {
+                                "type":"array",
+                            },
+                            "local_links11": {
+                                "type":"array",
+                            },
+                            "local_links12": {
+                                "type":"array",
+                            },
+                            "local_links13": {
+                                "type":"array",
+                            },
+                            "local_links14": {
+                                "type":"array",
+                            },
+                            "local_links15": {
+                                "type":"array",
+                            },
+                            "local_links16": {
+                                "type":"array",
+                            },
+                            "local_links17": {
+                                "type":"array",
+                            },
+                            "local_links18": {
+                                "type":"array",
+                            },
+                            "local_links19": {
+                                "type":"array",
+                            },
+                            "local_links20": {
+                                "type":"array",
+                            },
+                            "local_links21": {
+                                "type":"array",
+                            },
+                            "local_links22": {
+                                "type":"array",
+                            },
+                            "local_links23": {
+                                "type":"array",
+                            },
+                            "local_links24": {
+                                "type":"array",
+                            },
+                            "local_links2": {
+                                "type":"array",
+                            },
+                            "local_links3": {
+                                "type":"array",
+                            },
+                            "local_links4": {
+                                "type":"array",
+                            },
+                            "local_links5": {
+                                "type":"array",
+                            },
+                            "local_links6": {
+                                "type":"array",
+                            },
+                            "local_links7": {
+                                "type":"array",
+                            },
+                            "local_links8": {
+                                "type":"array",
+                            },
+                            "local_links9": {
+                                "type":"array",
                             }
                         },
-                        "required": ["unv1", "unv2", "biv", "total"]
+                        "required["local_links 1-24"]
                     }
-                ]
+
             },
-            "type": "array",
-            "items": {
-                "type": [
-                    "communities": {
-                    "descirption": "shows the communities ...",
-                    "type": "number",
-                    }
-                ]
-            },
-            "required": ["nodes", "links", "cont_table"]
+            "required": ["nodes", "links", "cont_table", "ld_plot"]
     }
 
 
