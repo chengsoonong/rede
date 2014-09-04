@@ -201,7 +201,7 @@ function create_arc_plot(x1, x2) {
             return chromcolour[i];
         })
         .style("stroke", function(d, i) {
-        return chromcolour[i];
+            return chromcolour[i];
         });
 
     // create the label for the chromosomes
@@ -216,9 +216,6 @@ function create_arc_plot(x1, x2) {
         .attr("font-size", "9px") 
         .attr("text-anchor", "end") 
         .style("fill", function(d, i) {
-            return chromcolour[i];
-        })
-        .style("stroke", function(d, i) {
             return chromcolour[i];
         });
     
