@@ -586,13 +586,6 @@ function zoom_arc_plot(v_chr, v_start, v_end) {
             } else {
                 return chromcolour[i];
             }
-        })
-        .style("stroke", function(d, i) {
-            if (i == (v_chr - 1)) {
-                return "#000";
-            } else {
-                return chromcolour[i];
-            }
         });
 
     // object to store the position of the zoomed chromosomes
